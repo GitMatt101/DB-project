@@ -5,7 +5,7 @@ import java.util.Objects;
 import it.unibo.common.Address;
 
 /**
- * This class models a manufactorer of {@link ROV}
+ * This class models a manufactorer of {@link ROV}.
  */
 public class Manufacturer {
 
@@ -13,7 +13,7 @@ public class Manufacturer {
     private final Address address;
 
     /**
-     * Creates an instance of {@code Manufacturer}
+     * Creates an instance of {@code Manufacturer}.
      * 
      * @param name    name of the manufacturer
      * @param address the address of the manufacturer
@@ -24,7 +24,7 @@ public class Manufacturer {
     }
 
     /**
-     * Retrieves the name of the {@code Manufacturer}
+     * Retrieves the name of the {@code Manufacturer}.
      * 
      * @return the manufacturer's name
      */
@@ -33,7 +33,7 @@ public class Manufacturer {
     }
 
     /**
-     * Retrieves the {@link Address} of the {@code Manufacturer}
+     * Retrieves the {@link Address} of the {@code Manufacturer}.
      * 
      * @return the manufacturer's address
      */

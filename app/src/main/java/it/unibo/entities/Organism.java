@@ -3,12 +3,12 @@ package it.unibo.entities;
 import java.util.Objects;
 import java.util.Optional;
 
+import it.unibo.common.Constants;
+
 /**
  * Class modelling a generic organism.
  */
 public class Organism {
-
-    private static final String SEPARATOR = "\n--------------------------------------------------------\n";
 
     private final String species;
     private final Optional<String> commonName;
@@ -117,16 +117,16 @@ public class Organism {
      */
     @Override
     public String toString() {
-        final StringBuilder description = new StringBuilder(50);
+        final StringBuilder description = new StringBuilder(Constants.STRINGBUILDER_INITIAL_SIZE);
         description.append("Species: ").append(this.species);
         if (!this.commonName.isEmpty()) {
             description.append("\nCommon name: ").append(this.commonName);
         }
         description.append("\nDimension: ").append(this.dimension)
                 .append("\nDepth: ").append(Float.toString(this.depth))
-                .append(SEPARATOR)
+                .append(Constants.SEPARATOR)
                 .append(this.behaviour)
-                .append(SEPARATOR)
+                .append(Constants.SEPARATOR)
                 .append(this.imagePath);
         return description.toString();
     }

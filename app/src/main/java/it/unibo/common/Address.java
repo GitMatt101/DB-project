@@ -20,7 +20,7 @@ public class Address {
      */
     public Address(final String city, final String street, final int houseNumber) {
         this.city = city;
-        this.street = city;
+        this.street = street;
         this.houseNumber = houseNumber;
     }
 
