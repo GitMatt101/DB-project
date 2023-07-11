@@ -119,9 +119,7 @@ public class Organism {
     public String toString() {
         final StringBuilder description = new StringBuilder(Constants.STRINGBUILDER_INITIAL_SIZE);
         description.append("Species: ").append(this.species);
-        if (!this.commonName.isEmpty()) {
-            description.append("\nCommon name: ").append(this.commonName);
-        }
+        this.commonName.ifPresent(name -> description.append("\nCommon name: ").append(name));
         description.append("\nDimension: ").append(this.dimension)
                 .append("\nDepth: ").append(Float.toString(this.depth))
                 .append(Constants.SEPARATOR)

@@ -74,11 +74,11 @@ public class Material {
     public String toString() {
         final StringBuilder description = new StringBuilder("Material: ").append(this.name)
                 .append("\nQuantity: ").append(this.quantity).append("kg");
-        if (!this.notes.isEmpty()) {
+        this.notes.ifPresent(notes -> {
             description.append(Constants.SEPARATOR)
                     .append(this.notes.get())
                     .append(Constants.SEPARATOR);
-        }
+        });
         return description.toString();
     }
 
