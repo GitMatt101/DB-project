@@ -1,4 +1,4 @@
-package it.unibo.tables;
+package it.unibo.tables.api;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,20 +16,6 @@ public interface Table<V, K> {
      * @return the name of the table.
      */
     String getTableName();
-
-    /**
-     * Creates the database table.
-     * 
-     * @return false if the table could not be created
-     */
-    boolean createTable();
-
-    /**
-     * Drops the database table.
-     * 
-     * @return false if the table could not be dropped
-     */
-    boolean dropTable();
 
     /**
      * Finds an object in the table with the given primary key.

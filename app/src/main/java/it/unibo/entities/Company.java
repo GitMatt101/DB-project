@@ -2,23 +2,21 @@ package it.unibo.entities;
 
 import java.util.Objects;
 
-import it.unibo.common.Address;
-
 /**
  * This class models a company identified by a unique name.
  */
 public class Company {
 
     private final String name;
-    private final Address address;
+    private final String address;
 
     /**
      * Creates an instance of {@code Company}.
      * 
      * @param name    the name of the company
-     * @param address the {@link Address} of the company
+     * @param address the address of the company
      */
-    public Company(final String name, final Address address) {
+    public Company(final String name, final String address) {
         this.name = name;
         this.address = address;
     }
@@ -37,7 +35,7 @@ public class Company {
      * 
      * @return the address
      */
-    public Address getAddress() {
+    public String getAddress() {
         return address;
     }
 

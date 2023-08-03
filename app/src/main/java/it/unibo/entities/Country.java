@@ -3,24 +3,23 @@ package it.unibo.entities;
 import java.util.Objects;
 
 /**
- * Simple class for the management of the seas and oceans where a {@link ROV} is
- * dispatched for an {@link Expedition}.
+ * This class models a country.
  */
-public class SeaOceanGulf {
+public class Country {
 
     private final String name;
 
     /**
-     * Creates an instance of a {@code Sea}, {@code Ocean} or {@code Gulf}.
+     * Creates an instance of {@code Country}.
      * 
      * @param name the name
      */
-    public SeaOceanGulf(final String name) {
+    public Country(final String name) {
         this.name = name;
     }
 
     /**
-     * Retrieves the name of the {@code Sea}, {@code Ocean} or {@code Gulf}.
+     * Retrieves the name of the country.
      * 
      * @return the name
      */
@@ -32,8 +31,17 @@ public class SeaOceanGulf {
      * {@inheritDoc}
      */
     @Override
+    public String toString() {
+        return this.name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean equals(final Object other) {
-        return other instanceof SeaOceanGulf && this.name.equals(((SeaOceanGulf) other).getName());
+        return other instanceof Country
+                && this.name.equals(((Country) other).getName());
     }
 
     /**

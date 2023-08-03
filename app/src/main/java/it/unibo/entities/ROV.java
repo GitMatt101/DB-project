@@ -1,5 +1,6 @@
 package it.unibo.entities;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -8,20 +9,24 @@ import java.util.Objects;
 public class ROV {
 
     private final String licensePlate;
-    private final Manufacturer manufacturer;
+    private final String manufacturerName;
     private final String serialNumber;
+    private final Date productionDate;
 
     /**
      * Creates an instance of a {@code ROV}.
      * 
-     * @param licensePlate the license plate
-     * @param manufacturer the {@link Manufacturer}
-     * @param serialNumber the serial number given by the manufacturer
+     * @param licensePlate     the license plate
+     * @param manufacturerName the manufacturer's name
+     * @param serialNumber     the serial number given by the String
+     * @param productionDate   the production date
      */
-    public ROV(final String licensePlate, final Manufacturer manufacturer, final String serialNumber) {
+    public ROV(final String licensePlate, final String manufacturerName, final String serialNumber,
+            final Date productionDate) {
         this.licensePlate = licensePlate;
-        this.manufacturer = manufacturer;
+        this.manufacturerName = manufacturerName;
         this.serialNumber = serialNumber;
+        this.productionDate = productionDate;
     }
 
     /**
@@ -34,21 +39,30 @@ public class ROV {
     }
 
     /**
-     * Retrieves the {@code ROV}'s {@link Manufacturer}.
+     * Retrieves the {@code ROV}'s manufacturerName.
      * 
-     * @return the manufacturer
+     * @return the manufacturerName
      */
-    public Manufacturer getManufacturer() {
-        return this.manufacturer;
+    public String getManufacturerName() {
+        return this.manufacturerName;
     }
 
     /**
      * Retrieves the {@code ROV}'s serial number.
      * 
-     * @return the serial number given by the {@link Manufacturer}
+     * @return the serial number given by the manufacturerName
      */
     public String getSerialNumber() {
         return this.serialNumber;
+    }
+
+    /**
+     * Retrieves the {@code ROV}'s production date.
+     * 
+     * @return the production date
+     */
+    public Date getProductionDate() {
+        return this.productionDate;
     }
 
     /**
@@ -57,8 +71,9 @@ public class ROV {
     @Override
     public String toString() {
         return new StringBuilder("License plate: ").append(this.licensePlate)
-                .append("\nManufacturer: ").append(this.manufacturer.getName())
+                .append("\nmanufacturerName: ").append(this.manufacturerName)
                 .append("\nSerial Number: ").append(this.serialNumber)
+                .append("\nProduction Date: ").append(this.productionDate)
                 .toString();
     }
 
@@ -69,8 +84,9 @@ public class ROV {
     public boolean equals(final Object other) {
         return other instanceof ROV
                 && this.licensePlate.equals(((ROV) other).getLicensePlate())
-                && this.manufacturer.equals(((ROV) other).getManufacturer())
-                && this.serialNumber.equals(((ROV) other).getSerialNumber());
+                && this.manufacturerName.equals(((ROV) other).getManufacturerName())
+                && this.serialNumber.equals(((ROV) other).getSerialNumber())
+                && this.productionDate.equals(((ROV) other).getProductionDate());
     }
 
     /**
@@ -78,7 +94,7 @@ public class ROV {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.licensePlate, this.manufacturer, this.serialNumber);
+        return Objects.hash(this.licensePlate, this.manufacturerName, this.serialNumber, this.productionDate);
     }
 
 }

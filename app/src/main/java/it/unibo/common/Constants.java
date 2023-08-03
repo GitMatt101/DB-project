@@ -17,6 +17,11 @@ public final class Constants {
      */
     public static final int STRINGBUILDER_INITIAL_SIZE = 50;
 
+    /**
+     * Error message for {@code Statement} creation.
+     */
+    public static final String STATEMENT_CREATION_ERROR = "Error while creating the statement";
+
     private Constants() {
     }
 

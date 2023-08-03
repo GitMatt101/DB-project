@@ -1,0 +1,158 @@
+package it.unibo.tables.impl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import it.unibo.common.Constants;
+import it.unibo.common.Pair;
+import it.unibo.entities.Group;
+import it.unibo.tables.api.Table;
+
+/**
+ * MySQL table for {@link Group} entity.
+ */
+public class GroupTable implements Table<Group, Pair<String, String>> {
+
+    private static final String TABLE_NAME = "gruppo_di_esplorazione";
+    private static final String ASSOCIATION = "NomeAssociazione";
+    private static final String ID = "ID";
+    private static final String NAME = "Nome_gruppo";
+    private static final String PREPARE_FIELD = " = ?";
+
+    private final Connection connection;
+
+    /**
+     * Creates an instance of {@code OrganismTable}.
+     * 
+     * @param connection the connection to the database
+     */
+    public GroupTable(final Connection connection) {
+        this.connection = connection;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTableName() {
+        return TABLE_NAME;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Group> findByPrimaryKey(final Pair<String, String> primaryKey) {
+        final String query = "SELECT * FROM " + TABLE_NAME
+                + " WHERE " + ASSOCIATION + PREPARE_FIELD
+                + " AND " + ID + PREPARE_FIELD;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, primaryKey.getX());
+            statement.setString(2, primaryKey.getY());
+            final ResultSet resultSet = statement.executeQuery();
+            return readGroupsFromResultSet(resultSet).stream().findFirst();
+        } catch (final SQLException e) {
+            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Given a ResultSet read all the groups in it and collects them in a List.
+     * 
+     * @param resultSet a ResultSet from which the groups will be extracted
+     * @return a List of all the groups in the ResultSet
+     * @throws SQLException
+     */
+    private List<Group> readGroupsFromResultSet(final ResultSet resultSet) throws SQLException {
+        final List<Group> groups = new ArrayList<>();
+        while (resultSet.next()) {
+            groups.add(new Group(
+                    resultSet.getString(ASSOCIATION),
+                    resultSet.getString(ID),
+                    resultSet.getString(NAME)));
+        }
+        return groups;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Group> findAll() {
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            return readGroupsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean save(final Group value) {
+        final String query = "INSERT INTO " + TABLE_NAME + "("
+                + ASSOCIATION + ", " + ID + ", " + NAME + ")"
+                + " VALUES (?, ?, ?)";
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, value.getAssociationName());
+            statement.setString(2, value.getID());
+            statement.setString(3, value.getName());
+            return statement.executeUpdate() > 0;
+        } catch (final SQLException e) {
+            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean update(final Group updatedValue) {
+        final String query = "UPDATE " + TABLE_NAME + " SET "
+                + NAME + PREPARE_FIELD
+                + " WHERE " + ASSOCIATION + PREPARE_FIELD
+                + " AND " + ID + PREPARE_FIELD;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, updatedValue.getName());
+            statement.setString(2, updatedValue.getAssociationName());
+            statement.setString(3, updatedValue.getID());
+            return statement.executeUpdate() > 0;
+        } catch (final SQLException e) {
+            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean delete(final Pair<String, String> primaryKey) {
+        final String query = "DELETE FROM " + TABLE_NAME
+                + " WHERE " + ASSOCIATION + PREPARE_FIELD
+                + " AND " + ID + PREPARE_FIELD;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, primaryKey.getX());
+            statement.setString(2, primaryKey.getY());
+            return statement.executeUpdate() > 0;
+        } catch (final SQLException e) {
+            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return false;
+        }
+    }
+
+}

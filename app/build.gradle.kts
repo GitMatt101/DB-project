@@ -30,6 +30,7 @@ dependencies {
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.7.3")
 
     implementation("com.googlecode.json-simple:json-simple:1.1")
+    implementation("mysql:mysql-connector-java:8.0.33")
 
     // JUnit API and testing engine
     val jUnitVersion = "5.9.3"

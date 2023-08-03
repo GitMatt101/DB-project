@@ -2,32 +2,30 @@ package it.unibo.entities;
 
 import java.util.Objects;
 
-import it.unibo.common.Address;
-
 /**
- * This class models an institute identified by a unique ID.
+ * This class models an laboratory identified by a unique ID.
  */
-public class Institute {
+public class Laboratory {
 
     private final String name;
     private final String id;
-    private final Address address;
+    private final String address;
 
     /**
-     * Creates an instance of {@code Institute}.
+     * Creates an instance of {@code Laboratory}.
      * 
-     * @param name    the name of the institute
-     * @param id      the ID of the institute
-     * @param address the {@link Address} of the institute
+     * @param name    the name of the laboratory
+     * @param id      the ID of the laboratory
+     * @param address the address of the laboratory
      */
-    public Institute(final String name, final String id, final Address address) {
+    public Laboratory(final String name, final String id, final String address) {
         this.name = name;
         this.id = id;
         this.address = address;
     }
 
     /**
-     * Retrieves the name of the institute.
+     * Retrieves the name of the laboratory.
      * 
      * @return the name
      */
@@ -36,7 +34,7 @@ public class Institute {
     }
 
     /**
-     * Retrieves the id of the institute.
+     * Retrieves the id of the laboratory.
      * 
      * @return the ID
      */
@@ -45,11 +43,11 @@ public class Institute {
     }
 
     /**
-     * Retrieves the {@link Address} of the institute.
+     * Retrieves the {@link Address} of the laboratory.
      * 
      * @return the address
      */
-    public Address getAddress() {
+    public String getAddress() {
         return address;
     }
 
@@ -69,10 +67,10 @@ public class Institute {
      */
     @Override
     public boolean equals(final Object other) {
-        return other instanceof Institute
-                && this.name.equals(((Institute) other).getName())
-                && this.id.equals(((Institute) other).getID())
-                && this.address.equals(((Institute) other).getAddress());
+        return other instanceof Laboratory
+                && this.name.equals(((Laboratory) other).getName())
+                && this.id.equals(((Laboratory) other).getID())
+                && this.address.equals(((Laboratory) other).getAddress());
     }
 
     /**

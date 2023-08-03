@@ -3,37 +3,36 @@ package it.unibo.entities;
 import java.util.Objects;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Pair;
 
 /**
  * This class models a group of operators, identified by a unique ID in the
- * {@link Company} it is part of.
+ * association it is part of.
  */
 public class Group {
 
-    private final Company company;
-    private final String id;
+    private final Pair<String, String> associationID;
     private final String name;
 
     /**
      * Creates an instance of {@code Group}.
      * 
-     * @param company the {@link Company} the group is part of
-     * @param id      the ID of the group
-     * @param name    the name of the group
+     * @param associationName the name of the association that the group is part of
+     * @param id              the ID of the group
+     * @param name            the name of the group
      */
-    public Group(final Company company, final String id, final String name) {
-        this.company = company;
-        this.id = id;
+    public Group(final String associationName, final String id, final String name) {
+        this.associationID = new Pair<>(associationName, id);
         this.name = name;
     }
 
     /**
-     * Retrieves the {@link Company} the group is part of.
+     * Retrieves the association the group is part of.
      * 
-     * @return the company
+     * @return the association
      */
-    public Company getCompany() {
-        return company;
+    public String getAssociationName() {
+        return this.associationID.getX();
     }
 
     /**
@@ -42,7 +41,7 @@ public class Group {
      * @return the ID
      */
     public String getID() {
-        return id;
+        return this.associationID.getY();
     }
 
     /**
@@ -51,7 +50,7 @@ public class Group {
      * @return the name
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -59,11 +58,10 @@ public class Group {
      */
     @Override
     public String toString() {
-        return new StringBuilder("Group ID: ").append(this.id)
+        return new StringBuilder(Constants.STRINGBUILDER_INITIAL_SIZE)
+                .append("Association: ").append(this.associationID.getX())
+                .append("\nID: ").append(this.associationID.getY())
                 .append("\nName: ").append(this.name)
-                .append(Constants.SEPARATOR)
-                .append("Company:\n").append(this.company)
-                .append(Constants.SEPARATOR)
                 .toString();
     }
 
@@ -73,9 +71,9 @@ public class Group {
     @Override
     public boolean equals(final Object other) {
         return other instanceof Group
-                && this.id.equals(((Group) other).getID())
-                && this.name.equals(((Group) other).getName())
-                && this.company.equals(((Group) other).getCompany());
+                && this.associationID.getX().equals(((Group) other).getAssociationName())
+                && this.associationID.getY().equals(((Group) other).getID())
+                && this.name.equals(((Group) other).getName());
     }
 
     /**
@@ -83,7 +81,7 @@ public class Group {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.company);
+        return Objects.hash(this.associationID, this.name);
     }
 
 }

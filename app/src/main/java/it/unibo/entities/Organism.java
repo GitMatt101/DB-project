@@ -10,106 +10,83 @@ import it.unibo.common.Constants;
  */
 public class Organism {
 
-    private final String species;
+    private final String id;
+    private Optional<String> species;
+    private Optional<String> temporaryName;
     private final Optional<String> commonName;
-    private final float dimension;
-    private final float depth;
-    private final String behaviour;
-    private final String imagePath;
-
-    /**
-     * Creates an instance of {@code Organism} without a common name.
-     * 
-     * @param species    name of the species
-     * @param dimension  length of the organism
-     * @param depth      depth where it was spotted
-     * @param behaviour  description of the behaviour when it was spotted
-     * @param imagePath path to the photo of the organism
-     */
-    public Organism(final String species, final float dimension, final float depth, final String behaviour,
-            final String imagePath) {
-        this.species = species;
-        this.commonName = Optional.empty();
-        this.dimension = dimension;
-        this.depth = depth;
-        this.behaviour = behaviour;
-        this.imagePath = imagePath;
-    }
+    private final String description;
 
     /**
      * Creates an instance of {@code Organism}.
      * 
-     * @param species     name of the species
-     * @param commonName common name of the organism
-     * @param dimension   length of the organism
-     * @param depth       depth where it was spotted
-     * @param behaviour   description of the behaviour when it was spotted
-     * @param imagePath  path to the photo of the organism
+     * @param id            the identifier of the organism
+     * @param species       the species of the organism
+     * @param temporaryName the temporary name of the organism
+     * @param commonName    the common name of the organism
+     * @param description   the description of the organism
      */
-    public Organism(final String species, final String commonName, final float dimension, final float depth,
-            final String behaviour,
-            final String imagePath) {
+    public Organism(final String id, final Optional<String> species, final Optional<String> temporaryName,
+            final Optional<String> commonName, final String description) {
+        this.id = id;
         this.species = species;
-        this.commonName = Optional.of(commonName);
-        this.dimension = dimension;
-        this.depth = depth;
-        this.behaviour = behaviour;
-        this.imagePath = imagePath;
+        this.temporaryName = temporaryName;
+        this.commonName = commonName;
+        this.description = description;
+    }
+
+    /**
+     * Retrieves the identifier of the organism.
+     * 
+     * @return the identifier
+     */
+    public String getId() {
+        return this.id;
     }
 
     /**
      * Retrieves the species of the organism.
      * 
-     * @return name of the species
+     * @return the species
      */
-    public String getSpecies() {
+    public Optional<String> getSpecies() {
         return this.species;
     }
 
     /**
-     * Retrieves the common name of the organism if it has one.
+     * Updates the species of the organism.
      * 
-     * @return the common name of the organism, if it doesn't have a common name it
-     *         will return {@code Optional.empty()}
+     * @param species the new species
+     */
+    public void updateInfo(final String species) {
+        this.species = Optional.of(species);
+        this.temporaryName = Optional.empty();
+    }
+
+    /**
+     * Retrieves the temporary name of the organism.
+     * 
+     * @return the temporary name
+     */
+    public Optional<String> getTemporaryName() {
+        return this.temporaryName;
+    }
+
+    /**
+     * Retrieves the common name of the organism.
+     * 
+     * @return the common name
      */
     public Optional<String> getCommonName() {
         return this.commonName;
     }
 
     /**
-     * Retrieves the dimension (lenght) of the organism.
+     * Retrieves the description of the organism.
      * 
-     * @return length of the organism
+     * @return the description
      */
-    public float getDimension() {
-        return this.dimension;
-    }
-
-    /**
-     * Retrieves the depth where the organism was found.
-     * 
-     * @return the depth
-     */
-    public float getDepth() {
-        return this.depth;
-    }
-
-    /**
-     * Retrieves the description of the behaviour of the organism.
-     * 
-     * @return the description of the behaviour
-     */
-    public String getBehaviour() {
-        return this.behaviour;
-    }
-
-    /**
-     * Retrieves the path to the image of the organism.
-     * 
-     * @return path to the image of the organism
-     */
-    public String getImagePath() {
-        return this.imagePath;
+    public String getDescription() {
+        return this.description;
     }
 
     /**
@@ -118,14 +95,14 @@ public class Organism {
     @Override
     public String toString() {
         final StringBuilder description = new StringBuilder(Constants.STRINGBUILDER_INITIAL_SIZE);
-        description.append("Species: ").append(this.species);
-        this.commonName.ifPresent(name -> description.append("\nCommon name: ").append(name));
-        description.append("\nDimension: ").append(this.dimension)
-                .append("\nDepth: ").append(Float.toString(this.depth))
-                .append(Constants.SEPARATOR)
-                .append(this.behaviour)
-                .append(Constants.SEPARATOR)
-                .append(this.imagePath);
+        description.append("ID: ").append(this.id)
+                .append("\nSpecies: ");
+        this.species.ifPresentOrElse(description::append, () -> description.append("unknown"));
+        this.temporaryName.ifPresent(tn -> description.append("\nTemporary name: ").append(tn));
+        this.commonName.ifPresent(cn -> description.append("\nCommon name: ").append(cn));
+        description.append(Constants.SEPARATOR)
+                .append(this.description)
+                .append(Constants.SEPARATOR);
         return description.toString();
     }
 
@@ -135,12 +112,11 @@ public class Organism {
     @Override
     public boolean equals(final Object other) {
         return other instanceof Organism
+                && this.id.equals(((Organism) other).getId())
                 && this.species.equals(((Organism) other).getSpecies())
+                && this.temporaryName.equals(((Organism) other).getTemporaryName())
                 && this.commonName.equals(((Organism) other).getCommonName())
-                && Math.abs(this.dimension - ((Organism) other).getDimension()) < Math.ulp(this.dimension)
-                && Math.abs(this.depth - ((Organism) other).getDepth()) < Math.ulp(this.depth)
-                && this.behaviour.equals(((Organism) other).getBehaviour())
-                && this.imagePath.equals(((Organism) other).getImagePath());
+                && this.description.equals(((Organism) other).getDescription());
     }
 
     /**
@@ -148,8 +124,7 @@ public class Organism {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.species, this.commonName, this.dimension, this.depth, this.behaviour,
-                this.imagePath);
+        return Objects.hash(this.id, this.species, this.temporaryName, this.commonName, this.description);
     }
 
 }
