@@ -22,6 +22,11 @@ public final class Constants {
      */
     public static final String STATEMENT_CREATION_ERROR = "Error while creating the statement";
 
+    /**
+     * Background color for every panel.
+     */
+    public static final java.awt.Color BACKGROUND_COLOR = java.awt.Color.BLACK;
+
     private Constants() {
     }
 
