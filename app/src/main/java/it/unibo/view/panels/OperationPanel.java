@@ -11,8 +11,8 @@ import it.unibo.common.Constants;
 public class OperationPanel extends JPanel {
 
     private static final int NUMBER_OF_OPERATIONS = 15;
-    private static final int ROWS = 15;
-    private static final int COLUMNS = 1;
+    private static final int ROWS = 5;
+    private static final int COLUMNS = 3;
     private static final int HORIZONTAL_SPACING = 10;
     private static final int VERTICAL_SPACING = 10;
 

@@ -13,8 +13,11 @@ public class MainPanel extends JPanel {
         super();
         this.setPreferredSize(new java.awt.Dimension(WIDTH, HEIGHT));
         this.setLayout(new java.awt.BorderLayout());
-        this.add(new LogoPanel(), java.awt.BorderLayout.CENTER);
-        this.add(new OperationPanel(), java.awt.BorderLayout.WEST);
+        final JPanel eastPanel = new JPanel();
+        eastPanel.add(new LogoPanel());
+        eastPanel.setBackground(Constants.BACKGROUND_COLOR);
+        this.add(eastPanel, java.awt.BorderLayout.EAST);
+        this.add(new CenterPanel(), java.awt.BorderLayout.CENTER);
         this.add(new EntityPanel(), java.awt.BorderLayout.SOUTH);
         this.setBackground(Constants.BACKGROUND_COLOR);
     }
