@@ -49,6 +49,14 @@ public class ExpeditionTable implements Table<Expedition, String> {
         return TABLE_NAME;
     }
 
+    public String getCodeName() {
+        return CODE;
+    }
+
+    public String getLocationName() {
+        return LOCATION;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -94,6 +102,22 @@ public class ExpeditionTable implements Table<Expedition, String> {
     public List<Expedition> findAll() {
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            return readExpeditionsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(ExpeditionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Retrieves all the expeditions that have been organized by a certain association
+     * @param associationName the name of the association
+     * @return a list of {@link Expedition}, or an empty list if no expeditions were found
+     */
+    public List<Expedition> filterByAssociation(final String associationName) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ASSOCIATION + "='" + associationName + "'";
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
             return readExpeditionsFromResultSet(resultSet);
         } catch (final SQLException e) {
             Logger.getLogger(ExpeditionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

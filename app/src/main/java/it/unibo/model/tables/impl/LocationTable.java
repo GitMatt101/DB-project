@@ -44,6 +44,24 @@ public class LocationTable implements Table<Location, String> {
     }
 
     /**
+     * Retrieves the name of the primary key of the table.
+     * 
+     * @return the name of the attribute
+     */
+    public String getName() {
+        return NAME;
+    }
+
+    /**
+     * Retrieves the name of the attribute that is the foreign key of the table.
+     * 
+     * @return the name of the attribute
+     */
+    public String getCountryName() {
+        return COUNTRY_NAME;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -113,7 +131,8 @@ public class LocationTable implements Table<Location, String> {
      */
     @Override
     public boolean update(final Location updatedValue) {
-        // We are going to assume that a contry will never claim the property of a location
+        // We are going to assume that a contry will never claim the property of a
+        // location
         return false;
     }
 

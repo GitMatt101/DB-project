@@ -27,6 +27,21 @@ public final class Constants {
      */
     public static final java.awt.Color BACKGROUND_COLOR = java.awt.Color.BLACK;
 
+    /**
+     * Name of the database.
+     */
+    public static final String DATABASE_NAME = "spedizioni";
+
+    /**
+     * Username to access the database.
+     */
+    public static final String USERNAME = "root";
+
+    /**
+     * Password to access the database.
+     */
+    public static final String PASSWORD = "frtMTT02%101";
+
     private Constants() {
     }
 

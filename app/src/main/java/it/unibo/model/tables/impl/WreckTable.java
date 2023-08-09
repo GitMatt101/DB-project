@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -87,6 +88,17 @@ public class WreckTable implements Table<Wreck, String> {
     public List<Wreck> findAll() {
         try (PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM " + TABLE_NAME)) {
             final ResultSet resultSet = statement.executeQuery();
+            return readWrecksFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Wreck> filterByName(final String wreckName) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + NAME + "='" + wreckName + "'";
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
             return readWrecksFromResultSet(resultSet);
         } catch (final SQLException e) {
             Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

@@ -98,6 +98,22 @@ public class OrganismTable implements Table<Organism, String> {
         }
     }
 
+    public List<Organism> filterByExpedition(final String expeditionCode) {
+        final SightingTable sighting = new SightingTable(null);
+        final String query = "SELECT (" + ID + "," + SPECIES + "," + TEMPORARY_NAME + "," + COMMON_NAME + ","
+                + DESCRIPTION
+                + ") FROM " + TABLE_NAME + "," + sighting.getTableName()
+                + " WHERE " + sighting.getTableName() + "." + sighting.getExpeditionCodeName() + "='" + expeditionCode + "'"
+                + " AND " + sighting.getTableName() + "." + sighting.getOrganismIDName() + "=" + TABLE_NAME + "." + ID;
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            return readOrganismsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

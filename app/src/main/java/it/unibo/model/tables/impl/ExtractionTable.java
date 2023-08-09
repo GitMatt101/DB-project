@@ -103,6 +103,27 @@ public class ExtractionTable implements Table<Extraction, String> {
     }
 
     /**
+     * Retrieves the next number for an extraction in a given expedition.
+     * 
+     * @param expeditionCode the code of the expedition
+     * @return the next number if everything went fine, -1 otherwise
+     */
+    public int getNextNumber(final String expeditionCode) {
+        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + " WHERE " + EXPEDITION + PREPARE_FIELD;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, expeditionCode);
+            final ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) + 1;
+            }
+            return -1;
+        } catch (final SQLException e) {
+            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return -1;
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -100,6 +100,23 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
     }
 
     /**
+     * Retrieves all the geological formations with the given danger level.
+     * @param dangerLevel the danger level
+     * @return a List of all the geological formations with the given danger level
+     */
+    public List<GeologicalFormation> filterByDangerLevel(final int dangerLevel) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + DANGER_LEVEL + "=" + dangerLevel;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            final ResultSet resultSet = statement.executeQuery();
+            return readGeologicalFormationsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
+                    e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -36,6 +36,15 @@ public class CountryTable implements Table<Country, String> {
     }
 
     /**
+     * Retrieves the name of the primary key of the table.
+     * 
+     * @return the name of the attribute
+     */
+    public String getName() {
+        return NAME;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

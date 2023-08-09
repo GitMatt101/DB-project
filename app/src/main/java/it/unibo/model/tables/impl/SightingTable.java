@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.model.entities.Organism;
+import it.unibo.model.entities.Wreck;
 import it.unibo.model.entities.impl.Sighting;
 import it.unibo.model.tables.api.Table;
 
@@ -50,6 +52,22 @@ public class SightingTable implements Table<Sighting, String> {
     @Override
     public String getTableName() {
         return TABLE_NAME;
+    }
+
+    public String getExpeditionCodeName() {
+        return EXPEDITION;
+    }
+
+    public String getOrganismIDName() {
+        return ORGANISM;
+    }
+
+    public String getWreckName() {
+        return WRECK;
+    }
+
+    public String getGeologicalFormationName() {
+        return GEOLOGICAL_FORMATION;
     }
 
     /**
@@ -99,6 +117,132 @@ public class SightingTable implements Table<Sighting, String> {
     public List<Sighting> findAll() {
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            return readSightingsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Retrieves the next number for a sighting in a given expedition.
+     * 
+     * @param expeditionCode the code of the expedition
+     * @return the next number if everything went fine, -1 otherwise
+     */
+    public int getNextNumber(final String expeditionCode) {
+        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + " WHERE " + EXPEDITION + PREPARE_FIELD;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, expeditionCode);
+            final ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) + 1;
+            }
+            return -1;
+        } catch (final SQLException e) {
+            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return -1;
+        }
+    }
+
+    /**
+     * Retrieves all the sightings that occurred at a certain depth, given a certain
+     * range for research.
+     * 
+     * @param minDepth the minimum depth
+     * @param maxDepth the maximum depth
+     * @return a list of {@link Sighting}, or an empty list if no sightings were
+     *         found
+     */
+    public List<Sighting> filterByDepth(final int minDepth, final int maxDepth) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + DEPTH + " >= " + minDepth + " AND " + DEPTH
+                + " <= " + maxDepth;
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            return readSightingsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Retrieves all the sightings that occurred at a certain {@link Location}.
+     * 
+     * @param locationName the name of the location
+     * @return a list of {@link Sighting}, or an empty list if no sightings were
+     *         found
+     */
+    public List<Sighting> filterByLocation(final String locationName) {
+        final ExpeditionTable exp = new ExpeditionTable(null);
+        final String query = "SELECT "
+                + CODE + ", "
+                + EXPEDITION + ", "
+                + NUMBER + ", "
+                + DEPTH + ", "
+                + IMAGE + ", "
+                + NOTES + ", "
+                + ORGANISM + ", "
+                + WRECK + ", "
+                + GEOLOGICAL_FORMATION
+                + " FROM " + TABLE_NAME + ", " + exp.getTableName()
+                + " WHERE " + EXPEDITION + " = " + exp.getTableName() + "." + exp.getCodeName()
+                + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName + "'";
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            return readSightingsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Retrieves all the sightings that occurred during a certain expedition.
+     * 
+     * @param expeditionCode the code of the expedition
+     * @return a list of {@link Sighting}, or an empty list if no sightings were
+     *         found
+     */
+    public List<Sighting> filterByExpedition(final String expeditionCode) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + expeditionCode + "='" + expeditionCode + "'";
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            return readSightingsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Retrieves all the sightings of an {@link Organism}.
+     * 
+     * @param organismID the ID of the organism
+     * @return a list of {@link Sighting}, or an empty list if no sightings were
+     *         found
+     */
+    public List<Sighting> filterByOrganism(final String organismID) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ORGANISM + "='" + organismID + "'";
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            return readSightingsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Retrieves all the sightings of a {@link Wreck}.
+     * 
+     * @param wreckID the ID of the wreck
+     * @return a list of {@link Wreck}, or an empty list if no sightings were found
+     */
+    public List<Sighting> filterByWreck(final String wreckID) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + WRECK + "='" + wreckID + "'";
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
             return readSightingsFromResultSet(resultSet);
         } catch (final SQLException e) {
             Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

@@ -32,8 +32,7 @@ public class Extraction implements Event {
      * @param notes          the notes
      */
     public Extraction(final String code, final String expeditionCode, final int number, final String materialName,
-            final Optional<Integer> depth, final float amount,
-            final Optional<String> notes) {
+            final Optional<Integer> depth, final float amount, final Optional<String> notes) {
         this.code = code;
         this.expeditionCode = expeditionCode;
         this.number = number;
