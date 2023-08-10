@@ -95,6 +95,18 @@ public class AnalysisTable implements Table<Analysis, String> {
         }
     }
 
+    public Optional<Analysis> findByExtractionCode(final String extractionCode) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + EXTRACTION_CODE + PREPARE_FIELD;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, extractionCode);
+            final ResultSet resultSet = statement.executeQuery();
+            return readAnalysesFromResultSet(resultSet).stream().findFirst();
+        } catch (final SQLException e) {
+            Logger.getGlobal().log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Optional.empty();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

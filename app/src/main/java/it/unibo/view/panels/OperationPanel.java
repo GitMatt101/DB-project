@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import it.unibo.common.Constants;
+import it.unibo.controller.Controller;
 
 public class OperationPanel extends JPanel {
 
@@ -37,6 +38,7 @@ public class OperationPanel extends JPanel {
      */
     private void loadButtonsText() {
         buttons.get(1).setText("O1 - Aggiungi un operatore");
+        buttons.get(1).addActionListener(e -> Controller.openOperatorRegistrationPopup());
         buttons.get(2).setText("O2 - Registra un ROV");
         buttons.get(3).setText("O3 - Registra una spedizione");
         buttons.get(4).setText("O4_A - Aggiungi un avvistamento ad una spedizione");

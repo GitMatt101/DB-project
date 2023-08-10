@@ -18,7 +18,7 @@
 --
 -- Table structure for table `analisi`
 --
-
+create database spedizioni;
 use spedizioni;
 
 DROP TABLE IF EXISTS `analisi`;
@@ -86,17 +86,17 @@ CREATE TABLE `avvistamento` (
   `Profondita` smallint DEFAULT NULL,
   `Foto` char(1) NOT NULL,
   `Note` text,
-  `IDrelitto` varchar(5) DEFAULT NULL,
-  `NomeFormazioneGeologica` char(30) DEFAULT NULL,
+  `IDrelitto` varchar(10) DEFAULT NULL,
+  `IDformazionegeologica` varchar(10) DEFAULT NULL,
   `IDorganismo` varchar(10) DEFAULT NULL,
   `CodiceSpedizione` varchar(10) NOT NULL,
   PRIMARY KEY (`Codice`),
   UNIQUE KEY `ID_AVVISTAMENTO_IND` (`Codice`),
   KEY `EQU_AVVIS_RELIT_IND` (`IDrelitto`),
-  KEY `EQU_AVVIS_FORMA_IND` (`NomeFormazioneGeologica`),
+  KEY `EQU_AVVIS_FORMA_IND` (`IDformazionegeologica`),
   KEY `EQU_AVVIS_ORGAN_IND` (`IDorganismo`),
   KEY `REF_AVVIS_SPEDI_IND` (`CodiceSpedizione`),
-  CONSTRAINT `EQU_AVVIS_FORMA_FK` FOREIGN KEY (`NomeFormazioneGeologica`) REFERENCES `formazione_geologica` (`Nome`),
+  CONSTRAINT `EQU_AVVIS_FORMA_FK` FOREIGN KEY (`IDformazionegeologica`) REFERENCES `formazione_geologica` (`ID`),
   CONSTRAINT `EQU_AVVIS_ORGAN_FK` FOREIGN KEY (`IDorganismo`) REFERENCES `organismo` (`ID`),
   CONSTRAINT `EQU_AVVIS_RELIT_FK` FOREIGN KEY (`IDrelitto`) REFERENCES `relitto` (`ID`),
   CONSTRAINT `REF_AVVIS_SPEDI_FK` FOREIGN KEY (`CodiceSpedizione`) REFERENCES `spedizione` (`Codice`)
@@ -145,12 +145,13 @@ DROP TABLE IF EXISTS `formazione_geologica`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `formazione_geologica` (
-  `Nome` char(30) NOT NULL,
-  `Dimensioni` decimal(1,0) NOT NULL,
+  `ID` varchar(10) NOT NULL,
+  `Tipologia` char(30) NOT NULL,
+  `Dimensioni` decimal(5,0) NOT NULL,
   `Grado_di_pericolo` decimal(1,0) NOT NULL,
   `Descrizione` text NOT NULL,
-  PRIMARY KEY (`Nome`),
-  UNIQUE KEY `ID_FORMAZIONE_GEOLOGICA_IND` (`Nome`)
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_FORMAZIONE_GEOLOGICA_IND` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

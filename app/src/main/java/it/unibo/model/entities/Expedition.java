@@ -99,8 +99,8 @@ public class Expedition {
                 .append("\nDate: ").append(this.date)
                 .append("\nLocation: ").append(this.locationName)
                 .append("\nROV: ").append(this.rovLicencePlate)
-                .append("\nGroup ID: ").append(this.groupID)
                 .append("\nAssociation: ").append(this.associationName)
+                .append("\nGroup ID: ").append(this.groupID)
                 .toString();
     }
 

@@ -42,6 +42,12 @@ public final class Constants {
      */
     public static final String PASSWORD = "frtMTT02%101";
 
+    public static final String SUCCESSFUL_REGISTRATION = "Registrazione avvenuta con successo";
+
+    public static final String UNSUCCESSFUL_REGISTRATION = "Registrazione fallita";
+
+    public static final String POPUP_MESSAGE = "Notifica di fine operazione";
+
     private Constants() {
     }
 

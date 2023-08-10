@@ -21,7 +21,8 @@ import it.unibo.model.tables.api.Table;
 public class GeologicalFormationTable implements Table<GeologicalFormation, String> {
 
     private static final String TABLE_NAME = "formazione_geologica";
-    private static final String NAME = "Nome";
+    private static final String ID = "ID";
+    private static final String TYPE = "Tipologia";
     private static final String SIZE = "Dimensioni";
     private static final String DANGER_LEVEL = "Grado_di_pericolo";
     private static final String DESCRIPTION = "Descrizione";
@@ -51,7 +52,7 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      */
     @Override
     public Optional<GeologicalFormation> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ID + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -76,7 +77,8 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
         final List<GeologicalFormation> geologicalFormations = new ArrayList<>();
         while (resultSet.next()) {
             geologicalFormations.add(new GeologicalFormation(
-                    resultSet.getString(NAME),
+                    resultSet.getString(ID),
+                    resultSet.getString(TYPE),
                     resultSet.getInt(SIZE),
                     resultSet.getInt(DANGER_LEVEL),
                     resultSet.getString(DESCRIPTION)));
@@ -122,13 +124,14 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
     @Override
     public boolean save(final GeologicalFormation value) {
         final String query = "INSERT INTO " + TABLE_NAME + " ("
-                + NAME + ", " + SIZE + ", " + DANGER_LEVEL + ", " + DESCRIPTION
-                + ") VALUES (?, ?, ?, ?)";
+                + ID + ", " + TYPE + ", " + SIZE + ", " + DANGER_LEVEL + ", " + DESCRIPTION
+                + ") VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getName());
-            statement.setInt(2, value.getSize());
-            statement.setInt(3, value.getDangerLevel());
-            statement.setString(4, value.getDescription());
+            statement.setString(1, value.getID());
+            statement.setString(2, value.getType());
+            statement.setInt(3, value.getSize());
+            statement.setInt(4, value.getDangerLevel());
+            statement.setString(5, value.getDescription());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
@@ -142,16 +145,17 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      */
     @Override
     public boolean update(final GeologicalFormation updatedValue) {
+        // We are going to assume that type of geological formation doesn't change
         final String query = "UPDATE " + TABLE_NAME + " SET "
                 + SIZE + PREPARE_FIELD + ", "
                 + DANGER_LEVEL + PREPARE_FIELD + ", "
                 + DESCRIPTION + PREPARE_FIELD
-                + " WHERE " + NAME + PREPARE_FIELD;
+                + " WHERE " + ID + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, updatedValue.getSize());
             statement.setInt(2, updatedValue.getDangerLevel());
             statement.setString(3, updatedValue.getDescription());
-            statement.setString(4, updatedValue.getName());
+            statement.setString(4, updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
@@ -165,7 +169,7 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + ID + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

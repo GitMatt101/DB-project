@@ -32,7 +32,7 @@ public class SightingTable implements Table<Sighting, String> {
     private static final String NOTES = "Note";
     private static final String ORGANISM = "IDorganismo";
     private static final String WRECK = "IDrelitto";
-    private static final String GEOLOGICAL_FORMATION = "NomeFormazioneGeologica";
+    private static final String GEOLOGICAL_FORMATION = "IDformazioneGeologica";
     private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;

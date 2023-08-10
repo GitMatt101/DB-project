@@ -124,6 +124,25 @@ public class ExtractionTable implements Table<Extraction, String> {
     }
 
     /**
+     * Retrieves all the extractions of a material.
+     * 
+     * @param materialName the name of the material
+     * @return a list of all the extractions, or an empty list if something went
+     *         wrong
+     */
+    public List<Extraction> filterByMaterial(final String materialName) {
+        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + MATERIAL + PREPARE_FIELD;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(1, materialName);
+            final ResultSet resultSet = statement.executeQuery();
+            return readExtractionsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

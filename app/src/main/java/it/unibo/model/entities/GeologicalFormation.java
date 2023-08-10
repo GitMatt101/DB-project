@@ -5,11 +5,12 @@ import java.util.Objects;
 import it.unibo.common.Constants;
 
 /**
- * This class models a geological formation, identified by a unique name.
+ * This class models a geological formation, identified by a unique id.
  */
 public class GeologicalFormation {
 
-    private final String name;
+    private final String id;
+    private final String type;
     private final int size;
     private final int dangerLevel;
     private final String description;
@@ -17,25 +18,36 @@ public class GeologicalFormation {
     /**
      * Creates an instance of {@code GeologicalFormation}.
      * 
-     * @param name        the name
+     * @param id        the id
      * @param size        the size
+     * @param type        the type
      * @param dangerLevel the danger level
      * @param description the description
      */
-    public GeologicalFormation(final String name, final int size, final int dangerLevel, final String description) {
-        this.name = name;
+    public GeologicalFormation(final String id, final String type, final int size, final int dangerLevel, final String description) {
+        this.id = id;
+        this.type = type;
         this.size = size;
         this.dangerLevel = dangerLevel;
         this.description = description;
     }
 
     /**
-     * Retrieves the name of the geological formation.
+     * Retrieves the id of the geological formation.
      * 
-     * @return the name
+     * @return the id
      */
-    public String getName() {
-        return this.name;
+    public String getID() {
+        return this.id;
+    }
+
+    /**
+     * Retrieves the type of the geological formation.
+     * 
+     * @return the type
+     */
+    public String getType() {
+        return this.type;
     }
 
     /**
@@ -71,7 +83,8 @@ public class GeologicalFormation {
     @Override
     public String toString() {
         return new StringBuilder(Constants.STRINGBUILDER_INITIAL_SIZE)
-                .append("Name: ").append(this.name)
+                .append("ID: ").append(this.id)
+                .append("\nType: ").append(this.type)
                 .append("\nSize: ").append(this.size).append(" m2")
                 .append("\nDanger level: ").append(this.dangerLevel).append("\\5")
                 .append(Constants.SEPARATOR)
@@ -86,7 +99,8 @@ public class GeologicalFormation {
     @Override
     public boolean equals(final Object other) {
         return other instanceof GeologicalFormation 
-                && this.name.equals(((GeologicalFormation) other).getName())
+                && this.id.equals(((GeologicalFormation) other).getID())
+                && this.type.equals(((GeologicalFormation) other).getType())
                 && this.size == ((GeologicalFormation) other).getSize()
                 && this.dangerLevel == ((GeologicalFormation) other).getDangerLevel()
                 && this.description.equals(((GeologicalFormation) other).getDescription());
@@ -97,7 +111,7 @@ public class GeologicalFormation {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.name, this.size, this.dangerLevel, this.description);
+        return Objects.hash(this.id, this.type, this.size, this.dangerLevel, this.description);
     }
 
 }

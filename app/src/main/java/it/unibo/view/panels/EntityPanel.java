@@ -7,6 +7,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import it.unibo.controller.Controller;
+
 public class EntityPanel extends JPanel {
 
     private static final int NUMBER_OF_ENTITIES = 6;
@@ -47,8 +49,8 @@ public class EntityPanel extends JPanel {
                 image.getImage().getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, java.awt.Image.SCALE_DEFAULT));
         this.buttons.get(3).setIcon(newImage);
 
-        this.buttons.get(4).setText("Materiali");
-        image = new ImageIcon("app\\src\\main\\resources\\button_images\\materials.jpg");
+        this.buttons.get(4).setText("Avvistamenti");
+        image = new ImageIcon("app\\src\\main\\resources\\button_images\\sightings.jpg");
         newImage = new ImageIcon(
                 image.getImage().getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, java.awt.Image.SCALE_DEFAULT));
         this.buttons.get(4).setIcon(newImage);

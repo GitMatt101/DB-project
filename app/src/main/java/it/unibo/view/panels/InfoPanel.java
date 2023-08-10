@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import it.unibo.common.Constants;
+import it.unibo.controller.Controller;
 
 public class InfoPanel extends JPanel {
 
