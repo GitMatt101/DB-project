@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import it.unibo.common.Constants;
-import it.unibo.controller.Controller;
 
 public class LogoPanel extends JPanel {
 

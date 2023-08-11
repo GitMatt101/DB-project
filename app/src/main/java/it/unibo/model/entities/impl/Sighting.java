@@ -24,7 +24,7 @@ public class Sighting implements Event {
     private final Optional<String> notes;
     private final Optional<String> organismID;
     private final Optional<String> wreckID;
-    private final Optional<String> geologicalFormationName;
+    private final Optional<String> geologicalFormationID;
 
     /**
      * Creates an instance of {@code Sighting}.
@@ -38,11 +38,11 @@ public class Sighting implements Event {
      * @param notes                   the notes
      * @param organismID              the ID of the organism
      * @param wreckID                 the ID of the wreck
-     * @param geologicalFormationName the name of the geological formation
+     * @param geologicalFormationID the ID of the geological formation
      */
     public Sighting(final String code, final String expeditionCode, final int number, final Optional<Integer> depth,
             final Blob image, final Optional<String> notes, final Optional<String> organismID,
-            final Optional<String> wreckID, final Optional<String> geologicalFormationName) {
+            final Optional<String> wreckID, final Optional<String> geologicalFormationID) {
         this.code = code;
         this.expeditionCode = expeditionCode;
         this.number = number;
@@ -51,7 +51,7 @@ public class Sighting implements Event {
         this.notes = notes;
         this.organismID = organismID;
         this.wreckID = wreckID;
-        this.geologicalFormationName = geologicalFormationName;
+        this.geologicalFormationID = geologicalFormationID;
     }
 
     /**
@@ -126,8 +126,8 @@ public class Sighting implements Event {
      * 
      * @return the geological formation
      */
-    public Optional<String> getGeologicalFormationName() {
-        return this.geologicalFormationName;
+    public Optional<String> getGeologicalFormationID() {
+        return this.geologicalFormationID;
     }
 
     /**
@@ -142,7 +142,7 @@ public class Sighting implements Event {
         this.depth.ifPresent(d -> description.append("\nDepth: ").append(d));
         this.organismID.ifPresent(o -> description.append("\nOrganism ID: ").append(o));
         this.wreckID.ifPresent(w -> description.append("\nWreck ID: ").append(w));
-        this.geologicalFormationName.ifPresent(g -> description.append("\nGeological Formation: ").append(g));
+        this.geologicalFormationID.ifPresent(g -> description.append("\nGeological Formation: ").append(g));
         this.notes.ifPresent(n -> description.append(Constants.SEPARATOR).append(n).append(Constants.SEPARATOR));
         return description.toString();
     }
@@ -161,7 +161,7 @@ public class Sighting implements Event {
                 && this.notes.equals(((Sighting) other).getNotes())
                 && this.organismID.equals(((Sighting) other).getOrganismID())
                 && this.wreckID.equals(((Sighting) other).getWreckID())
-                && this.geologicalFormationName.equals(((Sighting) other).getGeologicalFormationName());
+                && this.geologicalFormationID.equals(((Sighting) other).getGeologicalFormationID());
     }
 
     /**
@@ -170,7 +170,7 @@ public class Sighting implements Event {
     @Override
     public int hashCode() {
         return Objects.hash(this.code, this.number, this.expeditionCode, this.depth, this.image, this.notes,
-                this.organismID, this.wreckID, this.geologicalFormationName);
+                this.organismID, this.wreckID, this.geologicalFormationID);
     }
 
 }

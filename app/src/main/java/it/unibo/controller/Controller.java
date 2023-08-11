@@ -1,6 +1,8 @@
 package it.unibo.controller;
 
-import java.sql.Blob;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +17,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.sql.rowset.serial.SerialBlob;
 
 import it.unibo.common.Constants;
 import it.unibo.connection.ConnectionProvider;
@@ -40,7 +44,7 @@ import it.unibo.model.tables.impl.OrganismTable;
 import it.unibo.model.tables.impl.ROVTable;
 import it.unibo.model.tables.impl.SightingTable;
 import it.unibo.model.tables.impl.WreckTable;
-import it.unibo.view.popups.RegistrationPopup;
+import it.unibo.view.popups.InputPopups;
 
 /**
  * Implementation of the {@link Controller} interface.
@@ -60,7 +64,39 @@ public class Controller {
     }
 
     public static void openOperatorRegistrationPopup() {
-        RegistrationPopup.operatorRegistration();
+        InputPopups.operatorRegistration();
+    }
+
+    public static void openROVRegistrationPopup() {
+        InputPopups.rovRegistration();
+    }
+
+    public static void openExpeditionRegistrationPopup() {
+        InputPopups.expeditionRegistration();
+    }
+
+    public static void openSightingRegistrationPopup() {
+        InputPopups.sightingRegistration();
+    }
+
+    public static void openExtractionRegistrationPopup() {
+        InputPopups.extractionRegistration();
+    }
+
+    public static void openSpeciesUpdatePopup() {
+        InputPopups.speciesUpdate();
+    }
+
+    public static void openSightingsFilterPopup() {
+        InputPopups.sightingsFilterChoice();
+    }
+
+    public static void openExtractionsFilterPopup() {
+        InputPopups.extractionsFilterChoice();
+    }
+
+    public static void openExpeditionsFilterPopup() {
+        InputPopups.expeditionsFilterChoice();
     }
 
     /**
@@ -89,7 +125,8 @@ public class Controller {
      * @param productionDate   the ROV's production date
      * @return true if the operation is successful, false otherwise
      */
-    public static boolean registerROV(final String licensePlate, final String manufacturerName, final String serialNumber,
+    public static boolean registerROV(final String licensePlate, final String manufacturerName,
+            final String serialNumber,
             final Date productionDate) {
         return new ROVTable(CONNECTION)
                 .save(new ROV(licensePlate, manufacturerName, serialNumber, productionDate));
@@ -118,24 +155,36 @@ public class Controller {
     /**
      * Registers a new {@link Sighting} in the database.
      * 
-     * @param code                    the code of the sighting
-     * @param expeditionCode          the code of the expedition
-     * @param depth                   the depth at which the sighting occurred
-     * @param image                   the image of the sighted object/organism
-     * @param notes                   the notes of the sighting
-     * @param organismID              the ID of the organism
-     * @param wreckID                 the ID of the wreck
-     * @param geologicalFormationName the name of the geological formation
+     * @param code                  the code of the sighting
+     * @param expeditionCode        the code of the expedition
+     * @param depth                 the depth at which the sighting occurred
+     * @param imagePath             the path of the image of the sighted
+     *                              object/organism
+     * @param notes                 the notes of the sighting
+     * @param organismID            the ID of the organism
+     * @param wreckID               the ID of the wreck
+     * @param geologicalFormationID the ID of the geological formation
      * @return true if the operation is successful, false otherwise
      */
-    public static boolean registerSighting(final String code, final String expeditionCode, final Optional<Integer> depth,
-            final Blob image, final Optional<String> notes, final Optional<String> organismID,
-            final Optional<String> wreckID, final Optional<String> geologicalFormationName) {
+    public static boolean registerSighting(final String code, final String expeditionCode,
+            final int depth, final String imagePath, final String notes,
+            final String organismID, final String wreckID, final String geologicalFormationID) {
         final int number = new SightingTable(CONNECTION).getNextNumber(expeditionCode);
-        return number != -1 ? new SightingTable(CONNECTION)
-                .save(new Sighting(code, expeditionCode, number, depth, image, notes, organismID, wreckID,
-                        geologicalFormationName))
-                : false;
+        try (FileInputStream fis = new FileInputStream(new File(imagePath))) {
+            final byte[] blob = fis.readAllBytes();
+            return number != -1 ? new SightingTable(CONNECTION)
+                    .save(new Sighting(code, expeditionCode, number,
+                            Optional.ofNullable(depth), new SerialBlob(blob), Optional.ofNullable(notes),
+                            Optional.ofNullable(organismID), Optional.ofNullable(wreckID),
+                            Optional.ofNullable(geologicalFormationID)))
+                    : false;
+        } catch (final IOException e) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, "File not found: " + imagePath, e);
+            return false;
+        } catch (final SQLException e) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, "Error while creating the blob", e);
+            return false;
+        }
     }
 
     /**
@@ -152,10 +201,11 @@ public class Controller {
      * @return true if the operation is successful, false otherwise
      */
     public static boolean registerExtraction(final String code, final String expeditionCode, final String materialName,
-            final Optional<Integer> depth, final float amount, final Optional<String> notes) {
+            final int depth, final float amount, final String notes) {
         final int number = new ExtractionTable(CONNECTION).getNextNumber(expeditionCode);
         return number != -1 ? new ExtractionTable(CONNECTION)
-                .save(new Extraction(code, expeditionCode, number, materialName, depth, amount, notes))
+                .save(new Extraction(code, expeditionCode, number, materialName, Optional.ofNullable(depth), amount,
+                        Optional.ofNullable(notes)))
                 : false;
     }
 
@@ -177,26 +227,35 @@ public class Controller {
     }
 
     /**
-     * Filters {@link Sighting}s by depth.
+     * Applies the given research filters to retrieve a list of {@link Sighting}s.
      * 
-     * @param minDepth the minimum depth
-     * @param maxDepth the maximum depth
-     * @return a list of sightings, each represented by a list of its attributes, in
-     *         the following order:
+     * @param locationName
+     * @param minDepth
+     * @param maxDepth
+     * @param expeditionCode
+     * @param organismID
+     * @param wreckID
+     * @param geologicalFormationID
+     * @return a list of {@link Sighting}s, each represented by a list of its
+     *         attributes, following the order:
      *         <ul>
      *         <li>code of the sighting (String)</li>
      *         <li>code of the expedition (String)</li>
      *         <li>number (int)</li>
      *         <li>depth (int)</li>
-     *         <li>image (Blob)</li>
+     *         <li>image (byte[])</li>
      *         <li>notes (String)</li>
      *         <li>ID of the organism (String)</li>
      *         <li>ID of the wreck (String)</li>
-     *         <li>name of the geological formation (String)</li>
+     *         <li>ID of the geological formation (String)</li>
      *         </ul>
      */
-    public static List<List<Object>> filterSightingsByDepth(final int minDepth, final int maxDepth) {
-        final List<Sighting> sightings = new SightingTable(CONNECTION).filterByDepth(minDepth, maxDepth);
+    public static List<List<Object>> filterSightings(final Optional<String> locationName,
+            final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
+            final Optional<String> expeditionCode, final Optional<String> organismID, final Optional<String> wreckID,
+            final Optional<String> geologicalFormationID) {
+        final List<Sighting> sightings = new SightingTable(CONNECTION)
+                .filter(locationName, minDepth, maxDepth, expeditionCode, organismID, wreckID, geologicalFormationID);
         final List<List<Object>> output = new LinkedList<>();
         sightings.forEach(s -> {
             final List<Object> list = new ArrayList<>();
@@ -204,171 +263,71 @@ public class Controller {
             list.add(s.getExpeditionCode());
             list.add(s.getNumber());
             list.add(s.getDepth());
-            list.add(s.getImage());
+            try {
+                list.add(s.getImage().getBytes(1, (int) s.getImage().length()));
+            } catch (SQLException e) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, "Error while retrieving the image", e);
+            }
             list.add(s.getNotes());
             list.add(s.getOrganismID());
             list.add(s.getWreckID());
-            list.add(s.getGeologicalFormationName());
+            list.add(s.getGeologicalFormationID());
             output.add(list);
         });
         return output;
     }
 
-    /**
-     * Retrieves all the {@link Sighting}s that occurred in a specific
-     * {@link Location}.
-     * 
-     * @param locationName the name of the location
-     * @return a list of sightings, each represented by a list of its attributes, in
-     *         the following order:
-     *         <ul>
-     *         <li>code of the sighting (String)</li>
-     *         <li>code of the expedition (String)</li>
-     *         <li>number (int)</li>
-     *         <li>depth (int)</li>
-     *         <li>image (Blob)</li>
-     *         <li>notes (String)</li>
-     *         <li>ID of the organism (String)</li>
-     *         <li>ID of the wreck (String)</li>
-     *         <li>name of the geological formation (String)</li>
-     *         </ul>
-     */
-    public static List<List<Object>> filterSightingsByLocation(final String locationName) {
-        final List<Sighting> sightings = new SightingTable(CONNECTION).filterByLocation(locationName);
-        final List<List<Object>> output = new LinkedList<>();
-        sightings.forEach(s -> {
-            final List<Object> list = new ArrayList<>();
-            list.add(s.getCode());
-            list.add(s.getExpeditionCode());
-            list.add(s.getNumber());
-            list.add(s.getDepth());
-            list.add(s.getImage());
-            list.add(s.getNotes());
-            list.add(s.getOrganismID());
-            list.add(s.getWreckID());
-            list.add(s.getGeologicalFormationName());
-            output.add(list);
-        });
-        return output;
-    }
-
-    public static List<List<Object>> filterSightingsByExpedition(final String expeditionCode) {
-        final List<Sighting> sightings = new SightingTable(CONNECTION).filterByExpedition(expeditionCode);
-        final List<List<Object>> output = new LinkedList<>();
-        sightings.forEach(s -> {
-            final List<Object> list = new ArrayList<>();
-            list.add(s.getCode());
-            list.add(s.getExpeditionCode());
-            list.add(s.getNumber());
-            list.add(s.getDepth());
-            list.add(s.getImage());
-            list.add(s.getNotes());
-            list.add(s.getOrganismID());
-            list.add(s.getWreckID());
-            list.add(s.getGeologicalFormationName());
-            output.add(list);
-        });
-        return output;
-    }
-
-    /**
-     * Retrieves all the {@link Sighting}s that occurred in an {@link Expedition}.
-     * 
-     * @param expeditionCode the code of the expedition
-     * @return a list of sightings, each represented by a list of its attributes, in
-     *         the following order:
-     *         <ul>
-     *         <li>code of the sighting (String)</li>
-     *         <li>code of the expedition (String)</li>
-     *         <li>number (int)</li>
-     *         <li>depth (int)</li>
-     *         <li>image (Blob)</li>
-     *         <li>notes (String)</li>
-     *         <li>ID of the organism (String)</li>
-     *         <li>ID of the wreck (String)</li>
-     *         <li>name of the geological formation (String)</li>
-     *         </ul>
-     */
-    public static List<List<Object>> filterSightingsByOrganism(final String organismID) {
-        final List<Sighting> sightings = new SightingTable(CONNECTION).filterByOrganism(organismID);
-        final List<List<Object>> output = new LinkedList<>();
-        sightings.forEach(s -> {
-            final List<Object> list = new ArrayList<>();
-            list.add(s.getCode());
-            list.add(s.getExpeditionCode());
-            list.add(s.getNumber());
-            list.add(s.getDepth());
-            list.add(s.getImage());
-            list.add(s.getNotes());
-            list.add(s.getOrganismID());
-            list.add(s.getWreckID());
-            list.add(s.getGeologicalFormationName());
-            output.add(list);
-        });
-        return output;
-    }
-
-    /**
-     * Retrieves all the {@link Sighting}s where an {@link Organism} was observated.
-     * 
-     * @param organismID the ID of the organism
-     * @return a list of sightings, each represented by a list of its attributes, in
-     *         the following order:
-     *         <ul>
-     *         <li>code of the sighting (String)</li>
-     *         <li>code of the expedition (String)</li>
-     *         <li>number (int)</li>
-     *         <li>depth (int)</li>
-     *         <li>image (Blob)</li>
-     *         <li>notes (String)</li>
-     *         <li>ID of the organism (String)</li>
-     *         </ul>
-     */
-    public static List<List<Object>> filterSightingsByWreck(final String wreckID) {
-        final List<Sighting> sightings = new SightingTable(CONNECTION).filterByWreck(wreckID);
-        final List<List<Object>> output = new LinkedList<>();
-        sightings.forEach(s -> {
-            final List<Object> list = new ArrayList<>();
-            list.add(s.getCode());
-            list.add(s.getExpeditionCode());
-            list.add(s.getNumber());
-            list.add(s.getDepth());
-            list.add(s.getImage());
-            list.add(s.getNotes());
-            list.add(s.getOrganismID());
-            list.add(s.getWreckID());
-            list.add(s.getGeologicalFormationName());
-            output.add(list);
-        });
-        return output;
-    }
-
-    /**
-     * Retrieves all the {@link Sighting}s where a {@link Wreck} was observated.
-     * 
-     * @param organismID the ID of the wreck
-     * @return a list of sightings, each represented by a list of its attributes, in
-     *         the following order:
-     *         <ul>
-     *         <li>code of the sighting (String)</li>
-     *         <li>code of the expedition (String)</li>
-     *         <li>number (int)</li>
-     *         <li>depth (int)</li>
-     *         <li>image (Blob)</li>
-     *         <li>notes (String)</li>
-     *         <li>ID of the wreck (String)</li>
-     *         </ul>
-     */
-    public static List<List<String>> filterExpeditionsByAssociation(final String associationName) {
-        final List<Expedition> expeditions = new ExpeditionTable(CONNECTION).filterByAssociation(associationName);
+    public static List<List<String>> filterExtractions(final Optional<String> locationName,
+            final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
+            final Optional<String> expeditionCode, final Optional<String> materialName) {
+        final List<Extraction> extractions = new ExtractionTable(CONNECTION)
+                .filter(locationName, minDepth, maxDepth, expeditionCode, materialName);
         final List<List<String>> output = new LinkedList<>();
-        expeditions.forEach(s -> {
+        extractions.forEach(s -> {
             final List<String> list = new ArrayList<>();
+            list.add(s.getCode());
+            list.add(s.getExpeditionCode());
+            list.add(String.valueOf(s.getNumber()));
+            list.add(s.getMaterialName());
+            s.getDepth().ifPresentOrElse(d -> list.add(String.valueOf(d)), () -> list.add(""));
+            list.add(String.valueOf(s.getAmount()));
+            s.getNotes().ifPresentOrElse(n -> list.add(n), () -> list.add(""));
+            output.add(list);
+        });
+        return output;
+    }
+
+    /**
+     * Retrieves all the {@link Expedition}s organized by an association.
+     * 
+     * @param associationName the name of the association
+     * @return a list of sightings, each represented by a list of its attributes, in
+     *         the following order:
+     *         <ul>
+     *         <li>code (String)</li>
+     *         <li>date (String)</li>
+     *         <li>location (String)</li>
+     *         <li>association name (String)</li>
+     *         <li>group ID (String)</li>
+     *         </ul>
+     */
+    public static List<List<Object>> filterExpeditionsByAssociation(final String associationName) {
+        final List<Expedition> expeditions = new ExpeditionTable(CONNECTION).filterByAssociation(associationName);
+        final List<List<Object>> output = new LinkedList<>();
+        expeditions.forEach(s -> {
+            final List<Object> list = new ArrayList<>();
             list.add(s.getCode());
             list.add(s.getDate().toString());
             list.add(s.getLocationName());
             list.add(s.getAssociationName());
             list.add(s.getGroupID());
+            final List<String> names = new ArrayList<>();
+            final List<String> fiscalCodes = new ArrayList<>();
+            new OperatorTable(CONNECTION).getExpeditionPartecipants(s.getAssociationName(), s.getGroupID())
+                    .forEach(o -> {
+                        names.add(o.getFirstName() + " " + o.getLastName());
+                        fiscalCodes.add(o.getFiscalCode());
+                    });
             output.add(list);
         });
         return output;
@@ -561,7 +520,8 @@ public class Controller {
     }
 
     /**
-     * Retrieves all the information regarding all the analyses performed on a {@link Material}.
+     * Retrieves all the information regarding all the analyses performed on a
+     * {@link Material}.
      * 
      * @param materialName the name of the {@link Material}
      * @return

@@ -142,6 +142,46 @@ public class ExtractionTable implements Table<Extraction, String> {
         }
     }
 
+    private String appendToQuery(final String query) {
+        return query.length() > 0 ? " AND " : " WHERE ";
+    }
+
+    public List<Extraction> filter(final Optional<String> locationName,
+            final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
+            final Optional<String> expeditionCode, final Optional<String> materialName) {
+        final ExpeditionTable exp = new ExpeditionTable(null);
+        final StringBuilder queryBuilder = new StringBuilder(1000);
+        locationName.ifPresent(l -> {
+            queryBuilder.append(appendToQuery(queryBuilder.toString()));
+            queryBuilder.append(EXPEDITION + " = " + exp.getTableName() + "." + exp.getCodeName()
+                    + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName + "'");
+        });
+        minDepth.ifPresent(m -> {
+            queryBuilder.append(appendToQuery(queryBuilder.toString()));
+            queryBuilder.append(DEPTH + " >= " + minDepth.get());
+        });
+        maxDepth.ifPresent(m -> {
+            queryBuilder.append(appendToQuery(queryBuilder.toString()));
+            queryBuilder.append(DEPTH + " <= " + maxDepth.get());
+        });
+        expeditionCode.ifPresent(e -> {
+            queryBuilder.append(appendToQuery(queryBuilder.toString()));
+            queryBuilder.append(EXPEDITION + " = '" + expeditionCode.get() + "'");
+        });
+        materialName.ifPresent(m -> {
+            queryBuilder.append(appendToQuery(queryBuilder.toString()));
+            queryBuilder.append(MATERIAL + " = '" + materialName.get() + "'");
+        });
+        final String query = "SELECT * FROM " + TABLE_NAME + queryBuilder.toString();
+        try (Statement statement = this.connection.createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(query);
+            return readExtractionsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            return Collections.emptyList();
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

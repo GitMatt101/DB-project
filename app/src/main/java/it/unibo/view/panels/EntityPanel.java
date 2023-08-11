@@ -7,8 +7,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import it.unibo.controller.Controller;
-
 public class EntityPanel extends JPanel {
 
     private static final int NUMBER_OF_ENTITIES = 6;

@@ -3,8 +3,6 @@ package it.unibo.view.panels;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import it.unibo.controller.Controller;
-
 public class CenterPanel extends JPanel {
 
     public CenterPanel() {
