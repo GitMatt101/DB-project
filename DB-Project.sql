@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: localhost    Database: spedizioni
 -- ------------------------------------------------------
--- Server version	8.0.34
+-- Server version	8.0.33
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -18,8 +18,6 @@
 --
 -- Table structure for table `analisi`
 --
-create database spedizioni;
-use spedizioni;
 
 DROP TABLE IF EXISTS `analisi`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -273,9 +271,9 @@ DROP TABLE IF EXISTS `operatore`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `operatore` (
-  `Nome` char(1) NOT NULL,
-  `Cognome` char(1) NOT NULL,
-  `Codice_Fiscale` char(1) NOT NULL,
+  `Nome` char(20) NOT NULL,
+  `Cognome` char(20) NOT NULL,
+  `Codice_Fiscale` char(16) NOT NULL,
   `NomeAssociazione` char(30) NOT NULL,
   `IDgruppo` varchar(5) NOT NULL,
   `ID` varchar(5) NOT NULL,
@@ -482,4 +480,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-05 17:04:20
+-- Dump completed on 2023-08-11 11:47:06
