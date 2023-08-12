@@ -49,6 +49,17 @@ public class InputPopups {
         });
     }
 
+    private static JFrame createFrame(final String title, final JPanel mainPanel) {
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle(title);
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        return frame;
+    }
+
     public static void operatorRegistration() {
         final JTextField firstNameTip = new JTextField("Nome*");
         final JTextField firstNameField = new JTextField();
@@ -60,7 +71,7 @@ public class InputPopups {
         final JTextField associationField = new JTextField();
         final JTextField groupTip = new JTextField("ID gruppo*");
         final JTextField groupField = new JTextField();
-        final JTextField idTip = new JTextField("ID");
+        final JTextField idTip = new JTextField("ID*");
         final JTextField idField = new JTextField();
         final List<JTextField> textFields = List.of(firstNameTip, firstNameField, secondNameTip, secondNameField,
                 fiscalCodeTip, fiscalCodeField, associationTip, associationField, groupTip,
@@ -75,14 +86,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Registrazione operatore");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Registrazione operatore", mainPanel);
         confirmButton.addActionListener(e -> {
             final boolean result = Controller.registerOperator(
                     firstNameField.getText(),
@@ -117,14 +121,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Registrazione ROV");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Registrazione ROV", mainPanel);
         confirmButton.addActionListener(e -> {
             boolean result = false;
             try {
@@ -168,14 +165,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Registrazione spedizione");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Registrazione spedizione", mainPanel);
         confirmButton.addActionListener(e -> {
             boolean result = false;
             try {
@@ -226,14 +216,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Registrazione avvistamento");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Registrazione avvistamento", mainPanel);
         confirmButton.addActionListener(e -> {
             final int depth = depthField.getText().length() != 0 ? Integer.valueOf(depthField.getText()) : null;
             final String notes = notesField.getText().length() != 0 ? notesField.getText() : null;
@@ -285,14 +268,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Registrazione prelievo");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Registrazione prelievo", mainPanel);
         confirmButton.addActionListener(e -> {
             final int depth = depthField.getText().length() != 0 ? Integer.valueOf(depthField.getText()) : null;
             final String notes = notesField.getText().length() != 0 ? notesField.getText() : null;
@@ -324,14 +300,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Aggiornamento specie");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Aggiornamento specie", mainPanel);
         confirmButton.addActionListener(e -> {
             final boolean result = Controller.updateSpecies(
                     idField.getText(),
@@ -369,14 +338,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Filtro avvistamenti");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Filtro avvistamenti", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<List<Object>> result = Controller.filterSightings(
                     locationField.getText().length() != 0 ? Optional.of(locationField.getText()) : Optional.empty(),
@@ -389,7 +351,7 @@ public class InputPopups {
                     wreckField.getText().length() != 0 ? Optional.of(wreckField.getText()) : Optional.empty(),
                     idField.getText().length() != 0 ? Optional.of(idField.getText()) : Optional.empty());
             frame.dispose();
-            VisualizationPopups.showSightingsResults(result);
+            VisualizationPopups.showSightings(result);
         });
     }
 
@@ -416,14 +378,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Filtro prelievi");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Filtro prelievi", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = Controller.filterExtractions(
                     locationField.getText().length() != 0 ? Optional.of(locationField.getText()) : Optional.empty(),
@@ -434,7 +389,7 @@ public class InputPopups {
                     expeditionField.getText().length() != 0 ? Optional.of(expeditionField.getText()) : Optional.empty(),
                     materialField.getText().length() != 0 ? Optional.of(materialField.getText()) : Optional.empty());
             frame.dispose();
-            VisualizationPopups.showExtractionsResults(result);
+            VisualizationPopups.showExtractions(result);
         });
     }
 
@@ -451,18 +406,11 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Filtro spedizioni");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Selezione associazione", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<List<Object>> result = Controller.filterExpeditionsByAssociation(associationField.getText());
             frame.dispose();
-            VisualizationPopups.showExpeditionsResults(result);
+            VisualizationPopups.showExpeditions(result);
         });
     }
 
@@ -479,21 +427,14 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Filtro spedizioni");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Selezione codice spedizione", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<Object> result = Controller.getExpeditionDetails(codeField.getText());
             frame.dispose();
             if (result.isEmpty()) {
-                VisualizationPopups.showExpeditionsResults(Collections.emptyList());
+                VisualizationPopups.showExpeditions(Collections.emptyList());
             } else {
-                VisualizationPopups.showExpeditionsResults(List.of(result));
+                VisualizationPopups.showExpeditions(List.of(result));
             }
 
         });
@@ -512,18 +453,11 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Ricerca organismi per spedizione");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Selezione codice spedizione", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = Controller.filterOrganismsByExpedition(codeField.getText());
             frame.dispose();
-            VisualizationPopups.showOrganismsResults(result);
+            VisualizationPopups.showOrganisms(result);
         });
     }
 
@@ -540,23 +474,16 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Ricerca formazioni geologiche pericolose");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Selezione grado di pericolo", mainPanel);
         confirmButton.addActionListener(e -> {
             if (dangerField.getText().length() != 0) {
                 final List<List<String>> result = Controller
                         .filterGeologicalFormationsByDangerLevel(Integer.valueOf(dangerField.getText()));
                 frame.dispose();
-                VisualizationPopups.showGeologicalFormationsResults(result);
+                VisualizationPopups.showGeologicalFormationsAndLocations(result);
             } else {
                 frame.dispose();
-                VisualizationPopups.showGeologicalFormationsResults(Collections.emptyList());
+                VisualizationPopups.showGeologicalFormationsAndLocations(Collections.emptyList());
             }
         });
     }
@@ -574,18 +501,11 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Ricerca relitti");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Selezione nome relitto", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = Controller.filterLocationsByWreck(nameField.getText());
             frame.dispose();
-            VisualizationPopups.showIDAndLocation(result);
+            VisualizationPopups.showWrecksAndLocations(result);
         });
     }
 
@@ -602,18 +522,11 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Ricerca relitti");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Selezione ID organismo", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<List<Object>> result = Controller.getOrganismInfo(idField.getText());
             frame.dispose();
-            VisualizationPopups.showOrganismSightingsAndLocations(result);
+            VisualizationPopups.showSightingsAndLocations(result);
         });
     }
 
@@ -630,18 +543,11 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle("Ricerca relitti");
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        final JFrame frame = createFrame("Selezione materiale", mainPanel);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = Controller.getAnalysesInfo(materialField.getText());
             frame.dispose();
-            VisualizationPopups.showAnalysesReuslts(result);
+            VisualizationPopups.showAnalysesAndLaboratories(result);
         });
     }
 

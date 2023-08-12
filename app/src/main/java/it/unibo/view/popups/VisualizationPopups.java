@@ -24,8 +24,7 @@ public class VisualizationPopups {
     private static final int VERTICAL_CELL_SPACING = 0;
     private static final java.awt.Font FIELD_FONT = new java.awt.Font("Arial", java.awt.Font.PLAIN, 15);
 
-    public VisualizationPopups() {
-    }
+    public VisualizationPopups() {}
 
     private static void loadFieldProperties(final List<JTextField> textFields) {
         textFields.forEach(t -> {
@@ -35,7 +34,7 @@ public class VisualizationPopups {
         });
     }
 
-    public static void showSightingsResults(final List<List<Object>> sightings) {
+    public static void showSightings(final List<List<Object>> sightings) {
         final JTextField code = new JTextField("Codice");
         final JTextField expedition = new JTextField("Codice spedizione");
         final JTextField number = new JTextField("Numero");
@@ -89,7 +88,7 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showExtractionsResults(final List<List<String>> extractions) {
+    public static void showExtractions(final List<List<String>> extractions) {
         final JTextField code = new JTextField("Codice");
         final JTextField expedition = new JTextField("Codice spedizione");
         final JTextField number = new JTextField("Numero");
@@ -128,7 +127,7 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showExpeditionsResults(final List<List<Object>> expeditions) {
+    public static void showExpeditions(final List<List<Object>> expeditions) {
         final JTextField code = new JTextField("Codice");
         final JTextField date = new JTextField("Data");
         final JTextField location = new JTextField("Luogo");
@@ -193,7 +192,7 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showOrganismsResults(final List<List<String>> organisms) {
+    public static void showOrganisms(final List<List<String>> organisms) {
         final JTextField id = new JTextField("ID");
         final JTextField species = new JTextField("Specie");
         final JTextField temporaryName = new JTextField("Nome provvisorio");
@@ -230,7 +229,7 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showGeologicalFormationsResults(final List<List<String>> geologicalFormations) {
+    public static void showGeologicalFormationsAndLocations(final List<List<String>> geologicalFormations) {
         final JTextField id = new JTextField("ID");
         final JTextField type = new JTextField("Tipologia");
         final JTextField size = new JTextField("Dimensioni");
@@ -268,7 +267,7 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showIDAndLocation(final List<List<String>> values) {
+    public static void showWrecksAndLocations(final List<List<String>> values) {
         final JTextField id = new JTextField("ID");
         final JTextField location = new JTextField("Luogo");
         final JTextField country = new JTextField("Paese");
@@ -303,7 +302,7 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showOrganismSightingsAndLocations(final List<List<Object>> values) {
+    public static void showSightingsAndLocations(final List<List<Object>> values) {
         final JTextField code = new JTextField("Codice avvistamento");
         final JTextField depth = new JTextField("Profondità");
         final JTextField image = new JTextField("Foto");
@@ -354,7 +353,7 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showAnalysesReuslts(final List<List<String>> analyses) {
+    public static void showAnalysesAndLaboratories(final List<List<String>> analyses) {
         final JTextField code = new JTextField("Codice analisi");
         final JTextField description = new JTextField("Descrizione");
         final JTextField labName = new JTextField("Nome laboratorio");
