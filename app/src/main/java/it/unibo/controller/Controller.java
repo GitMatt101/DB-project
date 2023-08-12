@@ -96,7 +96,31 @@ public class Controller {
     }
 
     public static void openExpeditionsFilterPopup() {
-        InputPopups.expeditionsFilterChoice();
+        InputPopups.expeditionsAssociationFilterChoice();
+    }
+
+    public static void openExpeditionsCodeFilterPopup() {
+        InputPopups.expeditionsCodeFilterChoice();
+    }
+
+    public static void openOrganismsFilterPopup() {
+        InputPopups.organismsExpeditionFilterChoice();
+    }
+
+    public static void openDangerLevelFilterPopup() {
+        InputPopups.geologicalFormationDangerLevelChoice();
+    }
+
+    public static void openLocationWreckFilterPopup() {
+        InputPopups.wreckNameResearch();
+    }
+
+    public static void openSightingsSearchByOrganismID() {
+        InputPopups.sightingsResearchByOrganismID();
+    }
+
+    public static void openAnalysesSearch() {
+        InputPopups.analysesResearch();
     }
 
     /**
@@ -261,17 +285,17 @@ public class Controller {
             final List<Object> list = new ArrayList<>();
             list.add(s.getCode());
             list.add(s.getExpeditionCode());
-            list.add(s.getNumber());
-            list.add(s.getDepth());
+            list.add(String.valueOf(s.getNumber()));
+            s.getDepth().ifPresentOrElse(d -> list.add(String.valueOf(d)), () -> list.add(""));
             try {
                 list.add(s.getImage().getBytes(1, (int) s.getImage().length()));
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, "Error while retrieving the image", e);
             }
-            list.add(s.getNotes());
-            list.add(s.getOrganismID());
-            list.add(s.getWreckID());
-            list.add(s.getGeologicalFormationID());
+            s.getNotes().ifPresentOrElse(list::add, () -> list.add(""));
+            s.getOrganismID().ifPresentOrElse(list::add, () -> list.add(""));
+            s.getWreckID().ifPresentOrElse(list::add, () -> list.add(""));
+            s.getGeologicalFormationID().ifPresentOrElse(list::add, () -> list.add(""));
             output.add(list);
         });
         return output;
@@ -321,14 +345,16 @@ public class Controller {
             list.add(s.getLocationName());
             list.add(s.getAssociationName());
             list.add(s.getGroupID());
-            final List<String> names = new ArrayList<>();
-            final List<String> fiscalCodes = new ArrayList<>();
+            final List<Object> names = new ArrayList<>();
+            final List<Object> fiscalCodes = new ArrayList<>();
             new OperatorTable(CONNECTION).getExpeditionPartecipants(s.getAssociationName(), s.getGroupID())
                     .forEach(o -> {
                         names.add(o.getFirstName() + " " + o.getLastName());
                         fiscalCodes.add(o.getFiscalCode());
                     });
             output.add(list);
+            output.add(names);
+            output.add(fiscalCodes);
         });
         return output;
     }
@@ -356,26 +382,33 @@ public class Controller {
             output.add(expedition.get().getLocationName());
             output.add(expedition.get().getAssociationName());
             output.add(expedition.get().getGroupID());
-            output.add(new OperatorTable(CONNECTION)
-                    .getExpeditionPartecipants(expedition.get().getAssociationName(), expedition.get().getGroupID()));
+            final List<String> names = new ArrayList<>();
+            final List<String> fiscalCodes = new ArrayList<>();
+            new OperatorTable(CONNECTION)
+                    .getExpeditionPartecipants(expedition.get().getAssociationName(), expedition.get().getGroupID())
+                    .forEach(o -> {
+                        names.add(o.getFirstName() + " " + o.getLastName());
+                        fiscalCodes.add(o.getFiscalCode());
+                    });
+            output.add(names);
+            output.add(fiscalCodes);
             return output;
         }
         return Collections.emptyList();
     }
 
     /**
-     * Retrieves all the details regarding an {@link Expedition}.
+     * Retrieves all the organisms sighted during an {@link Expedition}.
      * 
      * @param expeditionCode the code of the expedition
-     * @return a list of the expedition's details, in the following order:
+     * @return a list of organisms, each represented by a list of its attributes, in
+     *         the following order:
      *         <ul>
-     *         <li>code (String)</li>
-     *         <li>date (Date)</li>
-     *         <li>name of the location (String)</li>
-     *         <li>name of the association (String)</li>
-     *         <li>ID of the group (String)</li>
-     *         <li>operators involved (List of names and IDs)</li>
-     *         <li>license plate of the ROV utilized (String)</li>
+     *         <li>ID (String)</li>
+     *         <li>species (String)</li>
+     *         <li>temporary name (String)</li>
+     *         <li>common name (String)</li>
+     *         <li>description (String)</li>
      *         </ul>
      */
     public static List<List<String>> filterOrganismsByExpedition(final String expeditionCode) {
@@ -384,9 +417,9 @@ public class Controller {
         organisms.forEach(o -> {
             final List<String> attributes = new ArrayList<>();
             attributes.add(o.getId());
-            o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("null"));
-            o.getTemporaryName().ifPresentOrElse(attributes::add, () -> attributes.add("null"));
-            o.getCommonName().ifPresentOrElse(attributes::add, () -> attributes.add("null"));
+            o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("Non identificato"));
+            o.getTemporaryName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            o.getCommonName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             attributes.add(o.getDescription());
             output.add(attributes);
         });
@@ -431,7 +464,6 @@ public class Controller {
                 list.add(g.getID());
                 list.add(g.getType());
                 list.add(String.valueOf(g.getSize()));
-                list.add(String.valueOf(g.getDangerLevel()));
                 list.add(g.getDescription());
                 list.add(resultSet.getString(locationTable.getName()));
                 list.add(resultSet.getString(locationTable.getCountryName()));
@@ -458,6 +490,8 @@ public class Controller {
         final LocationTable locationTable = new LocationTable(null);
         final Set<List<String>> output = new HashSet<>();
         wrecks.forEach(w -> {
+            final List<String> list = new ArrayList<>();
+            list.add(w.getId());
             final String query = "SELECT " + locationTable.getName() + "," + locationTable.getCountryName()
                     + " FROM " + locationTable.getTableName() + "," + expeditionTable.getTableName() + ","
                     + sightingTable.getTableName()
@@ -469,7 +503,6 @@ public class Controller {
                     + "='" + w.getId() + "'";
             try (Statement statement = CONNECTION.createStatement()) {
                 final ResultSet resultSet = statement.executeQuery(query);
-                final List<String> list = new ArrayList<>();
                 list.add(resultSet.getString(locationTable.getName()));
                 list.add(resultSet.getString(locationTable.getCountryName()));
                 output.add(list);
@@ -484,8 +517,18 @@ public class Controller {
     /**
      * Retrieves all the informations regarding the sightings of an organism.
      * 
-     * @param organismID
-     * @return
+     * @param organismID the ID of the organsism
+     * @return a list of sightings and locations, each element is represented by a
+     *         list of attributes,
+     *         in the following order:
+     *         <ul>
+     *         <li>code of the sighting (String)</li>
+     *         <li>depth (String)</li>
+     *         <li>image (byte[])</li>
+     *         <li>notes (String)</li>
+     *         <li>name of the location (String)</li>
+     *         <li>name of the country (String)</li>
+     *         </ul>
      */
     public static List<List<Object>> getOrganismInfo(final String organismID) {
         final List<Sighting> sightings = new SightingTable(CONNECTION).filterByOrganism(organismID);
@@ -493,11 +536,9 @@ public class Controller {
         sightings.forEach(s -> {
             final List<Object> attributes = new ArrayList<>();
             attributes.add(s.getCode());
-            attributes.add(s.getExpeditionCode());
-            attributes.add(s.getNumber());
-            attributes.add(s.getDepth());
+            s.getDepth().ifPresentOrElse(d -> attributes.add(String.valueOf(d)), () -> attributes.add(""));
             attributes.add(s.getImage());
-            attributes.add(s.getNotes());
+            s.getNotes().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             final LocationTable locationTable = new LocationTable(null);
             final ExpeditionTable expeditionTable = new ExpeditionTable(null);
             final String locationQuery = "SELECT " + locationTable.getName() + "," + locationTable.getCountryName()

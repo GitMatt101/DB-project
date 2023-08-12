@@ -32,7 +32,6 @@ public class LogoPanel extends JPanel {
         logo.setIcon(newImage);
         this.add(text, java.awt.BorderLayout.NORTH);
         this.add(logo, java.awt.BorderLayout.CENTER);
-        this.add(new InfoPanel(), java.awt.BorderLayout.SOUTH);
     }
 
 }

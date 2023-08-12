@@ -2,6 +2,7 @@ package it.unibo.view.popups;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +67,8 @@ public class InputPopups {
                 groupField, idTip, idField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(6, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         textFields.forEach(centerPanel::add);
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -107,7 +109,8 @@ public class InputPopups {
                 manufacturerField, serialNumberTip, serialNumberField, productionDateTip, productionDateField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(4, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         textFields.forEach(centerPanel::add);
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -157,7 +160,8 @@ public class InputPopups {
                 rovTip, rovField, associationTip, associationField, groupTip, groupField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(6, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         textFields.forEach(centerPanel::add);
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -214,7 +218,8 @@ public class InputPopups {
                 wreckField, geoTip, geoField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(8, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         textFields.forEach(centerPanel::add);
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -266,7 +271,8 @@ public class InputPopups {
                 materialField, depthTip, depthField, amountTip, amountField, notesTip, notesField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(6, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         List.of(codeTip, codeField,
                 expeditionTip, expeditionField,
                 materialTip, materialField,
@@ -310,7 +316,8 @@ public class InputPopups {
         final List<JTextField> textFields = List.of(idTip, idField, speciesTip, speciesField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         textFields.forEach(centerPanel::add);
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -354,7 +361,8 @@ public class InputPopups {
                 wreckField, idTip, idField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(7, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         textFields.forEach(centerPanel::add);
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -372,8 +380,10 @@ public class InputPopups {
         confirmButton.addActionListener(e -> {
             final List<List<Object>> result = Controller.filterSightings(
                     locationField.getText().length() != 0 ? Optional.of(locationField.getText()) : Optional.empty(),
-                    minDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(minDepthField.getText())) : Optional.empty(),
-                    maxDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(maxDepthField.getText())) : Optional.empty(),
+                    minDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(minDepthField.getText()))
+                            : Optional.empty(),
+                    maxDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(maxDepthField.getText()))
+                            : Optional.empty(),
                     expeditionField.getText().length() != 0 ? Optional.of(expeditionField.getText()) : Optional.empty(),
                     organismField.getText().length() != 0 ? Optional.of(organismField.getText()) : Optional.empty(),
                     wreckField.getText().length() != 0 ? Optional.of(wreckField.getText()) : Optional.empty(),
@@ -398,7 +408,8 @@ public class InputPopups {
                 maxDepthTip, maxDepthField, expeditionTip, expeditionField, materialTip, materialField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(7, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.setLayout(
+                new java.awt.GridLayout(textFields.size() / 2, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         textFields.forEach(centerPanel::add);
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -416,8 +427,10 @@ public class InputPopups {
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = Controller.filterExtractions(
                     locationField.getText().length() != 0 ? Optional.of(locationField.getText()) : Optional.empty(),
-                    minDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(minDepthField.getText())) : Optional.empty(),
-                    maxDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(maxDepthField.getText())) : Optional.empty(),
+                    minDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(minDepthField.getText()))
+                            : Optional.empty(),
+                    maxDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(maxDepthField.getText()))
+                            : Optional.empty(),
                     expeditionField.getText().length() != 0 ? Optional.of(expeditionField.getText()) : Optional.empty(),
                     materialField.getText().length() != 0 ? Optional.of(materialField.getText()) : Optional.empty());
             frame.dispose();
@@ -425,7 +438,7 @@ public class InputPopups {
         });
     }
 
-    public static void expeditionsFilterChoice() {
+    public static void expeditionsAssociationFilterChoice() {
         final JTextField associationTip = new JTextField("Associazione");
         final JTextField associationField = new JTextField();
         loadFieldProperties(List.of(associationTip, associationField));
@@ -450,6 +463,185 @@ public class InputPopups {
             final List<List<Object>> result = Controller.filterExpeditionsByAssociation(associationField.getText());
             frame.dispose();
             VisualizationPopups.showExpeditionsResults(result);
+        });
+    }
+
+    public static void expeditionsCodeFilterChoice() {
+        final JTextField codeTip = new JTextField("Codice");
+        final JTextField codeField = new JTextField();
+        loadFieldProperties(List.of(codeTip, codeField));
+        final JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.add(codeTip);
+        centerPanel.add(codeField);
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final JButton confirmButton = new JButton("Conferma");
+        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle("Filtro spedizioni");
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        confirmButton.addActionListener(e -> {
+            final List<Object> result = Controller.getExpeditionDetails(codeField.getText());
+            frame.dispose();
+            if (result.isEmpty()) {
+                VisualizationPopups.showExpeditionsResults(Collections.emptyList());
+            } else {
+                VisualizationPopups.showExpeditionsResults(List.of(result));
+            }
+
+        });
+    }
+
+    public static void organismsExpeditionFilterChoice() {
+        final JTextField codeTip = new JTextField("Codice spedizione");
+        final JTextField codeField = new JTextField();
+        loadFieldProperties(List.of(codeTip, codeField));
+        final JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.add(codeTip);
+        centerPanel.add(codeField);
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final JButton confirmButton = new JButton("Conferma");
+        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle("Ricerca organismi per spedizione");
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        confirmButton.addActionListener(e -> {
+            final List<List<String>> result = Controller.filterOrganismsByExpedition(codeField.getText());
+            frame.dispose();
+            VisualizationPopups.showOrganismsResults(result);
+        });
+    }
+
+    public static void geologicalFormationDangerLevelChoice() {
+        final JTextField dangerTip = new JTextField("Grado di pericolo (1-5)");
+        final JTextField dangerField = new JTextField();
+        loadFieldProperties(List.of(dangerTip, dangerField));
+        final JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.add(dangerTip);
+        centerPanel.add(dangerField);
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final JButton confirmButton = new JButton("Conferma");
+        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle("Ricerca formazioni geologiche pericolose");
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        confirmButton.addActionListener(e -> {
+            if (dangerField.getText().length() != 0) {
+                final List<List<String>> result = Controller
+                        .filterGeologicalFormationsByDangerLevel(Integer.valueOf(dangerField.getText()));
+                frame.dispose();
+                VisualizationPopups.showGeologicalFormationsResults(result);
+            } else {
+                frame.dispose();
+                VisualizationPopups.showGeologicalFormationsResults(Collections.emptyList());
+            }
+        });
+    }
+
+    public static void wreckNameResearch() {
+        final JTextField nameTip = new JTextField("Nome");
+        final JTextField nameField = new JTextField();
+        loadFieldProperties(List.of(nameTip, nameField));
+        final JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.add(nameTip);
+        centerPanel.add(nameField);
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final JButton confirmButton = new JButton("Conferma");
+        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle("Ricerca relitti");
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        confirmButton.addActionListener(e -> {
+            final List<List<String>> result = Controller.filterLocationsByWreck(nameField.getText());
+            frame.dispose();
+            VisualizationPopups.showIDAndLocation(result);
+        });
+    }
+
+    public static void sightingsResearchByOrganismID() {
+        final JTextField idTip = new JTextField("ID");
+        final JTextField idField = new JTextField();
+        loadFieldProperties(List.of(idTip, idField));
+        final JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.add(idTip);
+        centerPanel.add(idField);
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final JButton confirmButton = new JButton("Conferma");
+        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle("Ricerca relitti");
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        confirmButton.addActionListener(e -> {
+            final List<List<Object>> result = Controller.getOrganismInfo(idField.getText());
+            frame.dispose();
+            VisualizationPopups.showOrganismSightingsAndLocations(result);
+        });
+    }
+
+    public static void analysesResearch() {
+        final JTextField materialTip = new JTextField("Materiale");
+        final JTextField materialField = new JTextField();
+        loadFieldProperties(List.of(materialTip, materialField));
+        final JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
+        centerPanel.add(materialTip);
+        centerPanel.add(materialField);
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final JButton confirmButton = new JButton("Conferma");
+        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle("Ricerca relitti");
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        confirmButton.addActionListener(e -> {
+            final List<List<String>> result = Controller.getAnalysesInfo(materialField.getText());
+            frame.dispose();
+            VisualizationPopups.showAnalysesReuslts(result);
         });
     }
 

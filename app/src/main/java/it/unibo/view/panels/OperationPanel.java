@@ -43,24 +43,30 @@ public class OperationPanel extends JPanel {
         buttons.get(2).addActionListener(e -> Controller.openROVRegistrationPopup());
         buttons.get(3).setText("O3 - Registra una spedizione");
         buttons.get(3).addActionListener(e -> Controller.openExpeditionRegistrationPopup());
-        buttons.get(4).setText("O4_A - Aggiungi un avvistamento ad una spedizione");
+        buttons.get(4).setText("<html>O4_A - Aggiungi un avvistamento<br />ad una spedizione</html>");
         buttons.get(4).addActionListener(e -> Controller.openSightingRegistrationPopup());
-        buttons.get(5).setText("O4_B - Aggiungi un prelievo ad una spedizione");
+        buttons.get(5).setText("<html>O4_B - Aggiungi un prelievo<br />ad una spedizione</html>");
         buttons.get(5).addActionListener(e -> Controller.openExtractionRegistrationPopup());
-        buttons.get(6).setText("O5 - Modifica la specie di un organismo non identificato");
+        buttons.get(6).setText("<html>O5 - Modifica la specie di<br />un organismo non identificato</html>");
         buttons.get(6).addActionListener(e -> Controller.openSpeciesUpdatePopup());
         buttons.get(7).setText("O6_A - Visualizza avvistamenti con filtri");
         buttons.get(7).addActionListener(e -> Controller.openSightingsFilterPopup());
         buttons.get(8).setText("O6_B - Visualizza prelievi con filtri");
         buttons.get(8).addActionListener(e -> Controller.openExtractionsFilterPopup());
-        buttons.get(9).setText("O7 - Visualizza le spedizioni organizzate da un'associazione");
+        buttons.get(9).setText("<html>O7 - Visualizza le spedizioni organizzate<br />da un'associazione</html>");
         buttons.get(9).addActionListener(e -> Controller.openExpeditionsFilterPopup());
         buttons.get(10).setText("O8 - Visualizza i dettagli di una spedizione");
-        buttons.get(11).setText("O9 - Visualizza gli organismi avvistati in una spedizione");
-        buttons.get(12).setText("O10 - Visualizza le formazioni geologiche filtrando per grado di pericolo");
-        buttons.get(13).setText("O11 - Visualizza i luoghi dove sono affondati dei relitti");
+        buttons.get(10).addActionListener(e -> Controller.openExpeditionsCodeFilterPopup());
+        buttons.get(11).setText("<html>O9 - Visualizza gli organismi avvistati<br />in una spedizione</html>");
+        buttons.get(11).addActionListener(e -> Controller.openOrganismsFilterPopup());
+        buttons.get(12).setText("<html>O10 - Visualizza le formazioni geologiche<br />filtrando per grado di pericolo</html>");
+        buttons.get(12).addActionListener(e -> Controller.openDangerLevelFilterPopup());
+        buttons.get(13).setText("<html>O11 - Visualizza i luoghi dove sono<br />affondati dei relitti</html>");
+        buttons.get(13).addActionListener(e -> Controller.openLocationWreckFilterPopup());
         buttons.get(14).setText("O12 - Visualizza avvistamenti di un organismo");
+        buttons.get(14).addActionListener(e -> Controller.openSightingsSearchByOrganismID());
         buttons.get(15).setText("O13 - Visualizza le analisi fatte su un materiale");
+        buttons.get(15).addActionListener(e -> Controller.openAnalysesSearch());
     }
     
 }
