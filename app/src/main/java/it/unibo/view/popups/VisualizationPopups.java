@@ -36,9 +36,8 @@ public class VisualizationPopups {
                 SMALL_FONT_SIZE, SMALL_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(sightings.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(topPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         sightings.forEach(s -> {
             for (int i = 0; i < textFields.size(); i++) {
                 if (i != 4) {
@@ -62,7 +61,7 @@ public class VisualizationPopups {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
@@ -74,9 +73,8 @@ public class VisualizationPopups {
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(extractions.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(topPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         extractions.forEach(s -> {
             s.forEach(e -> {
                 final JTextField field = new JTextField(e);
@@ -87,7 +85,7 @@ public class VisualizationPopups {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
@@ -101,9 +99,8 @@ public class VisualizationPopups {
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(expeditions.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(mainPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         expeditions.forEach(s -> {
             for (int i = 0; i < textFields.size() - 2; i++) {
                 final JTextField field = new JTextField((String) s.get(i));
@@ -137,7 +134,7 @@ public class VisualizationPopups {
             fiscals.setEditable(false);
             centerPanel.add(fiscals);
         });
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
@@ -147,9 +144,8 @@ public class VisualizationPopups {
                 "Nome comune", "Descrizione"), LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(organisms.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(topPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         organisms.forEach(s -> {
             s.forEach(e -> {
                 final JTextField field = new JTextField(e);
@@ -160,7 +156,7 @@ public class VisualizationPopups {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
@@ -171,9 +167,8 @@ public class VisualizationPopups {
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(geologicalFormations.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(topPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         geologicalFormations.forEach(s -> {
             s.forEach(e -> {
                 final JTextField field = new JTextField(e);
@@ -184,7 +179,7 @@ public class VisualizationPopups {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
@@ -194,9 +189,8 @@ public class VisualizationPopups {
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(values.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(topPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         values.forEach(s -> {
             s.forEach(e -> {
                 final JTextField field = new JTextField(e);
@@ -207,7 +201,7 @@ public class VisualizationPopups {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
@@ -218,9 +212,8 @@ public class VisualizationPopups {
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(values.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(topPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         values.forEach(s -> {
             for (int i = 0; i < textFields.size(); i++) {
                 if (i != 2) {
@@ -244,7 +237,7 @@ public class VisualizationPopups {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
@@ -255,9 +248,8 @@ public class VisualizationPopups {
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(analyses.size(), textFields.size());
-        final JScrollPane scrollPanel = new JScrollPane(centerPanel);
-        centerPanel.setAutoscrolls(true);
-        scrollPanel.setPreferredSize(topPanel.getPreferredSize());
+        final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         analyses.forEach(s -> {
             s.forEach(e -> {
                 final JTextField field = new JTextField(e);
@@ -268,7 +260,7 @@ public class VisualizationPopups {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }

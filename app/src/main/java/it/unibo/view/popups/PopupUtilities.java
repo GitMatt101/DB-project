@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import it.unibo.common.Pair;
@@ -13,6 +14,7 @@ public class PopupUtilities {
 
     private static final int HORIZONTAL_CELL_SPACING = 0;
     private static final int VERTICAL_CELL_SPACING = 0;
+    private static final int DEFAULT_SCROLLPANE_HEIGHT = 600;
 
     public PopupUtilities() {
     }
@@ -54,6 +56,13 @@ public class PopupUtilities {
         centerPanel.setLayout(new java.awt.GridLayout(rows, columns, HORIZONTAL_CELL_SPACING,
                 VERTICAL_CELL_SPACING));
         return centerPanel;
+    }
+
+    public static JScrollPane createScrollPane(final JPanel centerPanel, final int width) {
+        final JScrollPane scrollPane = new JScrollPane(centerPanel);
+        centerPanel.setAutoscrolls(true);
+        scrollPane.setPreferredSize(new java.awt.Dimension(width, DEFAULT_SCROLLPANE_HEIGHT));
+        return scrollPane;
     }
 
 }
