@@ -45,6 +45,7 @@ import it.unibo.model.tables.impl.ROVTable;
 import it.unibo.model.tables.impl.SightingTable;
 import it.unibo.model.tables.impl.WreckTable;
 import it.unibo.view.popups.InputPopups;
+import it.unibo.view.popups.VisualizationPopups;
 
 /**
  * Implementation of the {@link Controller} interface.
@@ -121,6 +122,21 @@ public class Controller {
 
     public static void openAnalysesSearch() {
         InputPopups.analysesResearch();
+    }
+
+    public static void showAllOrganisms() {
+        final List<Organism> organisms = new OrganismTable(CONNECTION).findAll();
+        final List<List<String>> output = new LinkedList<>();
+        organisms.forEach(o -> {
+            final List<String> attributes = new ArrayList<>();
+            attributes.add(o.getId());
+            o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("[NON IDENTIFICATO]"));
+            o.getTemporaryName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            o.getCommonName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            attributes.add(o.getDescription());
+            output.add(attributes);
+        });
+        VisualizationPopups.showOrganisms(output);
     }
 
     /**
@@ -417,7 +433,7 @@ public class Controller {
         organisms.forEach(o -> {
             final List<String> attributes = new ArrayList<>();
             attributes.add(o.getId());
-            o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("Non identificato"));
+            o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("[NON IDENTIFICATO]"));
             o.getTemporaryName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             o.getCommonName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             attributes.add(o.getDescription());

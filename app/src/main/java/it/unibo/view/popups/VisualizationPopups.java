@@ -9,28 +9,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 
 import it.unibo.common.Pair;
 
 public class VisualizationPopups {
 
     private static final String FRAME_TITLE = "Risultati";
-    private static final int LARGE_FONT_SIZE = 18;
+    private static final int LARGE_FONT_SIZE = 17;
     private static final int SMALL_FONT_SIZE = 14;
-    private static final Pair<Integer, Integer> LARGE_FIELD = new Pair<>(200, 40);
-    private static final Pair<Integer, Integer> SMALL_FIELD = new Pair<>(160, 30);
+    private static final Pair<Integer, Integer> LARGE_FIELD = new Pair<>(200, 50);
+    private static final Pair<Integer, Integer> SMALL_FIELD = new Pair<>(160, 35);
 
     public VisualizationPopups() {
     }
 
     public static void showSightings(final List<List<Object>> sightings) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(
                 List.of("Codice avvistamento", "Codice spedizione", "Numero", "Profondità", "Foto", "Note",
                         "ID organismo", "ID relitto", "ID formazione geologica"),
                 SMALL_FONT_SIZE, SMALL_FIELD);
@@ -41,8 +42,8 @@ public class VisualizationPopups {
         sightings.forEach(s -> {
             for (int i = 0; i < textFields.size(); i++) {
                 if (i != 4) {
-                    final JTextField field = new JTextField((String) s.get(i));
-                    PopupUtilities.loadFieldProperties(field, SMALL_FONT_SIZE, SMALL_FIELD);
+                    final JTextArea field = new JTextArea((String) s.get(i));
+                    PopupUtilities.loadTextProperties(field, SMALL_FONT_SIZE, SMALL_FIELD);
                     centerPanel.add(field);
                 } else {
                     final File imageFile = new File("app\\src\\main\\resources\\placeholder.jpg");
@@ -67,7 +68,7 @@ public class VisualizationPopups {
     }
 
     public static void showExtractions(final List<List<String>> extractions) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(
                 List.of("Codice prelievo", "Codice spedizione", "Numero", "Materiale", "Profondità", "Quantità",
                         "Note"),
                 LARGE_FONT_SIZE, LARGE_FIELD);
@@ -77,8 +78,8 @@ public class VisualizationPopups {
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         extractions.forEach(s -> {
             s.forEach(e -> {
-                final JTextField field = new JTextField(e);
-                PopupUtilities.loadFieldProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+                final JTextArea field = new JTextArea(e);
+                PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             });
         });
@@ -91,7 +92,7 @@ public class VisualizationPopups {
     }
 
     public static void showExpeditions(final List<List<Object>> expeditions) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(
                 List.of("Codice", "Data", "Luogo", "Associazione", "Gruppo", "Operatori", "Codici fiscali"),
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
@@ -103,8 +104,8 @@ public class VisualizationPopups {
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         expeditions.forEach(s -> {
             for (int i = 0; i < textFields.size() - 2; i++) {
-                final JTextField field = new JTextField((String) s.get(i));
-                PopupUtilities.loadFieldProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+                final JTextArea field = new JTextArea((String) s.get(i));
+                PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             }
             Object obj = s.get(textFields.size() - 2);
@@ -140,18 +141,29 @@ public class VisualizationPopups {
     }
 
     public static void showOrganisms(final List<List<String>> organisms) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(List.of("ID", "Specie", "Nome provvisorio",
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(List.of("ID", "Specie", "Nome provvisorio",
                 "Nome comune", "Descrizione"), LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(organisms.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
-        organisms.forEach(s -> {
-            s.forEach(e -> {
-                final JTextField field = new JTextField(e);
-                PopupUtilities.loadFieldProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+        organisms.forEach(o -> {
+            for (int i = 0; i < textFields.size() - 1; i++) {
+                final JTextArea field = new JTextArea(o.get(i));
+                PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
+            }
+            final JButton button = new JButton("Apri descrizione");
+            button.addActionListener(e -> {
+                final String descriptionStart;
+                if (o.get(1).equals("[NON IDENTIFICATO]")) {
+                    descriptionStart = o.get(2);
+                } else {
+                    descriptionStart = o.get(1);
+                }
+                PopupUtilities.showPopup(descriptionStart + ":\n" + o.get(textFields.size() - 1), "Descrizione");
             });
+            centerPanel.add(button);
         });
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
@@ -162,7 +174,7 @@ public class VisualizationPopups {
     }
 
     public static void showGeologicalFormationsAndLocations(final List<List<String>> geologicalFormations) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(
                 List.of("ID", "Tipologia", "Dimensioni", "Descrizione", "Luogo", "Paese"),
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
@@ -171,8 +183,8 @@ public class VisualizationPopups {
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         geologicalFormations.forEach(s -> {
             s.forEach(e -> {
-                final JTextField field = new JTextField(e);
-                PopupUtilities.loadFieldProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+                final JTextArea field = new JTextArea(e);
+                PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             });
         });
@@ -185,7 +197,7 @@ public class VisualizationPopups {
     }
 
     public static void showWrecksAndLocations(final List<List<String>> values) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(List.of("ID", "Luogo", "Paese"),
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(List.of("ID", "Luogo", "Paese"),
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(values.size(), textFields.size());
@@ -193,8 +205,8 @@ public class VisualizationPopups {
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         values.forEach(s -> {
             s.forEach(e -> {
-                final JTextField field = new JTextField(e);
-                PopupUtilities.loadFieldProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+                final JTextArea field = new JTextArea(e);
+                PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             });
         });
@@ -207,7 +219,7 @@ public class VisualizationPopups {
     }
 
     public static void showSightingsAndLocations(final List<List<Object>> values) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(
                 List.of("Codice avvistamento", "Profondità", "Foto", "Note", "Luogo", "Paese"),
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
@@ -217,8 +229,8 @@ public class VisualizationPopups {
         values.forEach(s -> {
             for (int i = 0; i < textFields.size(); i++) {
                 if (i != 2) {
-                    final JTextField field = new JTextField((String) s.get(i));
-                    PopupUtilities.loadFieldProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+                    final JTextArea field = new JTextArea((String) s.get(i));
+                    PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                     centerPanel.add(field);
                 } else {
                     final File imageFile = new File("app\\src\\main\\resources\\placeholder.jpg");
@@ -243,7 +255,7 @@ public class VisualizationPopups {
     }
 
     public static void showAnalysesAndLaboratories(final List<List<String>> analyses) {
-        final List<JTextField> textFields = PopupUtilities.createTextFields(
+        final List<JTextArea> textFields = PopupUtilities.createTextFields(
                 List.of("Codice analisi", "Descrizione", "Nome laboratorio", "ID laboratorio", "Indirizzo laboratorio"),
                 LARGE_FONT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
@@ -252,8 +264,8 @@ public class VisualizationPopups {
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
         analyses.forEach(s -> {
             s.forEach(e -> {
-                final JTextField field = new JTextField(e);
-                PopupUtilities.loadFieldProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+                final JTextArea field = new JTextArea(e);
+                PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             });
         });

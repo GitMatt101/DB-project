@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 
 import it.unibo.common.Pair;
 
@@ -15,6 +15,8 @@ public class PopupUtilities {
     private static final int HORIZONTAL_CELL_SPACING = 0;
     private static final int VERTICAL_CELL_SPACING = 0;
     private static final int DEFAULT_SCROLLPANE_HEIGHT = 600;
+    private static final int DEFAULT_TEXTAREA_WIDTH = 300;
+    private static final int DEFAULT_TEXTAREA_HEIGHT = 300;
 
     public PopupUtilities() {
     }
@@ -29,22 +31,26 @@ public class PopupUtilities {
         return frame;
     }
 
-    public static List<JTextField> createTextFields(final List<String> names, final int fontSize,
+    public static List<JTextArea> createTextFields(final List<String> names, final int fontSize,
             final Pair<Integer, Integer> size) {
-        final List<JTextField> textFields = new ArrayList<>();
-        names.forEach(n -> textFields.add(new JTextField(n)));
-        textFields.forEach(t -> loadFieldProperties(t, fontSize, size));
-        return textFields;
+        final List<JTextArea> textAreas = new ArrayList<>();
+        names.forEach(n -> textAreas.add(new JTextArea(n)));
+        textAreas.forEach(t -> loadTextProperties(t, fontSize, size));
+        return textAreas;
     }
 
-    public static void loadFieldProperties(final JTextField textField, final int fontSize,
+    public static void loadTextProperties(final JTextArea textArea, final int fontSize,
             final Pair<Integer, Integer> size) {
-        textField.setPreferredSize(new java.awt.Dimension(size.getX(), size.getY()));
-        textField.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, fontSize));
-        textField.setEditable(false);
+        textArea.setPreferredSize(new java.awt.Dimension(size.getX(), size.getY()));
+        textArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, fontSize));
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLACK, 1, true));
     }
 
-    public static JPanel createTopPanel(final List<JTextField> fields) {
+    public static JPanel createTopPanel(final List<JTextArea> fields) {
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new java.awt.GridLayout(1, fields.size(), HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         fields.forEach(topPanel::add);
@@ -59,10 +65,28 @@ public class PopupUtilities {
     }
 
     public static JScrollPane createScrollPane(final JPanel centerPanel, final int width) {
-        final JScrollPane scrollPane = new JScrollPane(centerPanel);
+        final JScrollPane scrollPane = new JScrollPane(centerPanel,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         centerPanel.setAutoscrolls(true);
         scrollPane.setPreferredSize(new java.awt.Dimension(width, DEFAULT_SCROLLPANE_HEIGHT));
         return scrollPane;
+    }
+
+    public static void showPopup(final String text, final String title) {
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle(title);
+        final JTextArea textArea = new JTextArea(text);
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 20));
+        textArea.setPreferredSize(new java.awt.Dimension(DEFAULT_TEXTAREA_WIDTH, DEFAULT_TEXTAREA_HEIGHT));
+        frame.getContentPane().add(textArea);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
 }

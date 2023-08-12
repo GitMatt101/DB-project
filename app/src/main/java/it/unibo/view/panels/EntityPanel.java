@@ -7,6 +7,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import it.unibo.controller.Controller;
+
 public class EntityPanel extends JPanel {
 
     private static final int NUMBER_OF_ENTITIES = 6;
@@ -34,6 +36,9 @@ public class EntityPanel extends JPanel {
         ImageIcon newImage = new ImageIcon(
                 image.getImage().getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, java.awt.Image.SCALE_DEFAULT));
         this.buttons.get(1).setIcon(newImage);
+        this.buttons.get(1).addActionListener(e -> {
+            Controller.showAllOrganisms();
+        });
 
         this.buttons.get(2).setText("Relitti");
         image = new ImageIcon("app\\src\\main\\resources\\button_images\\shipwreck.jpg");
