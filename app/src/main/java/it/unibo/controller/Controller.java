@@ -557,7 +557,7 @@ public class Controller {
             }
             output.add(attributes);
         });
-        return null;
+        return output;
     }
 
     /**

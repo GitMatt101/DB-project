@@ -100,9 +100,9 @@ public class OrganismTable implements Table<Organism, String> {
 
     public List<Organism> filterByExpedition(final String expeditionCode) {
         final SightingTable sighting = new SightingTable(null);
-        final String query = "SELECT (" + ID + "," + SPECIES + "," + TEMPORARY_NAME + "," + COMMON_NAME + ","
+        final String query = "SELECT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME + ", "
                 + DESCRIPTION
-                + ") FROM " + TABLE_NAME + "," + sighting.getTableName()
+                + " FROM " + TABLE_NAME + ", " + sighting.getTableName()
                 + " WHERE " + sighting.getTableName() + "." + sighting.getExpeditionCodeName() + "='" + expeditionCode + "'"
                 + " AND " + sighting.getTableName() + "." + sighting.getOrganismIDName() + "=" + TABLE_NAME + "." + ID;
         try (Statement statement = this.connection.createStatement()) {
@@ -141,9 +141,9 @@ public class OrganismTable implements Table<Organism, String> {
     @Override
     public boolean update(final Organism updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + SPECIES + PREPARE_FIELD + ","
-                + TEMPORARY_NAME + PREPARE_FIELD + ","
-                + COMMON_NAME + PREPARE_FIELD + ","
+                + SPECIES + PREPARE_FIELD + ", "
+                + TEMPORARY_NAME + PREPARE_FIELD + ", "
+                + COMMON_NAME + PREPARE_FIELD + ", "
                 + DESCRIPTION + PREPARE_FIELD
                 + " WHERE " + ID + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
