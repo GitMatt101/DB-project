@@ -1,8 +1,6 @@
 package it.unibo.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,8 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.sql.rowset.serial.SerialBlob;
 
 import it.unibo.common.Constants;
 import it.unibo.connection.ConnectionProvider;
@@ -210,21 +206,12 @@ public class Controller {
             final int depth, final String imagePath, final String notes,
             final String organismID, final String wreckID, final String geologicalFormationID) {
         final int number = new SightingTable(CONNECTION).getNextNumber(expeditionCode);
-        try (FileInputStream fis = new FileInputStream(new File(imagePath))) {
-            final byte[] blob = fis.readAllBytes();
-            return number != -1 ? new SightingTable(CONNECTION)
-                    .save(new Sighting(code, expeditionCode, number,
-                            Optional.ofNullable(depth), new SerialBlob(blob), Optional.ofNullable(notes),
-                            Optional.ofNullable(organismID), Optional.ofNullable(wreckID),
-                            Optional.ofNullable(geologicalFormationID)))
-                    : false;
-        } catch (final IOException e) {
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, "File not found: " + imagePath, e);
-            return false;
-        } catch (final SQLException e) {
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, "Error while creating the blob", e);
-            return false;
-        }
+        return number != -1 ? new SightingTable(CONNECTION)
+                .save(new Sighting(code, expeditionCode, number,
+                        Optional.ofNullable(depth), new File(imagePath), Optional.ofNullable(notes),
+                        Optional.ofNullable(organismID), Optional.ofNullable(wreckID),
+                        Optional.ofNullable(geologicalFormationID)))
+                : false;
     }
 
     /**
@@ -283,7 +270,7 @@ public class Controller {
      *         <li>code of the expedition (String)</li>
      *         <li>number (int)</li>
      *         <li>depth (int)</li>
-     *         <li>image (byte[])</li>
+     *         <li>image (File)</li>
      *         <li>notes (String)</li>
      *         <li>ID of the organism (String)</li>
      *         <li>ID of the wreck (String)</li>
@@ -303,11 +290,7 @@ public class Controller {
             list.add(s.getExpeditionCode());
             list.add(String.valueOf(s.getNumber()));
             s.getDepth().ifPresentOrElse(d -> list.add(String.valueOf(d)), () -> list.add(""));
-            try {
-                list.add(s.getImage().getBytes(1, (int) s.getImage().length()));
-            } catch (final SQLException e) {
-                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, "Error while retrieving the image", e);
-            }
+            list.add(s.getImage());
             s.getNotes().ifPresentOrElse(list::add, () -> list.add(""));
             s.getOrganismID().ifPresentOrElse(list::add, () -> list.add(""));
             s.getWreckID().ifPresentOrElse(list::add, () -> list.add(""));

@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import it.unibo.common.Pair;
 
@@ -14,9 +15,10 @@ public class PopupUtilities {
 
     private static final int HORIZONTAL_CELL_SPACING = 0;
     private static final int VERTICAL_CELL_SPACING = 0;
-    private static final int DEFAULT_SCROLLPANE_HEIGHT = 600;
+    private static final int DEFAULT_SCROLLPANE_HEIGHT = 100;
     private static final int DEFAULT_TEXTAREA_WIDTH = 300;
     private static final int DEFAULT_TEXTAREA_HEIGHT = 300;
+    private static final int SCROLL_SPEED = 16;
 
     public PopupUtilities() {
     }
@@ -31,12 +33,17 @@ public class PopupUtilities {
         return frame;
     }
 
-    public static List<JTextArea> createTextFields(final List<String> names, final int fontSize,
+    public static List<JTextField> createTextFields(final List<String> names, final int fontSize,
             final Pair<Integer, Integer> size) {
-        final List<JTextArea> textAreas = new ArrayList<>();
-        names.forEach(n -> textAreas.add(new JTextArea(n)));
-        textAreas.forEach(t -> loadTextProperties(t, fontSize, size));
-        return textAreas;
+        final List<JTextField> textFields = new ArrayList<>();
+        names.forEach(n -> textFields.add(new JTextField(n)));
+        textFields.forEach(t -> {
+            t.setPreferredSize(new java.awt.Dimension(size.getX(), size.getY()));
+            t.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, fontSize));
+            t.setEditable(false);
+            t.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLACK, 1, true));
+        });
+        return textFields;
     }
 
     public static void loadTextProperties(final JTextArea textArea, final int fontSize,
@@ -45,12 +52,11 @@ public class PopupUtilities {
         textArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, fontSize));
         textArea.setEditable(false);
         textArea.setLineWrap(true);
-        textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLACK, 1, true));
     }
 
-    public static JPanel createTopPanel(final List<JTextArea> fields) {
+    public static JPanel createTopPanel(final List<JTextField> fields) {
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new java.awt.GridLayout(1, fields.size(), HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
         fields.forEach(topPanel::add);
@@ -70,6 +76,7 @@ public class PopupUtilities {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         centerPanel.setAutoscrolls(true);
         scrollPane.setPreferredSize(new java.awt.Dimension(width, DEFAULT_SCROLLPANE_HEIGHT));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(SCROLL_SPEED);
         return scrollPane;
     }
 

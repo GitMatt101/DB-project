@@ -1,6 +1,6 @@
 package it.unibo.model.entities.impl;
 
-import java.sql.Blob;
+import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public class Sighting implements Event {
     private final String expeditionCode;
     private final int number;
     private final Optional<Integer> depth;
-    private final Blob image;
+    private final File image;
     private final Optional<String> notes;
     private final Optional<String> organismID;
     private final Optional<String> wreckID;
@@ -41,7 +41,7 @@ public class Sighting implements Event {
      * @param geologicalFormationID the ID of the geological formation
      */
     public Sighting(final String code, final String expeditionCode, final int number, final Optional<Integer> depth,
-            final Blob image, final Optional<String> notes, final Optional<String> organismID,
+            final File image, final Optional<String> notes, final Optional<String> organismID,
             final Optional<String> wreckID, final Optional<String> geologicalFormationID) {
         this.code = code;
         this.expeditionCode = expeditionCode;
@@ -89,9 +89,9 @@ public class Sighting implements Event {
     /**
      * Retrieves the image.
      * 
-     * @return the image as a blob
+     * @return the image as a File
      */
-    public Blob getImage() {
+    public File getImage() {
         return this.image;
     }
 
