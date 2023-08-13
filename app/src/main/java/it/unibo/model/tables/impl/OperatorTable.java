@@ -101,7 +101,7 @@ public class OperatorTable implements Table<Operator, String> {
     }
 
     public List<Operator> getExpeditionPartecipants(final String associationName, final String groupID) {
-        final String query = "SELECT (" + FISCAL_CODE + ") FROM " + TABLE_NAME
+        final String query = "SELECT * FROM " + TABLE_NAME
                 + " WHERE " + ASSOCIATION + "='" + associationName + "' AND " + GROUP + "='" + groupID + "'";
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);

@@ -3,7 +3,6 @@ package it.unibo.view.popups;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +39,8 @@ public class VisualizationPopups {
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(sightings.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * sightings.size());
         for (var s : sightings) {
             for (int i = 0; i < textFields.size(); i++) {
                 if (i != 4) {
@@ -51,13 +51,14 @@ public class VisualizationPopups {
                     final File imageFile = (File) s.get(i);
                     ImageIcon image = new ImageIcon(imageFile.getAbsolutePath());
                     ImageIcon newImage = new ImageIcon(
-                            image.getImage().getScaledInstance(SMALL_FIELD.getX(), SMALL_FIELD.getX() * image.getIconHeight() / image.getIconWidth(), java.awt.Image.SCALE_DEFAULT));
+                            image.getImage().getScaledInstance(SMALL_FIELD.getX(),
+                                    SMALL_FIELD.getX() * image.getIconHeight() / image.getIconWidth(),
+                                    java.awt.Image.SCALE_DEFAULT));
                     centerPanel.add(new JLabel(newImage));
                     imageFile.delete();
-                    
                 }
             }
-        };
+        }
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
@@ -74,10 +75,11 @@ public class VisualizationPopups {
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(extractions.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
-        extractions.forEach(s -> {
-            s.forEach(e -> {
-                final JTextArea field = new JTextArea(e);
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * extractions.size());
+        extractions.forEach(e -> {
+            e.forEach(s -> {
+                final JTextArea field = new JTextArea(s);
                 PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             });
@@ -100,38 +102,41 @@ public class VisualizationPopups {
         mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(expeditions.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
-        expeditions.forEach(s -> {
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * expeditions.size());
+        expeditions.forEach(e -> {
             for (int i = 0; i < textFields.size() - 2; i++) {
-                final JTextArea field = new JTextArea((String) s.get(i));
+                final JTextArea field = new JTextArea((String) e.get(i));
                 PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             }
-            Object obj = s.get(textFields.size() - 2);
-            final List<String> list = new ArrayList<>();
+            Object obj = e.get(textFields.size() - 2);
+            String[] list = new String[((List<?>) obj).size()];
             if (obj instanceof List) {
-                ((List<?>) obj).forEach(o -> {
-                    if (o instanceof String) {
-                        list.add((String) o);
+                for (int i = 0; i < ((List<?>) obj).size(); i++) {
+                    if (((List<?>) obj).get(i) instanceof String) {
+                        list[i] = (String) ((List<?>) obj).get(i);
                     }
-                });
+                }
             }
-            final JComboBox<String> names = new JComboBox<>((String[]) list.toArray());
+            final JComboBox<String> names = new JComboBox<>(list);
             names.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, LARGE_FONT_SIZE));
             names.setEditable(false);
+            names.setPreferredSize(new java.awt.Dimension(LARGE_FIELD.getX(), LARGE_FIELD.getY()));
             centerPanel.add(names);
-            obj = s.get(textFields.size() - 1);
-            list.clear();
+            obj = e.get(textFields.size() - 1);
+            list = new String[((List<?>) obj).size()];
             if (obj instanceof List) {
-                ((List<?>) obj).forEach(o -> {
-                    if (o instanceof String) {
-                        list.add((String) o);
+                for (int i = 0; i < ((List<?>) obj).size(); i++) {
+                    if (((List<?>) obj).get(i) instanceof String) {
+                        list[i] = (String) ((List<?>) obj).get(i);
                     }
-                });
+                }
             }
-            final JComboBox<String> fiscals = new JComboBox<>((String[]) list.toArray());
+            final JComboBox<String> fiscals = new JComboBox<>(list);
             fiscals.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, LARGE_FONT_SIZE));
             fiscals.setEditable(false);
+            fiscals.setPreferredSize(new java.awt.Dimension(LARGE_FIELD.getX(), LARGE_FIELD.getY()));
             centerPanel.add(fiscals);
         });
         mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
@@ -145,7 +150,8 @@ public class VisualizationPopups {
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(organisms.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * organisms.size());
         organisms.forEach(o -> {
             for (int i = 0; i < textFields.size() - 1; i++) {
                 final JTextArea field = new JTextArea(o.get(i));
@@ -179,7 +185,8 @@ public class VisualizationPopups {
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(geologicalFormations.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * geologicalFormations.size());
         geologicalFormations.forEach(s -> {
             s.forEach(e -> {
                 final JTextArea field = new JTextArea(e);
@@ -201,7 +208,8 @@ public class VisualizationPopups {
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(values.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * values.size());
         values.forEach(s -> {
             s.forEach(e -> {
                 final JTextArea field = new JTextArea(e);
@@ -224,7 +232,8 @@ public class VisualizationPopups {
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(values.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * values.size());
         values.forEach(s -> {
             for (int i = 0; i < textFields.size(); i++) {
                 if (i != 2) {
@@ -260,7 +269,8 @@ public class VisualizationPopups {
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(analyses.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue());
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * analyses.size());
         analyses.forEach(s -> {
             s.forEach(e -> {
                 final JTextArea field = new JTextArea(e);

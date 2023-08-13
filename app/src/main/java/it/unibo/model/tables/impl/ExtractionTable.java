@@ -154,7 +154,7 @@ public class ExtractionTable implements Table<Extraction, String> {
         locationName.ifPresent(l -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
             queryBuilder.append(EXPEDITION + " = " + exp.getTableName() + "." + exp.getCodeName()
-                    + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName + "'");
+                    + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get() + "'");
         });
         minDepth.ifPresent(m -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
@@ -172,7 +172,8 @@ public class ExtractionTable implements Table<Extraction, String> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
             queryBuilder.append(MATERIAL + " = '" + materialName.get() + "'");
         });
-        final String query = "SELECT * FROM " + TABLE_NAME + queryBuilder.toString();
+        final String query = "SELECT " + TABLE_NAME + "." + CODE + "," + EXPEDITION + "," + NUMBER + "," + MATERIAL + "," + DEPTH + ","
+                + AMOUNT + "," + NOTES + " FROM " + TABLE_NAME + "," + exp.getTableName() + queryBuilder.toString();
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);
             return readExtractionsFromResultSet(resultSet);
@@ -187,7 +188,7 @@ public class ExtractionTable implements Table<Extraction, String> {
      */
     @Override
     public boolean save(final Extraction value) {
-        final String query = "INSERT INTO " + TABLE_NAME
+        final String query = "INSERT INTO " + TABLE_NAME + "("
                 + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + MATERIAL + ", " + DEPTH + ", " + AMOUNT + ", "
                 + NOTES
                 + ") VALUES (?, ?, ?, ?, ?, ?, ?)";

@@ -88,8 +88,8 @@ public class ExpeditionTable implements Table<Expedition, String> {
                     resultSet.getDate(DATE),
                     resultSet.getString(LOCATION),
                     resultSet.getString(ROV),
-                    resultSet.getString(ASSOCIATION),
-                    resultSet.getString(GROUP));
+                    resultSet.getString(GROUP),
+                    resultSet.getString(ASSOCIATION));
             expeditions.add(expedition);
         }
         return expeditions;
@@ -138,7 +138,7 @@ public class ExpeditionTable implements Table<Expedition, String> {
             statement.setDate(2, new java.sql.Date(value.getDate().getTime()));
             statement.setString(3, value.getLocationName());
             statement.setString(4, value.getROVLicencePlate());
-            statement.setString(5, value.getLocationName());
+            statement.setString(5, value.getAssociationName());
             statement.setString(6, value.getGroupID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {

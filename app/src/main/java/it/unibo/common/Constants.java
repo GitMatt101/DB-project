@@ -48,6 +48,10 @@ public final class Constants {
 
     public static final String POPUP_MESSAGE = "Notifica di fine operazione";
 
+    public static final int MAX_IMAGE_WIDTH = 200;
+
+    public static final int MAX_IMAGE_HEIGHT = 200;
+
     private Constants() {
     }
 

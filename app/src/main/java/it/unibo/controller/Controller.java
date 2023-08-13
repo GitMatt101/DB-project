@@ -351,9 +351,9 @@ public class Controller {
                         names.add(o.getFirstName() + " " + o.getLastName());
                         fiscalCodes.add(o.getFiscalCode());
                     });
+            list.add(names);
+            list.add(fiscalCodes);
             output.add(list);
-            output.add(names);
-            output.add(fiscalCodes);
         });
         return output;
     }

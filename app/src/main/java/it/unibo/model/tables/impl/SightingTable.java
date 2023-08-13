@@ -105,15 +105,15 @@ public class SightingTable implements Table<Sighting, String> {
             try (FileOutputStream fos = new FileOutputStream(image)) {
                 fos.write(resultSet.getBlob(IMAGE).getBytes(1, (int) resultSet.getBlob(IMAGE).length()));
                 sightings.add(new Sighting(
-                    resultSet.getString(CODE),
-                    resultSet.getString(EXPEDITION),
-                    resultSet.getInt(NUMBER),
-                    Optional.ofNullable(resultSet.getInt(DEPTH)),
-                    image,
-                    Optional.ofNullable(resultSet.getString(NOTES)),
-                    Optional.ofNullable(resultSet.getString(ORGANISM)),
-                    Optional.ofNullable(resultSet.getString(WRECK)),
-                    Optional.ofNullable(resultSet.getString(GEOLOGICAL_FORMATION))));
+                        resultSet.getString(CODE),
+                        resultSet.getString(EXPEDITION),
+                        resultSet.getInt(NUMBER),
+                        Optional.ofNullable(resultSet.getInt(DEPTH)),
+                        image,
+                        Optional.ofNullable(resultSet.getString(NOTES)),
+                        Optional.ofNullable(resultSet.getString(ORGANISM)),
+                        Optional.ofNullable(resultSet.getString(WRECK)),
+                        Optional.ofNullable(resultSet.getString(GEOLOGICAL_FORMATION))));
             } catch (IOException e) {
                 Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, "Could not open file", e);
                 continue;
@@ -179,7 +179,8 @@ public class SightingTable implements Table<Sighting, String> {
         return query.length() > 0 ? " AND " : " WHERE ";
     }
 
-    public List<Sighting> filter(final Optional<String> locationName, final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
+    public List<Sighting> filter(final Optional<String> locationName, final Optional<Integer> minDepth,
+            final Optional<Integer> maxDepth,
             final Optional<String> expeditionCode, final Optional<String> organismID, final Optional<String> wreckID,
             final Optional<String> geologicalFormationID) {
         final ExpeditionTable exp = new ExpeditionTable(null);
@@ -187,7 +188,7 @@ public class SightingTable implements Table<Sighting, String> {
         locationName.ifPresent(l -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
             queryBuilder.append(EXPEDITION + " = " + exp.getTableName() + "." + exp.getCodeName()
-                + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName + "'");
+                    + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get() + "'");
         });
         minDepth.ifPresent(m -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
@@ -211,7 +212,11 @@ public class SightingTable implements Table<Sighting, String> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
             queryBuilder.append(GEOLOGICAL_FORMATION + " = '" + geologicalFormationID.get() + "'");
         }
-        final String query = "SELECT * FROM " + TABLE_NAME + queryBuilder.toString();
+        final String query = "SELECT " + TABLE_NAME + "." + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + DEPTH
+                + ", " + IMAGE + ", " + NOTES + ", "
+                + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION + " FROM " + TABLE_NAME + ", "
+                + exp.getTableName()
+                + queryBuilder.toString();
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);
             return readSightingsFromResultSet(resultSet);
@@ -260,7 +265,8 @@ public class SightingTable implements Table<Sighting, String> {
                 + " WHERE " + CODE + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, updatedValue.getDepth().orElse(null));
-            statement.setBinaryStream(2, new FileInputStream(updatedValue.getImage()), (int) updatedValue.getImage().length());
+            statement.setBinaryStream(2, new FileInputStream(updatedValue.getImage()),
+                    (int) updatedValue.getImage().length());
             statement.setString(3, updatedValue.getNotes().orElse(null));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
