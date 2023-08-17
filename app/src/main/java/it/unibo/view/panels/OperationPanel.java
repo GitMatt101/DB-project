@@ -1,8 +1,5 @@
 package it.unibo.view.panels;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -11,13 +8,10 @@ import it.unibo.controller.Controller;
 
 public class OperationPanel extends JPanel {
 
-    private static final int NUMBER_OF_OPERATIONS = 15;
     private static final int ROWS = 5;
     private static final int COLUMNS = 3;
     private static final int HORIZONTAL_SPACING = 10;
     private static final int VERTICAL_SPACING = 10;
-
-    private final Map<Integer, JButton> buttons = new HashMap<>();
 
     /**
      * Creates a {@code JPanel} with the buttons.
@@ -25,48 +19,59 @@ public class OperationPanel extends JPanel {
     public OperationPanel() {
         super();
         this.setLayout(new java.awt.GridLayout(ROWS, COLUMNS, HORIZONTAL_SPACING, VERTICAL_SPACING));
-        for (int i = 0; i < NUMBER_OF_OPERATIONS; i++) {
-            buttons.put(i+1, new JButton());
-        }
-        loadButtons();
-        buttons.forEach((k, v) -> this.add(v));
         this.setBackground(Constants.BACKGROUND_COLOR);
+        final JButton o1 = new JButton();
+        o1.setText("O1 - Aggiungi un operatore");
+        o1.addActionListener(e -> Controller.openOperatorRegistrationPopup());
+        final JButton o2 = new JButton();
+        o2.setText("O2 - Registra un ROV");
+        o2.addActionListener(e -> Controller.openROVRegistrationPopup());
+        final JButton o3 = new JButton();
+        o3.setText("O3 - Registra una spedizione");
+        o3.addActionListener(e -> Controller.openExpeditionRegistrationPopup());
+        final JButton o4A = new JButton();
+        o4A.setText("<html>O4_A - Aggiungi un avvistamento<br />ad una spedizione</html>");
+        o4A.addActionListener(e -> Controller.openSightingRegistrationPopup());
+        final JButton o4B = new JButton();
+        o4B.setText("<html>O4_B - Aggiungi un prelievo<br />ad una spedizione</html>");
+        o4B.addActionListener(e -> Controller.openExtractionRegistrationPopup());
+        final JButton o5 = new JButton();
+        o5.setText("<html>O5 - Modifica la specie di<br />un organismo non identificato</html>");
+        o5.addActionListener(e -> Controller.openSpeciesUpdatePopup());
+        final JButton o6A = new JButton();
+        o6A.setText("O6_A - Visualizza avvistamenti con filtri");
+        o6A.addActionListener(e -> Controller.openSightingsFilterPopup());
+        final JButton o6B = new JButton();
+        o6B.setText("O6_B - Visualizza prelievi con filtri");
+        o6B.addActionListener(e -> Controller.openExtractionsFilterPopup());
+        final JButton o7 = new JButton();
+        o7.setText("<html>O7 - Visualizza le spedizioni organizzate<br />da un'associazione</html>");
+        o7.addActionListener(e -> Controller.openExpeditionsFilterPopup());
+        final JButton o8 = new JButton();
+        o8.setText("<html>O8 - Visualizza gli organismi avvistati<br />in una spedizione</html>");
+        o8.addActionListener(e -> Controller.openOrganismsFilterPopup());
+        final JButton o9 = new JButton();
+        o9.setText("<html>O9 - Visualizza le formazioni geologiche<br />filtrando per grado di pericolo</html>");
+        o9.addActionListener(e -> Controller.openDangerLevelFilterPopup());
+        final JButton o10 = new JButton();
+        o10.setText("<html>O10 - Visualizza i luoghi dove sono<br />affondati dei relitti</html>");
+        o10.addActionListener(e -> Controller.openLocationWreckFilterPopup());
+        final JButton o11 = new JButton();
+        o11.setText("O11 - Visualizza le analisi fatte su un materiale");
+        o11.addActionListener(e -> Controller.openAnalysesSearch());
+        this.add(o1);
+        this.add(o2);
+        this.add(o3);
+        this.add(o4A);
+        this.add(o4B);
+        this.add(o5);
+        this.add(o6A);
+        this.add(o6B);
+        this.add(o7);
+        this.add(o8);
+        this.add(o9);
+        this.add(o10);
+        this.add(o11);
     }
 
-    /**
-     * Loads the text of the operation in the buttons.
-     */
-    private void loadButtons() {
-        buttons.get(1).setText("O1 - Aggiungi un operatore");
-        buttons.get(1).addActionListener(e -> Controller.openOperatorRegistrationPopup());
-        buttons.get(2).setText("O2 - Registra un ROV");
-        buttons.get(2).addActionListener(e -> Controller.openROVRegistrationPopup());
-        buttons.get(3).setText("O3 - Registra una spedizione");
-        buttons.get(3).addActionListener(e -> Controller.openExpeditionRegistrationPopup());
-        buttons.get(4).setText("<html>O4_A - Aggiungi un avvistamento<br />ad una spedizione</html>");
-        buttons.get(4).addActionListener(e -> Controller.openSightingRegistrationPopup());
-        buttons.get(5).setText("<html>O4_B - Aggiungi un prelievo<br />ad una spedizione</html>");
-        buttons.get(5).addActionListener(e -> Controller.openExtractionRegistrationPopup());
-        buttons.get(6).setText("<html>O5 - Modifica la specie di<br />un organismo non identificato</html>");
-        buttons.get(6).addActionListener(e -> Controller.openSpeciesUpdatePopup());
-        buttons.get(7).setText("O6_A - Visualizza avvistamenti con filtri");
-        buttons.get(7).addActionListener(e -> Controller.openSightingsFilterPopup());
-        buttons.get(8).setText("O6_B - Visualizza prelievi con filtri");
-        buttons.get(8).addActionListener(e -> Controller.openExtractionsFilterPopup());
-        buttons.get(9).setText("<html>O7 - Visualizza le spedizioni organizzate<br />da un'associazione</html>");
-        buttons.get(9).addActionListener(e -> Controller.openExpeditionsFilterPopup());
-        buttons.get(10).setText("O8 - Visualizza i dettagli di una spedizione");
-        buttons.get(10).addActionListener(e -> Controller.openExpeditionsCodeFilterPopup());
-        buttons.get(11).setText("<html>O9 - Visualizza gli organismi avvistati<br />in una spedizione</html>");
-        buttons.get(11).addActionListener(e -> Controller.openOrganismsFilterPopup());
-        buttons.get(12).setText("<html>O10 - Visualizza le formazioni geologiche<br />filtrando per grado di pericolo</html>");
-        buttons.get(12).addActionListener(e -> Controller.openDangerLevelFilterPopup());
-        buttons.get(13).setText("<html>O11 - Visualizza i luoghi dove sono<br />affondati dei relitti</html>");
-        buttons.get(13).addActionListener(e -> Controller.openLocationWreckFilterPopup());
-        buttons.get(14).setText("O12 - Visualizza avvistamenti di un organismo");
-        buttons.get(14).addActionListener(e -> Controller.openSightingsSearchByOrganismID());
-        buttons.get(15).setText("O13 - Visualizza le analisi fatte su un materiale");
-        buttons.get(15).addActionListener(e -> Controller.openAnalysesSearch());
-    }
-    
 }

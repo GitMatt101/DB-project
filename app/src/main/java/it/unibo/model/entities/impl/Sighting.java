@@ -1,6 +1,5 @@
 package it.unibo.model.entities.impl;
 
-import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,7 +19,6 @@ public class Sighting implements Event {
     private final String expeditionCode;
     private final int number;
     private final Optional<Integer> depth;
-    private final File image;
     private final Optional<String> notes;
     private final Optional<String> organismID;
     private final Optional<String> wreckID;
@@ -29,25 +27,23 @@ public class Sighting implements Event {
     /**
      * Creates an instance of {@code Sighting}.
      * 
-     * @param code                    the code
-     * @param number                  the number of the sighting relative to the
-     *                                expedition
-     * @param expeditionCode          the code of the expedition
-     * @param depth                   the depth
-     * @param image                   the image
-     * @param notes                   the notes
-     * @param organismID              the ID of the organism
-     * @param wreckID                 the ID of the wreck
+     * @param code                  the code
+     * @param number                the number of the sighting relative to the
+     *                              expedition
+     * @param expeditionCode        the code of the expedition
+     * @param depth                 the depth
+     * @param image                 the image
+     * @param notes                 the notes
+     * @param organismID            the ID of the organism
+     * @param wreckID               the ID of the wreck
      * @param geologicalFormationID the ID of the geological formation
      */
-    public Sighting(final String code, final String expeditionCode, final int number, final Optional<Integer> depth,
-            final File image, final Optional<String> notes, final Optional<String> organismID,
+    public Sighting(final String code, final String expeditionCode, final int number, final Optional<Integer> depth, final Optional<String> notes, final Optional<String> organismID,
             final Optional<String> wreckID, final Optional<String> geologicalFormationID) {
         this.code = code;
         this.expeditionCode = expeditionCode;
         this.number = number;
         this.depth = depth;
-        this.image = image;
         this.notes = notes;
         this.organismID = organismID;
         this.wreckID = wreckID;
@@ -84,15 +80,6 @@ public class Sighting implements Event {
     @Override
     public Optional<Integer> getDepth() {
         return this.depth;
-    }
-
-    /**
-     * Retrieves the image.
-     * 
-     * @return the image as a File
-     */
-    public File getImage() {
-        return this.image;
     }
 
     /**
@@ -157,7 +144,6 @@ public class Sighting implements Event {
                 && this.number == ((Sighting) other).getNumber()
                 && this.expeditionCode.equals(((Sighting) other).getExpeditionCode())
                 && this.depth.equals(((Sighting) other).getDepth())
-                && this.image.equals(((Sighting) other).getImage())
                 && this.notes.equals(((Sighting) other).getNotes())
                 && this.organismID.equals(((Sighting) other).getOrganismID())
                 && this.wreckID.equals(((Sighting) other).getWreckID())
@@ -169,7 +155,7 @@ public class Sighting implements Event {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.code, this.number, this.expeditionCode, this.depth, this.image, this.notes,
+        return Objects.hash(this.code, this.number, this.expeditionCode, this.depth, this.notes,
                 this.organismID, this.wreckID, this.geologicalFormationID);
     }
 

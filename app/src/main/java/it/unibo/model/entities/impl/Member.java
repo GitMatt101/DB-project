@@ -6,35 +6,37 @@ import it.unibo.model.entities.ROV;
 import it.unibo.model.entities.api.Person;
 
 /**
- * This class models a {@link ROV} operator.
+ * This class models a {@link ROV} member's.
  */
-public class Operator implements Person {
+public class Member implements Person {
 
     private final String firstName;
     private final String lastName;
     private final String fiscalCode;
-    private final String id;
-    private final String groupID;
     private final String associationName;
+    private final String groupID;
+    private final String id;
+    private final String role;
 
     /**
-     * Creates an instance of {@code Operator}.
+     * Creates an instance of {@code member's}.
      * 
-     * @param firstName       the first name of the operator
-     * @param lastName        the last name of the operator
-     * @param fiscalCode      the fiscal code of the operator
-     * @param id              the ID of the operator
-     * @param groupID         groupID the operator is part of
-     * @param associationName the name of the association the operator is part of
+     * @param firstName       the first name of the member
+     * @param lastName        the last name of the member
+     * @param fiscalCode      the fiscal code of the member
+     * @param id              the ID of the member
+     * @param groupID         groupID the member is part of
+     * @param associationName the name of the association the member works for
      */
-    public Operator(final String firstName, final String lastName, final String fiscalCode,
-            final String associationName, final String groupID, final String id) {
+    public Member(final String firstName, final String lastName, final String fiscalCode,
+            final String associationName, final String groupID, final String id, final String role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.fiscalCode = fiscalCode;
         this.associationName = associationName;
         this.groupID = groupID;
         this.id = id;
+        this.role = role;
     }
 
     /**
@@ -62,7 +64,7 @@ public class Operator implements Person {
     }
 
     /**
-     * Retrieves the name of the association the operator is part of.
+     * Retrieves the name of the association the member is part of.
      * 
      * @return the association's name
      */
@@ -71,7 +73,7 @@ public class Operator implements Person {
     }
 
     /**
-     * Retrieves the ID of the group the operator is part of.
+     * Retrieves the ID of the group the member is part of.
      * 
      * @return the group'ID
      */
@@ -80,12 +82,21 @@ public class Operator implements Person {
     }
 
     /**
-     * Retrieves the operator ID.
+     * Retrieves the member's ID.
      * 
      * @return the ID
      */
     public String getID() {
         return this.id;
+    }
+
+    /**
+     * Retrieves the member's role.
+     * 
+     * @return the role
+     */
+    public String getRole() {
+        return this.role;
     }
 
     /**
@@ -97,9 +108,10 @@ public class Operator implements Person {
         description.append("First name: ").append(firstName)
                 .append("\nLast name: ").append(lastName)
                 .append("\nFiscal code: ").append(fiscalCode)
-                .append("\nID: ").append(id)
+                .append("\nAssociation: ").append(associationName)
                 .append("\nGroup ID: ").append(groupID)
-                .append("\nAssociation: ").append(associationName);
+                .append("\nID: ").append(id)
+                .append("\nRole: ").append(role);
         return description.toString();
     }
 
@@ -108,13 +120,13 @@ public class Operator implements Person {
      */
     @Override
     public boolean equals(final Object other) {
-        return other instanceof Operator
-                && this.firstName.equals(((Operator) other).getFirstName())
-                && this.lastName.equals(((Operator) other).getLastName())
-                && this.fiscalCode.equals(((Operator) other).getFiscalCode())
-                && this.id.equals(((Operator) other).getID())
-                && this.groupID.equals(((Operator) other).getGroupID())
-                && this.associationName.equals(((Operator) other).getAssociationName());
+        return other instanceof Member
+                && this.firstName.equals(((Member) other).getFirstName())
+                && this.lastName.equals(((Member) other).getLastName())
+                && this.fiscalCode.equals(((Member) other).getFiscalCode())
+                && this.id.equals(((Member) other).getID())
+                && this.groupID.equals(((Member) other).getGroupID())
+                && this.associationName.equals(((Member) other).getAssociationName());
     }
 
     /**

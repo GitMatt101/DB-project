@@ -1,10 +1,5 @@
 package it.unibo.model.tables.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,7 +27,6 @@ public class SightingTable implements Table<Sighting, String> {
     private static final String EXPEDITION = "CodiceSpedizione";
     private static final String NUMBER = "Numero";
     private static final String DEPTH = "Profondita";
-    private static final String IMAGE = "Foto";
     private static final String NOTES = "Note";
     private static final String ORGANISM = "IDorganismo";
     private static final String WRECK = "IDrelitto";
@@ -99,25 +93,16 @@ public class SightingTable implements Table<Sighting, String> {
      */
     private List<Sighting> readSightingsFromResultSet(final ResultSet resultSet) throws SQLException {
         final List<Sighting> sightings = new ArrayList<>();
-        final int count = 0;
         while (resultSet.next()) {
-            final File image = new File("app\\src\\main\\resources\\" + count + ".jpg");
-            try (FileOutputStream fos = new FileOutputStream(image)) {
-                fos.write(resultSet.getBlob(IMAGE).getBytes(1, (int) resultSet.getBlob(IMAGE).length()));
-                sightings.add(new Sighting(
-                        resultSet.getString(CODE),
-                        resultSet.getString(EXPEDITION),
-                        resultSet.getInt(NUMBER),
-                        Optional.ofNullable(resultSet.getInt(DEPTH)),
-                        image,
-                        Optional.ofNullable(resultSet.getString(NOTES)),
-                        Optional.ofNullable(resultSet.getString(ORGANISM)),
-                        Optional.ofNullable(resultSet.getString(WRECK)),
-                        Optional.ofNullable(resultSet.getString(GEOLOGICAL_FORMATION))));
-            } catch (IOException e) {
-                Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, "Could not open file", e);
-                continue;
-            }
+            sightings.add(new Sighting(
+                    resultSet.getString(CODE),
+                    resultSet.getString(EXPEDITION),
+                    resultSet.getInt(NUMBER),
+                    Optional.ofNullable(resultSet.getInt(DEPTH)),
+                    Optional.ofNullable(resultSet.getString(NOTES)),
+                    Optional.ofNullable(resultSet.getString(ORGANISM)),
+                    Optional.ofNullable(resultSet.getString(WRECK)),
+                    Optional.ofNullable(resultSet.getString(GEOLOGICAL_FORMATION))));
         }
         return sightings;
     }
@@ -213,8 +198,8 @@ public class SightingTable implements Table<Sighting, String> {
             queryBuilder.append(GEOLOGICAL_FORMATION + " = '" + geologicalFormationID.get() + "'");
         }
         final String query = "SELECT " + TABLE_NAME + "." + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + DEPTH
-                + ", " + IMAGE + ", " + NOTES + ", "
-                + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION + " FROM " + TABLE_NAME + ", "
+                + ", " + NOTES + ", " + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION
+                + " FROM " + TABLE_NAME + ", "
                 + exp.getTableName()
                 + queryBuilder.toString();
         try (Statement statement = this.connection.createStatement()) {
@@ -232,25 +217,26 @@ public class SightingTable implements Table<Sighting, String> {
     @Override
     public boolean save(final Sighting value) {
         final String query = "INSERT INTO " + TABLE_NAME + " ("
-                + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + DEPTH + ", " + IMAGE + ", " + NOTES + ", "
+                + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + DEPTH + ", " + NOTES + ", "
                 + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION + ")"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, value.getCode());
             statement.setString(2, value.getExpeditionCode());
             statement.setInt(3, value.getNumber());
-            statement.setInt(4, value.getDepth().orElse(null));
-            statement.setBinaryStream(5, new FileInputStream(value.getImage()), (int) value.getImage().length());
-            statement.setString(6, value.getNotes().orElse(null));
-            statement.setString(7, value.getOrganismID().orElse(null));
-            statement.setString(8, value.getWreckID().orElse(null));
-            statement.setString(9, value.getGeologicalFormationID().orElse(null));
+            if (value.getDepth().isEmpty()) { statement.setNull(4, java.sql.Types.INTEGER); } 
+                else { statement.setInt(4, value.getDepth().get()); }
+            if (value.getNotes().isEmpty()) { statement.setNull(5, java.sql.Types.NCHAR); } 
+                else { statement.setString(5, value.getNotes().get()); }
+            if (value.getOrganismID().isEmpty()) { statement.setNull(6, java.sql.Types.VARCHAR); } 
+                else { statement.setString(6, value.getOrganismID().get()); }
+            if (value.getWreckID().isEmpty()) { statement.setNull(7, java.sql.Types.VARCHAR); } 
+                else { statement.setString(7, value.getWreckID().get()); }
+            if (value.getGeologicalFormationID().isEmpty()) { statement.setNull(8, java.sql.Types.VARCHAR); } 
+                else { statement.setString(8, value.getGeologicalFormationID().get()); }
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        } catch (FileNotFoundException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, "File not found", e);
             return false;
         }
     }
@@ -261,19 +247,14 @@ public class SightingTable implements Table<Sighting, String> {
     @Override
     public boolean update(final Sighting updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + DEPTH + " = ?, " + IMAGE + " = ?, " + NOTES + " = ?, "
+                + DEPTH + " = ?, " + NOTES + " = ?, "
                 + " WHERE " + CODE + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, updatedValue.getDepth().orElse(null));
-            statement.setBinaryStream(2, new FileInputStream(updatedValue.getImage()),
-                    (int) updatedValue.getImage().length());
-            statement.setString(3, updatedValue.getNotes().orElse(null));
+            statement.setString(2, updatedValue.getNotes().orElse(null));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        } catch (FileNotFoundException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, "File not found", e);
             return false;
         }
     }

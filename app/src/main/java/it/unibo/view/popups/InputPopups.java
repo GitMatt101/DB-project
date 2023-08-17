@@ -49,7 +49,7 @@ public class InputPopups {
         });
     }
 
-    public static void operatorRegistration() {
+    public static void memberRegistration() {
         final JTextField firstNameTip = new JTextField("Nome*");
         final JTextField firstNameField = new JTextField();
         final JTextField secondNameTip = new JTextField("Cognome*");
@@ -62,9 +62,11 @@ public class InputPopups {
         final JTextField groupField = new JTextField();
         final JTextField idTip = new JTextField("ID*");
         final JTextField idField = new JTextField();
+        final JTextField roleTip = new JTextField("Ruolo*");
+        final JTextField roleField = new JTextField();
         final List<JTextField> textFields = List.of(firstNameTip, firstNameField, secondNameTip, secondNameField,
                 fiscalCodeTip, fiscalCodeField, associationTip, associationField, groupTip,
-                groupField, idTip, idField);
+                groupField, idTip, idField, roleTip, roleField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
         centerPanel.setLayout(
@@ -75,7 +77,7 @@ public class InputPopups {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton("Conferma");
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Registrazione operatore", mainPanel);
+        final JFrame frame = PopupUtilities.createFrame("Registrazione membro", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final boolean result = Controller.registerOperator(
@@ -84,7 +86,8 @@ public class InputPopups {
                     fiscalCodeField.getText(),
                     associationField.getText(),
                     groupField.getText(),
-                    idField.getText());
+                    idField.getText(),
+                    roleField.getText());
             frame.dispose();
             showResultPopup(result);
         });
@@ -185,8 +188,6 @@ public class InputPopups {
         final JTextField expeditionField = new JTextField();
         final JTextField depthTip = new JTextField("Profondità");
         final JTextField depthField = new JTextField();
-        final JTextField imageTip = new JTextField("Foto* (percorso file)");
-        final JTextField imageField = new JTextField();
         final JTextField notesTip = new JTextField("Note");
         final JTextField notesField = new JTextField();
         final JTextField organismTip = new JTextField("ID organismo");
@@ -196,7 +197,7 @@ public class InputPopups {
         final JTextField geoTip = new JTextField("ID formazione geologica");
         final JTextField geoField = new JTextField();
         final List<JTextField> textFields = List.of(codeTip, codeField, expeditionTip, expeditionField, depthTip,
-                depthField, imageTip, imageField, notesTip, notesField, organismTip, organismField, wreckTip,
+                depthField, notesTip, notesField, organismTip, organismField, wreckTip,
                 wreckField, geoTip, geoField);
         loadFieldProperties(textFields);
         final JPanel centerPanel = new JPanel();
@@ -211,7 +212,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Registrazione avvistamento", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final int depth = depthField.getText().length() != 0 ? Integer.valueOf(depthField.getText()) : null;
+            final Integer depth = depthField.getText().length() != 0 ? Integer.valueOf(depthField.getText()) : null;
             final String notes = notesField.getText().length() != 0 ? notesField.getText() : null;
             final String organismID = organismField.getText().length() != 0 ? organismField.getText() : null;
             final String wreckID = wreckField.getText().length() != 0 ? wreckField.getText() : null;
@@ -220,7 +221,6 @@ public class InputPopups {
                     codeField.getText(),
                     expeditionField.getText(),
                     depth,
-                    imageField.getText(),
                     notes,
                     organismID,
                     wreckID,
@@ -336,7 +336,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Filtro avvistamenti", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<Object>> result = Controller.filterSightings(
+            final List<List<String>> result = Controller.filterSightings(
                     locationField.getText().length() != 0 ? Optional.of(locationField.getText()) : Optional.empty(),
                     minDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(minDepthField.getText()))
                             : Optional.empty(),
@@ -409,33 +409,6 @@ public class InputPopups {
             final List<List<Object>> result = Controller.filterExpeditionsByAssociation(associationField.getText());
             frame.dispose();
             VisualizationPopups.showExpeditions(result);
-        });
-    }
-
-    public static void expeditionsCodeFilterChoice() {
-        final JTextField codeTip = new JTextField("Codice");
-        final JTextField codeField = new JTextField();
-        loadFieldProperties(List.of(codeTip, codeField));
-        final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
-        centerPanel.add(codeTip);
-        centerPanel.add(codeField);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Selezione codice spedizione", mainPanel);
-        frame.setVisible(true);
-        confirmButton.addActionListener(e -> {
-            final List<Object> result = Controller.getExpeditionDetails(codeField.getText());
-            frame.dispose();
-            if (result.isEmpty()) {
-                VisualizationPopups.showExpeditions(Collections.emptyList());
-            } else {
-                VisualizationPopups.showExpeditions(List.of(result));
-            }
-
         });
     }
 
@@ -527,7 +500,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Selezione ID organismo", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<Object>> result = Controller.getOrganismInfo(idField.getText());
+            final List<List<Object>> result = Controller.getOrganismSightings(idField.getText());
             frame.dispose();
             VisualizationPopups.showSightingsAndLocations(result);
         });

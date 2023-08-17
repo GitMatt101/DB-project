@@ -13,13 +13,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
-import it.unibo.model.entities.impl.Operator;
+import it.unibo.model.entities.impl.Member;
 import it.unibo.model.tables.api.Table;
 
 /**
- * This class models the table of the {@link Operator}.
+ * This class models the table of the {@link Member}.
  */
-public class OperatorTable implements Table<Operator, String> {
+public class OperatorTable implements Table<Member, String> {
 
     private static final String TABLE_NAME = "operatore";
     private static final String FIRST_NAME = "Nome";
@@ -28,6 +28,7 @@ public class OperatorTable implements Table<Operator, String> {
     private static final String ASSOCIATION = "NomeAssociazione";
     private static final String GROUP = "IDgruppo";
     private static final String ID = "ID";
+    private static final String ROLE = "Ruolo";
     private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
@@ -53,7 +54,7 @@ public class OperatorTable implements Table<Operator, String> {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Operator> findByPrimaryKey(final String primaryKey) {
+    public Optional<Member> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + FISCAL_CODE + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
@@ -72,16 +73,17 @@ public class OperatorTable implements Table<Operator, String> {
      * @return a List of all the operators in the ResultSet
      * @throws SQLException
      */
-    private List<Operator> readOperatorsFromResultSet(final ResultSet resultSet) throws SQLException {
-        final List<Operator> operators = new ArrayList<>();
+    private List<Member> readOperatorsFromResultSet(final ResultSet resultSet) throws SQLException {
+        final List<Member> operators = new ArrayList<>();
         while (resultSet.next()) {
-            operators.add(new Operator(
+            operators.add(new Member(
                     resultSet.getString(FIRST_NAME),
                     resultSet.getString(LAST_NAME),
                     resultSet.getString(FISCAL_CODE),
                     resultSet.getString(ASSOCIATION),
                     resultSet.getString(GROUP),
-                    resultSet.getString(ID)));
+                    resultSet.getString(ID),
+                    resultSet.getString(ROLE)));
         }
         return operators;
     }
@@ -90,7 +92,7 @@ public class OperatorTable implements Table<Operator, String> {
      * {@inheritDoc}
      */
     @Override
-    public List<Operator> findAll() {
+    public List<Member> findAll() {
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
             return readOperatorsFromResultSet(resultSet);
@@ -100,7 +102,7 @@ public class OperatorTable implements Table<Operator, String> {
         }
     }
 
-    public List<Operator> getExpeditionPartecipants(final String associationName, final String groupID) {
+    public List<Member> getExpeditionPartecipants(final String associationName, final String groupID) {
         final String query = "SELECT * FROM " + TABLE_NAME
                 + " WHERE " + ASSOCIATION + "='" + associationName + "' AND " + GROUP + "='" + groupID + "'";
         try (Statement statement = this.connection.createStatement()) {
@@ -116,10 +118,10 @@ public class OperatorTable implements Table<Operator, String> {
      * {@inheritDoc}
      */
     @Override
-    public boolean save(final Operator value) {
+    public boolean save(final Member value) {
         final String query = "INSERT INTO " + TABLE_NAME + " ("
-                + FIRST_NAME + ", " + LAST_NAME + ", " + FISCAL_CODE + ", " + ASSOCIATION + ", " + GROUP + ", " + ID
-                + ") VALUES (?, ?, ?, ?, ?, ?)";
+                + FIRST_NAME + ", " + LAST_NAME + ", " + FISCAL_CODE + ", " + ASSOCIATION + ", " + GROUP + ", " + ID + ", " + ROLE
+                + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, value.getFirstName());
             statement.setString(2, value.getLastName());
@@ -127,6 +129,7 @@ public class OperatorTable implements Table<Operator, String> {
             statement.setString(4, value.getAssociationName());
             statement.setString(5, value.getGroupID());
             statement.setString(6, value.getID());
+            statement.setString(7, value.getRole());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(OperatorTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -138,13 +141,14 @@ public class OperatorTable implements Table<Operator, String> {
      * {@inheritDoc}
      */
     @Override
-    public boolean update(final Operator updatedValue) {
+    public boolean update(final Member updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
                 + FIRST_NAME + PREPARE_FIELD + ", "
                 + LAST_NAME + PREPARE_FIELD + ", "
                 + ASSOCIATION + PREPARE_FIELD + ", "
                 + GROUP + PREPARE_FIELD + ", "
                 + ID + PREPARE_FIELD
+                + ROLE + PREPARE_FIELD
                 + " WHERE " + FISCAL_CODE + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getFirstName());

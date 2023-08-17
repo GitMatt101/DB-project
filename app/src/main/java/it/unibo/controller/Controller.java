@@ -1,6 +1,5 @@
 package it.unibo.controller;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +18,7 @@ import java.util.logging.Logger;
 import it.unibo.common.Constants;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Analysis;
+import it.unibo.model.entities.Company;
 import it.unibo.model.entities.Expedition;
 import it.unibo.model.entities.GeologicalFormation;
 import it.unibo.model.entities.Laboratory;
@@ -27,9 +27,10 @@ import it.unibo.model.entities.Organism;
 import it.unibo.model.entities.ROV;
 import it.unibo.model.entities.Wreck;
 import it.unibo.model.entities.impl.Extraction;
-import it.unibo.model.entities.impl.Operator;
+import it.unibo.model.entities.impl.Member;
 import it.unibo.model.entities.impl.Sighting;
 import it.unibo.model.tables.impl.AnalysisTable;
+import it.unibo.model.tables.impl.CompanyTable;
 import it.unibo.model.tables.impl.ExpeditionTable;
 import it.unibo.model.tables.impl.ExtractionTable;
 import it.unibo.model.tables.impl.GeologicalFormationTable;
@@ -61,7 +62,7 @@ public class Controller {
     }
 
     public static void openOperatorRegistrationPopup() {
-        InputPopups.operatorRegistration();
+        InputPopups.memberRegistration();
     }
 
     public static void openROVRegistrationPopup() {
@@ -94,10 +95,6 @@ public class Controller {
 
     public static void openExpeditionsFilterPopup() {
         InputPopups.expeditionsAssociationFilterChoice();
-    }
-
-    public static void openExpeditionsCodeFilterPopup() {
-        InputPopups.expeditionsCodeFilterChoice();
     }
 
     public static void openOrganismsFilterPopup() {
@@ -135,8 +132,94 @@ public class Controller {
         VisualizationPopups.showOrganisms(output);
     }
 
+    public static void showAllWrecks() {
+        final List<Wreck> wrecks = new WreckTable(CONNECTION).findAll();
+        final List<List<String>> output = new LinkedList<>();
+        wrecks.forEach(w -> {
+            final List<String> attributes = new ArrayList<>();
+            attributes.add(w.getId());
+            w.getName().ifPresentOrElse(n -> attributes.add(n), () -> attributes.add(""));
+            w.getWreckageDate().ifPresentOrElse(d -> attributes.add(d.toString()), () -> attributes.add("Sconosciuta"));
+            attributes.add(String.valueOf(w.getLength()) + "m");
+            attributes.add(w.getDescription());
+            output.add(attributes);
+        });
+        VisualizationPopups.showWrecks(output);
+    }
+
+    public static void showAllGeologicalFormations() {
+        final List<GeologicalFormation> geologicalFormations = new GeologicalFormationTable(CONNECTION).findAll();
+        final List<List<String>> output = new LinkedList<>();
+        geologicalFormations.forEach(g -> {
+            final List<String> attributes = new ArrayList<>();
+            attributes.add(g.getID());
+            attributes.add(g.getType());
+            attributes.add(String.valueOf(g.getSize()) + "m2");
+            attributes.add(g.getDescription());
+            output.add(attributes);
+        });
+        VisualizationPopups.showGeologicalFormations(output);
+    }
+
+    public static void showAllSightings() {
+        final List<Sighting> sightings = new SightingTable(CONNECTION).findAll();
+        final List<List<String>> output = new LinkedList<>();
+        sightings.forEach(s -> {
+            final List<String> attributes = new ArrayList<>();
+            attributes.add(s.getCode());
+            attributes.add(s.getExpeditionCode());
+            attributes.add(String.valueOf(s.getNumber()));
+            s.getDepth().ifPresentOrElse(d -> {
+                if (d > 0) {
+                    attributes.add(String.valueOf(d) + "m");
+                } else {
+                    attributes.add("[NON SPECIFICATA]");
+                }
+            }, () -> attributes.add("[NON SPECIFICATA]"));
+            s.getNotes().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            s.getOrganismID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            s.getWreckID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            s.getGeologicalFormationID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            output.add(attributes);
+        });
+        VisualizationPopups.showSightings(output);
+    }
+
+    public static void showAllAssociations() {
+        final List<Company> associations = new CompanyTable(CONNECTION, "associazione").findAll();
+        final List<List<String>> output = new LinkedList<>();
+        associations.forEach(a -> {
+            final List<String> attributes = new ArrayList<>();
+            attributes.add(a.getName());
+            attributes.add(a.getAddress());
+            output.add(attributes);
+        });
+        VisualizationPopups.showAssociations(output);
+    }
+
+    public static void showAllExpeditions() {
+        final List<Expedition> expeditions = new ExpeditionTable(CONNECTION).findAll();
+        final List<List<Object>> output = new LinkedList<>();
+        expeditions.forEach(e -> {
+            final List<Object> attributes = new ArrayList<>();
+            attributes.add(e.getCode());
+            attributes.add(e.getDate().toString());
+            attributes.add(e.getLocationName());
+            attributes.add(e.getAssociationName());
+            attributes.add(e.getGroupID());
+            final List<Object> names = new ArrayList<>();
+            new OperatorTable(CONNECTION).getExpeditionPartecipants(e.getAssociationName(), e.getGroupID())
+                    .forEach(o -> {
+                        names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());
+                    });
+            attributes.add(names);
+            output.add(attributes);
+        });
+        VisualizationPopups.showExpeditions(output);
+    }
+
     /**
-     * Registers a new {@link Operator} in the database.
+     * Registers a new {@link Member} in the database.
      * 
      * @param firstName       the first name of the operator
      * @param secondName      the second name of the operator
@@ -147,9 +230,9 @@ public class Controller {
      * @return true if the operation is successful, false otherwise
      */
     public static boolean registerOperator(final String firstName, final String secondName, final String fiscalCode,
-            final String associationName, final String groupID, final String id) {
+            final String associationName, final String groupID, final String id, final String role) {
         return new OperatorTable(CONNECTION)
-                .save(new Operator(firstName, secondName, fiscalCode, associationName, groupID, id));
+                .save(new Member(firstName, secondName, fiscalCode, associationName, groupID, id, role));
     }
 
     /**
@@ -203,12 +286,12 @@ public class Controller {
      * @return true if the operation is successful, false otherwise
      */
     public static boolean registerSighting(final String code, final String expeditionCode,
-            final int depth, final String imagePath, final String notes,
-            final String organismID, final String wreckID, final String geologicalFormationID) {
+            final Integer depth, final String notes, final String organismID, final String wreckID,
+            final String geologicalFormationID) {
         final int number = new SightingTable(CONNECTION).getNextNumber(expeditionCode);
         return number != -1 ? new SightingTable(CONNECTION)
                 .save(new Sighting(code, expeditionCode, number,
-                        Optional.ofNullable(depth), new File(imagePath), Optional.ofNullable(notes),
+                        Optional.ofNullable(depth), Optional.ofNullable(notes),
                         Optional.ofNullable(organismID), Optional.ofNullable(wreckID),
                         Optional.ofNullable(geologicalFormationID)))
                 : false;
@@ -277,27 +360,32 @@ public class Controller {
      *         <li>ID of the geological formation (String)</li>
      *         </ul>
      */
-    public static List<List<Object>> filterSightings(final Optional<String> locationName,
+    public static List<List<String>> filterSightings(final Optional<String> locationName,
             final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
             final Optional<String> expeditionCode, final Optional<String> organismID, final Optional<String> wreckID,
             final Optional<String> geologicalFormationID) {
         final List<Sighting> sightings = new SightingTable(CONNECTION)
                 .filter(locationName, minDepth, maxDepth, expeditionCode, organismID, wreckID, geologicalFormationID);
-        final List<List<Object>> output = new LinkedList<>();
+        final List<List<String>> output = new LinkedList<>();
         sightings.forEach(s -> {
-            final List<Object> list = new ArrayList<>();
+            final List<String> list = new ArrayList<>();
             list.add(s.getCode());
             list.add(s.getExpeditionCode());
             list.add(String.valueOf(s.getNumber()));
-            s.getDepth().ifPresentOrElse(d -> list.add(String.valueOf(d)), () -> list.add(""));
-            list.add(s.getImage());
+            s.getDepth().ifPresentOrElse(d -> {
+                if (d > 0) {
+                    list.add(String.valueOf(d));
+                } else {
+                    list.add("[NON SPECIFICATA]");
+                }
+            }, () -> list.add("[NON SPECIFICATA]"));
             s.getNotes().ifPresentOrElse(list::add, () -> list.add(""));
             s.getOrganismID().ifPresentOrElse(list::add, () -> list.add(""));
             s.getWreckID().ifPresentOrElse(list::add, () -> list.add(""));
             s.getGeologicalFormationID().ifPresentOrElse(list::add, () -> list.add(""));
             output.add(list);
         });
-        return output;
+        return new LinkedList<>(new HashSet<>(output));
     }
 
     public static List<List<String>> filterExtractions(final Optional<String> locationName,
@@ -312,12 +400,18 @@ public class Controller {
             list.add(s.getExpeditionCode());
             list.add(String.valueOf(s.getNumber()));
             list.add(s.getMaterialName());
-            s.getDepth().ifPresentOrElse(d -> list.add(String.valueOf(d)), () -> list.add(""));
+            s.getDepth().ifPresentOrElse(d -> {
+                if (d > 0) {
+                    list.add(String.valueOf(d));
+                } else {
+                    list.add("[NON SPECIFICATA]");
+                }
+            }, () -> list.add("[NON SPECIFICATA]"));
             list.add(String.valueOf(s.getAmount()));
             s.getNotes().ifPresentOrElse(n -> list.add(n), () -> list.add(""));
             output.add(list);
         });
-        return output;
+        return new LinkedList<>(new HashSet<>(output));
     }
 
     /**
@@ -345,14 +439,11 @@ public class Controller {
             list.add(s.getAssociationName());
             list.add(s.getGroupID());
             final List<Object> names = new ArrayList<>();
-            final List<Object> fiscalCodes = new ArrayList<>();
             new OperatorTable(CONNECTION).getExpeditionPartecipants(s.getAssociationName(), s.getGroupID())
                     .forEach(o -> {
-                        names.add(o.getFirstName() + " " + o.getLastName());
-                        fiscalCodes.add(o.getFiscalCode());
+                        names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());
                     });
             list.add(names);
-            list.add(fiscalCodes);
             output.add(list);
         });
         return output;
@@ -382,15 +473,12 @@ public class Controller {
             output.add(expedition.get().getAssociationName());
             output.add(expedition.get().getGroupID());
             final List<String> names = new ArrayList<>();
-            final List<String> fiscalCodes = new ArrayList<>();
             new OperatorTable(CONNECTION)
                     .getExpeditionPartecipants(expedition.get().getAssociationName(), expedition.get().getGroupID())
                     .forEach(o -> {
-                        names.add(o.getFirstName() + " " + o.getLastName());
-                        fiscalCodes.add(o.getFiscalCode());
+                        names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());
                     });
             output.add(names);
-            output.add(fiscalCodes);
             return output;
         }
         return Collections.emptyList();
@@ -422,7 +510,7 @@ public class Controller {
             attributes.add(o.getDescription());
             output.add(attributes);
         });
-        return output;
+        return new LinkedList<>(new HashSet<>(output));
     }
 
     /**
@@ -529,14 +617,13 @@ public class Controller {
      *         <li>name of the country (String)</li>
      *         </ul>
      */
-    public static List<List<Object>> getOrganismInfo(final String organismID) {
+    public static List<List<Object>> getOrganismSightings(final String organismID) {
         final List<Sighting> sightings = new SightingTable(CONNECTION).filterByOrganism(organismID);
         final List<List<Object>> output = new LinkedList<>();
         sightings.forEach(s -> {
             final List<Object> attributes = new ArrayList<>();
             attributes.add(s.getCode());
             s.getDepth().ifPresentOrElse(d -> attributes.add(String.valueOf(d)), () -> attributes.add(""));
-            attributes.add(s.getImage());
             s.getNotes().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             final LocationTable locationTable = new LocationTable(null);
             final ExpeditionTable expeditionTable = new ExpeditionTable(null);
@@ -545,11 +632,13 @@ public class Controller {
                     + " WHERE " + locationTable.getTableName() + "." + locationTable.getName()
                     + "=" + expeditionTable.getTableName() + "." + expeditionTable.getLocationName()
                     + " AND " + expeditionTable.getTableName() + "." + expeditionTable.getCodeName()
-                    + "=" + s.getExpeditionCode();
+                    + "='" + s.getExpeditionCode() + "'";
             try (Statement statement = CONNECTION.createStatement()) {
                 final ResultSet resultSet = statement.executeQuery(locationQuery);
-                attributes.add(resultSet.getString(locationTable.getName()));
-                attributes.add(resultSet.getString(locationTable.getCountryName()));
+                if (resultSet.next()) {
+                    attributes.add(resultSet.getString(locationTable.getName()));
+                    attributes.add(resultSet.getString(locationTable.getCountryName()));
+                }
             } catch (final SQLException e) {
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
                         e);
