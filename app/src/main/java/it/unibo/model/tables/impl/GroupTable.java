@@ -22,10 +22,10 @@ import it.unibo.model.tables.api.Table;
  */
 public class GroupTable implements Table<Group, Pair<String, String>> {
 
-    private static final String TABLE_NAME = "gruppo_di_esplorazione";
+    private static final String TABLE_NAME = "gruppi_di_esplorazione";
     private static final String ASSOCIATION = "NomeAssociazione";
     private static final String ID = "ID";
-    private static final String NAME = "Nome_gruppo";
+    private static final String NAME = "Nome";
     private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;

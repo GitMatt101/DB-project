@@ -21,7 +21,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class ExpeditionTable implements Table<Expedition, String> {
 
-    private static final String TABLE_NAME = "spedizione";
+    private static final String TABLE_NAME = "spedizioni";
     private static final String CODE = "Codice";
     private static final String DATE = "Data";
     private static final String LOCATION = "NomeLuogo";

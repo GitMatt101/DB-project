@@ -20,10 +20,10 @@ import it.unibo.model.tables.api.Table;
  */
 public class WreckTable implements Table<Wreck, String> {
 
-    private static final String TABLE_NAME = "relitto";
+    private static final String TABLE_NAME = "relitti";
     private static final String ID = "ID";
     private static final String NAME = "Nome";
-    private static final String WRECKAGE_DATE = "Data_affondamento_stimata";
+    private static final String WRECKAGE_DATE = "DataAffondamento";
     private static final String SIZE = "Dimensioni";
     private static final String DESCRIPTION = "Descrizione";
     private static final String PREPARE_FIELD = " = ?";

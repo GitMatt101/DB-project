@@ -22,7 +22,7 @@ public class ROVTable implements Table<ROV, String> {
 
     private static final String TABLE_NAME = "rov";
     private static final String LICENSE_PLATE = "Targa";
-    private static final String SERIAL_NUMBER = "Numero_di_serie";
+    private static final String SERIAL_NUMBER = "NumeroSerie";
     private static final String MANUFACTURER = "NomeCasaProduttrice";
     private static final String DATE = "DataProduzione";
     private static final String PREPARE_FIELD = " = ?";

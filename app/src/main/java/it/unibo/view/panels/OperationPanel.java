@@ -21,7 +21,7 @@ public class OperationPanel extends JPanel {
         this.setLayout(new java.awt.GridLayout(ROWS, COLUMNS, HORIZONTAL_SPACING, VERTICAL_SPACING));
         this.setBackground(Constants.BACKGROUND_COLOR);
         final JButton o1 = new JButton();
-        o1.setText("O1 - Aggiungi un operatore");
+        o1.setText("O1 - Aggiungi un membro ad un gruppo");
         o1.addActionListener(e -> Controller.openOperatorRegistrationPopup());
         final JButton o2 = new JButton();
         o2.setText("O2 - Registra un ROV");

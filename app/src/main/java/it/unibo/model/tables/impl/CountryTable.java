@@ -19,7 +19,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class CountryTable implements Table<Country, String> {
 
-    private static final String TABLE_NAME = "paese";
+    private static final String TABLE_NAME = "paesi";
 
     private static final String NAME = "Nome";
     private static final String PREPARE_FIELD = " = ?";

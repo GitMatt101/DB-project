@@ -19,7 +19,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class LocationTable implements Table<Location, String> {
 
-    private static final String TABLE_NAME = "luogo";
+    private static final String TABLE_NAME = "luoghi";
     private static final String NAME = "Nome";
     private static final String COUNTRY_NAME = "NomePaese";
     private static final String PREPARE_FIELD = " = ?";

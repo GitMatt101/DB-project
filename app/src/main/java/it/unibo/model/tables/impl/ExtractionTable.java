@@ -21,7 +21,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class ExtractionTable implements Table<Extraction, String> {
 
-    private static final String TABLE_NAME = "prelievo";
+    private static final String TABLE_NAME = "prelievi";
     private static final String CODE = "Codice";
     private static final String EXPEDITION = "CodiceSpedizione";
     private static final String NUMBER = "Numero";

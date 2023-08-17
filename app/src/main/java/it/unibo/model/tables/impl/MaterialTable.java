@@ -20,7 +20,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class MaterialTable implements Table<Material, String> {
 
-    private static final String TABLE_NAME = "materiale";
+    private static final String TABLE_NAME = "materiali";
     private static final String NAME = "Nome";
     private static final String PREPARE_FIELD = " = ?";
 

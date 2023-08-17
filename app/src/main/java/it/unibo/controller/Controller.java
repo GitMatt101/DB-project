@@ -36,7 +36,7 @@ import it.unibo.model.tables.impl.ExtractionTable;
 import it.unibo.model.tables.impl.GeologicalFormationTable;
 import it.unibo.model.tables.impl.LaboratoryTable;
 import it.unibo.model.tables.impl.LocationTable;
-import it.unibo.model.tables.impl.OperatorTable;
+import it.unibo.model.tables.impl.MemberTable;
 import it.unibo.model.tables.impl.OrganismTable;
 import it.unibo.model.tables.impl.ROVTable;
 import it.unibo.model.tables.impl.SightingTable;
@@ -208,7 +208,7 @@ public class Controller {
             attributes.add(e.getAssociationName());
             attributes.add(e.getGroupID());
             final List<Object> names = new ArrayList<>();
-            new OperatorTable(CONNECTION).getExpeditionPartecipants(e.getAssociationName(), e.getGroupID())
+            new MemberTable(CONNECTION).getExpeditionPartecipants(e.getAssociationName(), e.getGroupID())
                     .forEach(o -> {
                         names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());
                     });
@@ -229,9 +229,9 @@ public class Controller {
      * @param id              the ID of the operator
      * @return true if the operation is successful, false otherwise
      */
-    public static boolean registerOperator(final String firstName, final String secondName, final String fiscalCode,
+    public static boolean registerMember(final String firstName, final String secondName, final String fiscalCode,
             final String associationName, final String groupID, final String id, final String role) {
-        return new OperatorTable(CONNECTION)
+        return new MemberTable(CONNECTION)
                 .save(new Member(firstName, secondName, fiscalCode, associationName, groupID, id, role));
     }
 
@@ -439,7 +439,7 @@ public class Controller {
             list.add(s.getAssociationName());
             list.add(s.getGroupID());
             final List<Object> names = new ArrayList<>();
-            new OperatorTable(CONNECTION).getExpeditionPartecipants(s.getAssociationName(), s.getGroupID())
+            new MemberTable(CONNECTION).getExpeditionPartecipants(s.getAssociationName(), s.getGroupID())
                     .forEach(o -> {
                         names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());
                     });
@@ -473,7 +473,7 @@ public class Controller {
             output.add(expedition.get().getAssociationName());
             output.add(expedition.get().getGroupID());
             final List<String> names = new ArrayList<>();
-            new OperatorTable(CONNECTION)
+            new MemberTable(CONNECTION)
                     .getExpeditionPartecipants(expedition.get().getAssociationName(), expedition.get().getGroupID())
                     .forEach(o -> {
                         names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());

@@ -21,7 +21,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class LaboratoryTable implements Table<Laboratory, String> {
 
-    private static final String TABLE_NAME = "laboratorio";
+    private static final String TABLE_NAME = "laboratori";
     private static final String ID = "ID";
     private static final String NAME = "Nome";
     private static final String ADDRESS = "Indirizzo";

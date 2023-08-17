@@ -20,11 +20,11 @@ import it.unibo.model.tables.api.Table;
  */
 public class GeologicalFormationTable implements Table<GeologicalFormation, String> {
 
-    private static final String TABLE_NAME = "formazione_geologica";
+    private static final String TABLE_NAME = "formazioni_geologiche";
     private static final String ID = "ID";
     private static final String TYPE = "Tipologia";
     private static final String SIZE = "Dimensioni";
-    private static final String DANGER_LEVEL = "Grado_di_pericolo";
+    private static final String DANGER_LEVEL = "GradoPericolo";
     private static final String DESCRIPTION = "Descrizione";
     private static final String PREPARE_FIELD = " = ?";
 

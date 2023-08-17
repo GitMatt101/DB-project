@@ -21,11 +21,11 @@ import it.unibo.model.tables.api.Table;
  */
 public class OrganismTable implements Table<Organism, String> {
 
-    private static final String TABLE_NAME = "organismo";
+    private static final String TABLE_NAME = "organismi";
     private static final String ID = "ID";
     private static final String SPECIES = "Specie";
-    private static final String TEMPORARY_NAME = "Nome_provvisorio";
-    private static final String COMMON_NAME = "Nome_comune";
+    private static final String TEMPORARY_NAME = "NomeProvvisorio";
+    private static final String COMMON_NAME = "NomeComune";
     private static final String DESCRIPTION = "Descrizione";
     private static final String PREPARE_FIELD = " = ?";
 

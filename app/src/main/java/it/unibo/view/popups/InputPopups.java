@@ -80,7 +80,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Registrazione membro", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final boolean result = Controller.registerOperator(
+            final boolean result = Controller.registerMember(
                     firstNameField.getText(),
                     secondNameField.getText(),
                     fiscalCodeField.getText(),

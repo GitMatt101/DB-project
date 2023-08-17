@@ -22,7 +22,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class SightingTable implements Table<Sighting, String> {
 
-    private static final String TABLE_NAME = "avvistamento";
+    private static final String TABLE_NAME = "avvistamenti";
     private static final String CODE = "Codice";
     private static final String EXPEDITION = "CodiceSpedizione";
     private static final String NUMBER = "Numero";
@@ -30,7 +30,7 @@ public class SightingTable implements Table<Sighting, String> {
     private static final String NOTES = "Note";
     private static final String ORGANISM = "IDorganismo";
     private static final String WRECK = "IDrelitto";
-    private static final String GEOLOGICAL_FORMATION = "IDformazioneGeologica";
+    private static final String GEOLOGICAL_FORMATION = "IDformazionegeologica";
     private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;

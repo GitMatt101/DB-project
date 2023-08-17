@@ -19,12 +19,12 @@ import it.unibo.model.tables.api.Table;
 /**
  * This class models the table of the {@link Member}.
  */
-public class OperatorTable implements Table<Member, String> {
+public class MemberTable implements Table<Member, String> {
 
-    private static final String TABLE_NAME = "operatore";
+    private static final String TABLE_NAME = "membri";
     private static final String FIRST_NAME = "Nome";
     private static final String LAST_NAME = "Cognome";
-    private static final String FISCAL_CODE = "Codice_Fiscale";
+    private static final String FISCAL_CODE = "CodiceFiscale";
     private static final String ASSOCIATION = "NomeAssociazione";
     private static final String GROUP = "IDgruppo";
     private static final String ID = "ID";
@@ -38,7 +38,7 @@ public class OperatorTable implements Table<Member, String> {
      * 
      * @param connection the connection to the database
      */
-    public OperatorTable(final Connection connection) {
+    public MemberTable(final Connection connection) {
         this.connection = connection;
     }
 
@@ -61,7 +61,7 @@ public class OperatorTable implements Table<Member, String> {
             final ResultSet resultSet = statement.executeQuery();
             return readOperatorsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(OperatorTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return Optional.empty();
         }
     }
@@ -97,7 +97,7 @@ public class OperatorTable implements Table<Member, String> {
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
             return readOperatorsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(OperatorTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return Collections.emptyList();
         }
     }
@@ -109,7 +109,7 @@ public class OperatorTable implements Table<Member, String> {
             final ResultSet resultSet = statement.executeQuery(query);
             return readOperatorsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(OperatorTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return Collections.emptyList();
         }
     }
@@ -132,7 +132,7 @@ public class OperatorTable implements Table<Member, String> {
             statement.setString(7, value.getRole());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(OperatorTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return false;
         }
     }
@@ -159,7 +159,7 @@ public class OperatorTable implements Table<Member, String> {
             statement.setString(6, updatedValue.getFiscalCode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(OperatorTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return false;
         }
     }
@@ -174,7 +174,7 @@ public class OperatorTable implements Table<Member, String> {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(OperatorTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return false;
         }
     }
