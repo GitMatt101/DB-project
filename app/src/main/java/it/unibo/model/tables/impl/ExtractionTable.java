@@ -142,10 +142,29 @@ public class ExtractionTable implements Table<Extraction, String> {
         }
     }
 
+    /**
+     * Method used to check if the next condition in a query is the first or not.
+     * 
+     * @param query the query
+     * @return " AND " if the query already has other conditions, " WHERE "
+     *         otherwise
+     */
     private String appendToQuery(final String query) {
         return query.length() > 0 ? " AND " : " WHERE ";
     }
 
+    /**
+     * Applies some filters to retrieve {@link Extraction}s that match the
+     * spcecified values.
+     * 
+     * @param locationName   the name of the location
+     * @param minDepth       the minimum depth
+     * @param maxDepth       the maximum depth
+     * @param expeditionCode the code of the expedition
+     * @param materialName   the name of the material
+     * @return a list of all the extractions, or an empty list if something went
+     *         wrong
+     */
     public List<Extraction> filter(final Optional<String> locationName,
             final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
             final Optional<String> expeditionCode, final Optional<String> materialName) {
@@ -172,7 +191,8 @@ public class ExtractionTable implements Table<Extraction, String> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
             queryBuilder.append(MATERIAL + " = '" + materialName.get() + "'");
         });
-        final String query = "SELECT " + TABLE_NAME + "." + CODE + "," + EXPEDITION + "," + NUMBER + "," + MATERIAL + "," + DEPTH + ","
+        final String query = "SELECT " + TABLE_NAME + "." + CODE + "," + EXPEDITION + "," + NUMBER + "," + MATERIAL
+                + "," + DEPTH + ","
                 + AMOUNT + "," + NOTES + " FROM " + TABLE_NAME + "," + exp.getTableName() + queryBuilder.toString();
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);

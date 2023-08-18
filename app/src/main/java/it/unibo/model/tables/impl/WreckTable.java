@@ -95,6 +95,12 @@ public class WreckTable implements Table<Wreck, String> {
         }
     }
 
+    /**
+     * Given a name, returns all the wrecks with that name.
+     * 
+     * @param wreckName the name of the wrecks to find
+     * @return a List of all the wrecks with the given name
+     */
     public List<Wreck> filterByName(final String wreckName) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + NAME + "='" + wreckName + "'";
         try (Statement statement = this.connection.createStatement()) {

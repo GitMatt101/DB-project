@@ -52,18 +52,40 @@ public class SightingTable implements Table<Sighting, String> {
         return TABLE_NAME;
     }
 
+    /**
+     * Retrieves the name of the expedition code attribute according to the
+     * database.
+     * 
+     * @return the name of the attribute
+     */
     public String getExpeditionCodeName() {
         return EXPEDITION;
     }
 
+    /**
+     * Retrieves the name of the organism ID attribute according to the database.
+     * 
+     * @return the name of the attribute
+     */
     public String getOrganismIDName() {
         return ORGANISM;
     }
 
+    /**
+     * Retrieves the name of the wreck ID attribute according to the database.
+     * 
+     * @return the name of the attribute
+     */
     public String getWreckName() {
         return WRECK;
     }
 
+    /**
+     * Retrieves the name of the geological formation ID attribute according to the
+     * database.
+     * 
+     * @return the name of the attribute
+     */
     public String getGeologicalFormationName() {
         return GEOLOGICAL_FORMATION;
     }
@@ -160,10 +182,31 @@ public class SightingTable implements Table<Sighting, String> {
         }
     }
 
+    /**
+     * Method used to check if the next condition in a query is the first or not.
+     * 
+     * @param query the query
+     * @return " AND " if the query already has other conditions, " WHERE "
+     *         otherwise
+     */
     private String appendToQuery(final String query) {
         return query.length() > 0 ? " AND " : " WHERE ";
     }
 
+    /**
+     * Applies some filters to retrieve {@link Sighting}s that match the
+     * spcecified values.
+     * 
+     * @param locationName          the name of the location
+     * @param minDepth              the minimum depth
+     * @param maxDepth              the maximum depth
+     * @param expeditionCode        the code of the expedition
+     * @param organismID            the ID of the organism
+     * @param wreckID               the ID of the wreck
+     * @param geologicalFormationID the ID of the geological formation
+     * @return a list of all the sightings, or an empty list if something went
+     *         wrong
+     */
     public List<Sighting> filter(final Optional<String> locationName, final Optional<Integer> minDepth,
             final Optional<Integer> maxDepth,
             final Optional<String> expeditionCode, final Optional<String> organismID, final Optional<String> wreckID,
@@ -224,16 +267,31 @@ public class SightingTable implements Table<Sighting, String> {
             statement.setString(1, value.getCode());
             statement.setString(2, value.getExpeditionCode());
             statement.setInt(3, value.getNumber());
-            if (value.getDepth().isEmpty()) { statement.setNull(4, java.sql.Types.INTEGER); } 
-                else { statement.setInt(4, value.getDepth().get()); }
-            if (value.getNotes().isEmpty()) { statement.setNull(5, java.sql.Types.NCHAR); } 
-                else { statement.setString(5, value.getNotes().get()); }
-            if (value.getOrganismID().isEmpty()) { statement.setNull(6, java.sql.Types.VARCHAR); } 
-                else { statement.setString(6, value.getOrganismID().get()); }
-            if (value.getWreckID().isEmpty()) { statement.setNull(7, java.sql.Types.VARCHAR); } 
-                else { statement.setString(7, value.getWreckID().get()); }
-            if (value.getGeologicalFormationID().isEmpty()) { statement.setNull(8, java.sql.Types.VARCHAR); } 
-                else { statement.setString(8, value.getGeologicalFormationID().get()); }
+            if (value.getDepth().isEmpty()) {
+                statement.setNull(4, java.sql.Types.INTEGER);
+            } else {
+                statement.setInt(4, value.getDepth().get());
+            }
+            if (value.getNotes().isEmpty()) {
+                statement.setNull(5, java.sql.Types.NCHAR);
+            } else {
+                statement.setString(5, value.getNotes().get());
+            }
+            if (value.getOrganismID().isEmpty()) {
+                statement.setNull(6, java.sql.Types.VARCHAR);
+            } else {
+                statement.setString(6, value.getOrganismID().get());
+            }
+            if (value.getWreckID().isEmpty()) {
+                statement.setNull(7, java.sql.Types.VARCHAR);
+            } else {
+                statement.setString(7, value.getWreckID().get());
+            }
+            if (value.getGeologicalFormationID().isEmpty()) {
+                statement.setNull(8, java.sql.Types.VARCHAR);
+            } else {
+                statement.setString(8, value.getGeologicalFormationID().get());
+            }
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

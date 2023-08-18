@@ -95,6 +95,13 @@ public class AnalysisTable implements Table<Analysis, String> {
         }
     }
 
+    /**
+     * Retrieves the {@link Analysis} with the given extraction code.
+     * 
+     * @param extractionCode the extraction code
+     * @return the {@link Analysis} with the given extraction code if present, an
+     *         empty {@link Optional} otherwise
+     */
     public Optional<Analysis> findByExtractionCode(final String extractionCode) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + EXTRACTION_CODE + PREPARE_FIELD;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {

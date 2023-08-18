@@ -49,10 +49,20 @@ public class ExpeditionTable implements Table<Expedition, String> {
         return TABLE_NAME;
     }
 
+    /**
+     * Retrieves the name of the code attribute according to the database.
+     * 
+     * @return the name of the code
+     */
     public String getCodeName() {
         return CODE;
     }
 
+    /**
+     * Retrieves the name of the location attribute according to the database.
+     * 
+     * @return the name of the location attribute
+     */
     public String getLocationName() {
         return LOCATION;
     }
@@ -110,9 +120,12 @@ public class ExpeditionTable implements Table<Expedition, String> {
     }
 
     /**
-     * Retrieves all the expeditions that have been organized by a certain association
+     * Retrieves all the expeditions that have been organized by a certain
+     * association.
+     * 
      * @param associationName the name of the association
-     * @return a list of {@link Expedition}, or an empty list if no expeditions were found
+     * @return a list of {@link Expedition}, or an empty list if no expeditions were
+     *         found
      */
     public List<Expedition> filterByAssociation(final String associationName) {
         final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ASSOCIATION + "='" + associationName + "'";

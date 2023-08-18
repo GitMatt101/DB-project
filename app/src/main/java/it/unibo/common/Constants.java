@@ -42,15 +42,20 @@ public final class Constants {
      */
     public static final String PASSWORD = "frtMTT02%101";
 
+    /**
+     * Message for a successful registration query operation.
+     */
     public static final String SUCCESSFUL_REGISTRATION = "Registrazione avvenuta con successo";
 
+    /**
+     * Message for an unsuccessful registration query operation.
+     */
     public static final String UNSUCCESSFUL_REGISTRATION = "Registrazione fallita";
 
+    /**
+     * Title for the popup message.
+     */
     public static final String POPUP_MESSAGE = "Notifica di fine operazione";
-
-    public static final int MAX_IMAGE_WIDTH = 200;
-
-    public static final int MAX_IMAGE_HEIGHT = 200;
 
     private Constants() {
     }

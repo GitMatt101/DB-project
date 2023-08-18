@@ -24,9 +24,10 @@ public class Member implements Person {
      * @param firstName       the first name of the member
      * @param lastName        the last name of the member
      * @param fiscalCode      the fiscal code of the member
-     * @param id              the ID of the member
-     * @param groupID         groupID the member is part of
      * @param associationName the name of the association the member works for
+     * @param groupID         groupID the member is part of
+     * @param id              the ID of the member
+     * @param role            the role of the member
      */
     public Member(final String firstName, final String lastName, final String fiscalCode,
             final String associationName, final String groupID, final String id, final String role) {

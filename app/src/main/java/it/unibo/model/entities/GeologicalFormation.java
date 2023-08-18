@@ -18,13 +18,14 @@ public class GeologicalFormation {
     /**
      * Creates an instance of {@code GeologicalFormation}.
      * 
-     * @param id        the id
+     * @param id          the id
      * @param size        the size
      * @param type        the type
      * @param dangerLevel the danger level
      * @param description the description
      */
-    public GeologicalFormation(final String id, final String type, final int size, final int dangerLevel, final String description) {
+    public GeologicalFormation(final String id, final String type, final int size, final int dangerLevel,
+            final String description) {
         this.id = id;
         this.type = type;
         this.size = size;
@@ -98,7 +99,7 @@ public class GeologicalFormation {
      */
     @Override
     public boolean equals(final Object other) {
-        return other instanceof GeologicalFormation 
+        return other instanceof GeologicalFormation
                 && this.id.equals(((GeologicalFormation) other).getID())
                 && this.type.equals(((GeologicalFormation) other).getType())
                 && this.size == ((GeologicalFormation) other).getSize()

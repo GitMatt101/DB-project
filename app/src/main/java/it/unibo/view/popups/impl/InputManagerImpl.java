@@ -1,4 +1,4 @@
-package it.unibo.view.popups;
+package it.unibo.view.popups.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,9 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import it.unibo.common.Constants;
-import it.unibo.controller.Controller;
+import it.unibo.controller.api.Controller;
+import it.unibo.view.popups.PopupUtilities;
+import it.unibo.view.popups.api.InputManager;
+import it.unibo.view.popups.api.OutputManager;
 
-public class InputPopups {
+/**
+ * Implementation of {@link InputManager}.
+ */
+public class InputManagerImpl implements InputManager {
 
     private static final int FIELD_WIDTH = 300;
     private static final int FIELD_HEIGHT = 40;
@@ -26,10 +32,24 @@ public class InputPopups {
     private static final int VERTICAL_CELL_SPACING = 10;
     private static final java.awt.Font FIELD_FONT = new java.awt.Font("Arial", java.awt.Font.PLAIN, 20);
 
-    public InputPopups() {
+    private final OutputManager outputManager;
+    private final Controller controller;
+
+    /**
+     * Creates an instance of {@code InputManagerImpl} that also uses an
+     * {@link OutputManager}.
+     */
+    public InputManagerImpl(final Controller controller) {
+        this.outputManager = new OutputManagerImpl();
+        this.controller = controller;
     }
 
-    private static void showResultPopup(final boolean result) {
+    /**
+     * Displays a popup that shows the result of an operation.
+     * 
+     * @param result the result of the operation
+     */
+    private void showResultPopup(final boolean result) {
         if (result) {
             JOptionPane.showMessageDialog(null, Constants.SUCCESSFUL_REGISTRATION, Constants.POPUP_MESSAGE,
                     JOptionPane.INFORMATION_MESSAGE);
@@ -39,7 +59,12 @@ public class InputPopups {
         }
     }
 
-    private static void loadFieldProperties(final List<JTextField> textFields) {
+    /**
+     * Loads the properties of the text fields.
+     * 
+     * @param textFields the text fields
+     */
+    private void loadFieldProperties(final List<JTextField> textFields) {
         textFields.forEach(t -> {
             t.setPreferredSize(new java.awt.Dimension(FIELD_WIDTH, FIELD_HEIGHT));
             t.setFont(FIELD_FONT);
@@ -49,7 +74,11 @@ public class InputPopups {
         });
     }
 
-    public static void memberRegistration() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void memberRegistration() {
         final JTextField firstNameTip = new JTextField("Nome*");
         final JTextField firstNameField = new JTextField();
         final JTextField secondNameTip = new JTextField("Cognome*");
@@ -80,7 +109,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Registrazione membro", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final boolean result = Controller.registerMember(
+            final boolean result = this.controller.registerMember(
                     firstNameField.getText(),
                     secondNameField.getText(),
                     fiscalCodeField.getText(),
@@ -93,7 +122,11 @@ public class InputPopups {
         });
     }
 
-    public static void rovRegistration() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void rovRegistration() {
         final JTextField licensePlateTip = new JTextField("Targa*");
         final JTextField licensePlateField = new JTextField();
         final JTextField manufacturerTip = new JTextField("Casa produttrice*");
@@ -120,13 +153,13 @@ public class InputPopups {
             boolean result = false;
             try {
                 final Date date = new SimpleDateFormat("yyyy-MM-dd").parse(productionDateField.getText());
-                result = Controller.registerROV(
+                result = this.controller.registerROV(
                         licensePlateField.getText(),
                         manufacturerField.getText(),
                         serialNumberField.getText(),
                         date);
             } catch (final ParseException e1) {
-                Logger.getLogger(InputPopups.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
+                Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
                 result = false;
             }
             frame.dispose();
@@ -134,7 +167,11 @@ public class InputPopups {
         });
     }
 
-    public static void expeditionRegistration() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void expeditionRegistration() {
         final JTextField codeTip = new JTextField("Codice*");
         final JTextField codeField = new JTextField();
         final JTextField dateTip = new JTextField("Data* (YYYY-MM-DD)");
@@ -165,7 +202,7 @@ public class InputPopups {
             boolean result = false;
             try {
                 final Date tmpDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateField.getText());
-                result = Controller.registerExpedition(
+                result = this.controller.registerExpedition(
                         codeField.getText(),
                         tmpDate,
                         locationField.getText(),
@@ -173,7 +210,7 @@ public class InputPopups {
                         associationField.getText(),
                         groupField.getText());
             } catch (final ParseException e1) {
-                Logger.getLogger(InputPopups.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
+                Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
                 result = false;
             }
             frame.dispose();
@@ -181,7 +218,11 @@ public class InputPopups {
         });
     }
 
-    public static void sightingRegistration() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void sightingRegistration() {
         final JTextField codeTip = new JTextField("Codice*");
         final JTextField codeField = new JTextField();
         final JTextField expeditionTip = new JTextField("Codice spedizione*");
@@ -217,7 +258,7 @@ public class InputPopups {
             final String organismID = organismField.getText().length() != 0 ? organismField.getText() : null;
             final String wreckID = wreckField.getText().length() != 0 ? wreckField.getText() : null;
             final String geologicalFormationID = geoField.getText().length() != 0 ? geoField.getText() : null;
-            final boolean result = Controller.registerSighting(
+            final boolean result = this.controller.registerSighting(
                     codeField.getText(),
                     expeditionField.getText(),
                     depth,
@@ -230,7 +271,11 @@ public class InputPopups {
         });
     }
 
-    public static void extractionRegistration() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void extractionRegistration() {
         final JTextField codeTip = new JTextField("Codice*");
         final JTextField codeField = new JTextField();
         final JTextField expeditionTip = new JTextField("Codice spedizione*");
@@ -266,7 +311,7 @@ public class InputPopups {
         confirmButton.addActionListener(e -> {
             final int depth = depthField.getText().length() != 0 ? Integer.valueOf(depthField.getText()) : null;
             final String notes = notesField.getText().length() != 0 ? notesField.getText() : null;
-            final boolean result = Controller.registerExtraction(
+            final boolean result = this.controller.registerExtraction(
                     codeField.getText(),
                     expeditionField.getText(),
                     materialField.getText(),
@@ -278,7 +323,11 @@ public class InputPopups {
         });
     }
 
-    public static void speciesUpdate() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void speciesUpdate() {
         final JTextField idTip = new JTextField("ID*");
         final JTextField idField = new JTextField();
         final JTextField speciesTip = new JTextField("Nuova pecie*");
@@ -297,7 +346,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Aggiornamento specie", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final boolean result = Controller.updateSpecies(
+            final boolean result = this.controller.updateSpecies(
                     idField.getText(),
                     speciesField.getText());
             frame.dispose();
@@ -305,7 +354,11 @@ public class InputPopups {
         });
     }
 
-    public static void sightingsFilterChoice() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void sightingsFilter() {
         final JTextField locationTip = new JTextField("Luogo");
         final JTextField locationField = new JTextField();
         final JTextField minDepthTip = new JTextField("Profondità minima");
@@ -336,7 +389,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Filtro avvistamenti", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<String>> result = Controller.filterSightings(
+            final List<List<String>> result = this.controller.filterSightings(
                     locationField.getText().length() != 0 ? Optional.of(locationField.getText()) : Optional.empty(),
                     minDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(minDepthField.getText()))
                             : Optional.empty(),
@@ -347,11 +400,15 @@ public class InputPopups {
                     wreckField.getText().length() != 0 ? Optional.of(wreckField.getText()) : Optional.empty(),
                     idField.getText().length() != 0 ? Optional.of(idField.getText()) : Optional.empty());
             frame.dispose();
-            VisualizationPopups.showSightings(result);
+            this.outputManager.showSightings(result);
         });
     }
 
-    public static void extractionsFilterChoice() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void extractionsFilter() {
         final JTextField locationTip = new JTextField("Luogo");
         final JTextField locationField = new JTextField();
         final JTextField minDepthTip = new JTextField("Profondità minima");
@@ -377,7 +434,7 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Filtro prelievi", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<String>> result = Controller.filterExtractions(
+            final List<List<String>> result = this.controller.filterExtractions(
                     locationField.getText().length() != 0 ? Optional.of(locationField.getText()) : Optional.empty(),
                     minDepthField.getText().length() != 0 ? Optional.of(Integer.valueOf(minDepthField.getText()))
                             : Optional.empty(),
@@ -386,11 +443,15 @@ public class InputPopups {
                     expeditionField.getText().length() != 0 ? Optional.of(expeditionField.getText()) : Optional.empty(),
                     materialField.getText().length() != 0 ? Optional.of(materialField.getText()) : Optional.empty());
             frame.dispose();
-            VisualizationPopups.showExtractions(result);
+            this.outputManager.showExtractions(result);
         });
     }
 
-    public static void expeditionsAssociationFilterChoice() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void expeditionsFilterByAssociation() {
         final JTextField associationTip = new JTextField("Associazione");
         final JTextField associationField = new JTextField();
         loadFieldProperties(List.of(associationTip, associationField));
@@ -406,13 +467,17 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Selezione associazione", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<Object>> result = Controller.filterExpeditionsByAssociation(associationField.getText());
+            final List<List<Object>> result = this.controller.filterExpeditionsByAssociation(associationField.getText());
             frame.dispose();
-            VisualizationPopups.showExpeditions(result);
+            this.outputManager.showExpeditions(result);
         });
     }
 
-    public static void organismsExpeditionFilterChoice() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void organismsFilterByExpedition() {
         final JTextField codeTip = new JTextField("Codice spedizione");
         final JTextField codeField = new JTextField();
         loadFieldProperties(List.of(codeTip, codeField));
@@ -428,13 +493,17 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Selezione codice spedizione", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<String>> result = Controller.filterOrganismsByExpedition(codeField.getText());
+            final List<List<String>> result = this.controller.filterOrganismsByExpedition(codeField.getText());
             frame.dispose();
-            VisualizationPopups.showOrganisms(result);
+            this.outputManager.showOrganisms(result);
         });
     }
 
-    public static void geologicalFormationDangerLevelChoice() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void geologicalFormationFilterByDangerLevel() {
         final JTextField dangerTip = new JTextField("Grado di pericolo (1-5)");
         final JTextField dangerField = new JTextField();
         loadFieldProperties(List.of(dangerTip, dangerField));
@@ -451,18 +520,22 @@ public class InputPopups {
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             if (dangerField.getText().length() != 0) {
-                final List<List<String>> result = Controller
+                final List<List<String>> result = this.controller
                         .filterGeologicalFormationsByDangerLevel(Integer.valueOf(dangerField.getText()));
                 frame.dispose();
-                VisualizationPopups.showGeologicalFormationsAndLocations(result);
+                this.outputManager.showGeologicalFormationsAndLocations(result);
             } else {
                 frame.dispose();
-                VisualizationPopups.showGeologicalFormationsAndLocations(Collections.emptyList());
+                this.outputManager.showGeologicalFormationsAndLocations(Collections.emptyList());
             }
         });
     }
 
-    public static void wreckNameResearch() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void wrecksFitlerByName() {
         final JTextField nameTip = new JTextField("Nome");
         final JTextField nameField = new JTextField();
         loadFieldProperties(List.of(nameTip, nameField));
@@ -478,35 +551,17 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Selezione nome relitto", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<String>> result = Controller.filterLocationsByWreck(nameField.getText());
+            final List<List<String>> result = this.controller.filterLocationsByWreck(nameField.getText());
             frame.dispose();
-            VisualizationPopups.showWrecksAndLocations(result);
+            this.outputManager.showWrecksAndLocations(result);
         });
     }
 
-    public static void sightingsResearchByOrganismID() {
-        final JTextField idTip = new JTextField("ID");
-        final JTextField idField = new JTextField();
-        loadFieldProperties(List.of(idTip, idField));
-        final JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new java.awt.GridLayout(1, 2, HORIZONTAL_CELL_SPACING, VERTICAL_CELL_SPACING));
-        centerPanel.add(idTip);
-        centerPanel.add(idField);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Selezione ID organismo", mainPanel);
-        frame.setVisible(true);
-        confirmButton.addActionListener(e -> {
-            final List<List<Object>> result = Controller.getOrganismSightings(idField.getText());
-            frame.dispose();
-            VisualizationPopups.showSightingsAndLocations(result);
-        });
-    }
-
-    public static void analysesResearch() {
+    /**
+     * {@inhertidoc}
+     */
+    @Override
+    public void analysesFilterByMaterial() {
         final JTextField materialTip = new JTextField("Materiale");
         final JTextField materialField = new JTextField();
         loadFieldProperties(List.of(materialTip, materialField));
@@ -522,9 +577,9 @@ public class InputPopups {
         final JFrame frame = PopupUtilities.createFrame("Selezione materiale", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<String>> result = Controller.getAnalysesInfo(materialField.getText());
+            final List<List<String>> result = this.controller.getAnalysesInfo(materialField.getText());
             frame.dispose();
-            VisualizationPopups.showAnalysesAndLaboratories(result);
+            this.outputManager.showAnalysesAndLaboratories(result);
         });
     }
 

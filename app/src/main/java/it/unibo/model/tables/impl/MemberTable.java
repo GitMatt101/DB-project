@@ -102,6 +102,15 @@ public class MemberTable implements Table<Member, String> {
         }
     }
 
+    /**
+     * Retrieves all the {@link Member}s that have participated to a certain
+     * expedition, knowing the association that organized it and the group that
+     * participated.
+     * 
+     * @param associationName the name of the association
+     * @param groupID         the ID of the group
+     * @return a list of {@link Member}, or an empty list if no members were found
+     */
     public List<Member> getExpeditionPartecipants(final String associationName, final String groupID) {
         final String query = "SELECT * FROM " + TABLE_NAME
                 + " WHERE " + ASSOCIATION + "='" + associationName + "' AND " + GROUP + "='" + groupID + "'";
@@ -120,7 +129,8 @@ public class MemberTable implements Table<Member, String> {
     @Override
     public boolean save(final Member value) {
         final String query = "INSERT INTO " + TABLE_NAME + " ("
-                + FIRST_NAME + ", " + LAST_NAME + ", " + FISCAL_CODE + ", " + ASSOCIATION + ", " + GROUP + ", " + ID + ", " + ROLE
+                + FIRST_NAME + ", " + LAST_NAME + ", " + FISCAL_CODE + ", " + ASSOCIATION + ", " + GROUP + ", " + ID
+                + ", " + ROLE
                 + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, value.getFirstName());

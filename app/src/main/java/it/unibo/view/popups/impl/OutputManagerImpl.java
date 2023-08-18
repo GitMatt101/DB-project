@@ -1,4 +1,4 @@
-package it.unibo.view.popups;
+package it.unibo.view.popups.impl;
 
 import java.util.List;
 
@@ -11,8 +11,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import it.unibo.common.Pair;
+import it.unibo.view.popups.PopupUtilities;
+import it.unibo.view.popups.api.OutputManager;
 
-public class VisualizationPopups {
+/**
+ * Implementation of {@link OutputManager}.
+ */
+public class OutputManagerImpl implements OutputManager {
 
     private static final String FRAME_TITLE = "Risultati";
     private static final int LARGE_FONT_SIZE = 17;
@@ -21,10 +26,18 @@ public class VisualizationPopups {
     private static final Pair<Integer, Integer> LARGE_FIELD = new Pair<>(250, 50);
     private static final Pair<Integer, Integer> SMALL_FIELD = new Pair<>(180, 35);
 
-    public VisualizationPopups() {
+    /**
+     * Creates an instance of {@link OutputManagerImpl}.
+     */
+    public OutputManagerImpl() {
+        super();
     }
 
-    public static void showSightings(final List<List<String>> sightings) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showSightings(final List<List<String>> sightings) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("Codice avvistamento", "Codice spedizione", "Numero", "Profondità", "Note",
                         "ID organismo", "ID relitto", "ID formazione geologica"),
@@ -56,15 +69,16 @@ public class VisualizationPopups {
                 }
             }
         }
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showExtractions(final List<List<String>> extractions) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showExtractions(final List<List<String>> extractions) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("Codice prelievo", "Codice spedizione", "Numero", "Materiale", "Profondità", "Quantità",
                         "Note"),
@@ -93,15 +107,16 @@ public class VisualizationPopups {
                 centerPanel.add(blank);
             }
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showExpeditions(final List<List<Object>> expeditions) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showExpeditions(final List<List<Object>> expeditions) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("Codice", "Data", "Luogo", "Associazione", "Gruppo", "Membri-Ruoli"),
                 TOP_TEXT_SIZE, LARGE_FIELD);
@@ -153,7 +168,11 @@ public class VisualizationPopups {
         frame.setVisible(true);
     }
 
-    public static void showOrganisms(final List<List<String>> organisms) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showOrganisms(final List<List<String>> organisms) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(List.of("ID", "Specie", "Nome provvisorio",
                 "Nome comune", "Descrizione"), TOP_TEXT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
@@ -179,15 +198,16 @@ public class VisualizationPopups {
             });
             centerPanel.add(button);
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showWrecks(final List<List<String>> wrecks) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showWrecks(final List<List<String>> wrecks) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("ID", "Nome modello", "Data affondamento", "Lunghezza", "Descrizione"),
                 TOP_TEXT_SIZE, LARGE_FIELD);
@@ -208,17 +228,19 @@ public class VisualizationPopups {
             });
             centerPanel.add(button);
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showGeologicalFormations(final List<List<String>> geos) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showGeologicalFormations(final List<List<String>> geos) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
-                List.of("ID", "Tipologia", "Grado di pericolo", "Dimensioni"), TOP_TEXT_SIZE, LARGE_FIELD);
+                List.of("ID", "Tipologia", "Grado di pericolo", "Dimensioni", "Descrizione"), TOP_TEXT_SIZE,
+                LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(geos.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
@@ -236,18 +258,19 @@ public class VisualizationPopups {
             });
             centerPanel.add(button);
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showAssociations(final List<List<String>> associations) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showAssociations(final List<List<String>> associations) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("Nome", "Indirizzo"),
-                TOP_TEXT_SIZE, new Pair<>(LARGE_FIELD.getX()+300, LARGE_FIELD.getY()));
+                TOP_TEXT_SIZE, new Pair<>(LARGE_FIELD.getX() + 300, LARGE_FIELD.getY()));
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
         final JPanel centerPanel = PopupUtilities.createCenterPanel(associations.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
@@ -260,15 +283,16 @@ public class VisualizationPopups {
                 centerPanel.add(field);
             });
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showGeologicalFormationsAndLocations(final List<List<String>> geologicalFormations) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showGeologicalFormationsAndLocations(final List<List<String>> geologicalFormations) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("ID", "Tipologia", "Dimensioni", "Descrizione", "Luogo", "Paese"),
                 TOP_TEXT_SIZE, LARGE_FIELD);
@@ -277,22 +301,38 @@ public class VisualizationPopups {
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
                 Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * geologicalFormations.size());
-        geologicalFormations.forEach(s -> {
-            s.forEach(e -> {
-                final JTextArea field = new JTextArea(e);
-                PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
-                centerPanel.add(field);
-            });
+        geologicalFormations.forEach(g -> {
+            for (int i = 0; i < textFields.size(); i++) {
+                if (i == 3) {
+                    final String description = g.get(i);
+                    if (description.length() > 0) {
+                        final JButton button = new JButton("Apri descrizione");
+                        button.addActionListener(e -> {
+                            PopupUtilities.showPopup(description, "Descrizione");
+                        });
+                        centerPanel.add(button);
+                    } else {
+                        final JTextArea blank = new JTextArea();
+                        PopupUtilities.loadTextProperties(blank, LARGE_FONT_SIZE, LARGE_FIELD);
+                        centerPanel.add(blank);
+                    }
+                } else {
+                    final JTextArea field = new JTextArea(g.get(i));
+                    PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
+                    centerPanel.add(field);
+                }
+            }
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showWrecksAndLocations(final List<List<String>> values) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showWrecksAndLocations(final List<List<String>> values) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(List.of("ID", "Luogo", "Paese"),
                 TOP_TEXT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
@@ -307,15 +347,16 @@ public class VisualizationPopups {
                 centerPanel.add(field);
             });
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showSightingsAndLocations(final List<List<Object>> values) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showSightingsAndLocations(final List<List<Object>> values) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("Codice avvistamento", "Profondità", "Note", "Luogo", "Paese"),
                 TOP_TEXT_SIZE, LARGE_FIELD);
@@ -324,10 +365,10 @@ public class VisualizationPopups {
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
                 Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
                 Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * values.size());
-        values.forEach(s -> {
+        values.forEach(v -> {
             for (int i = 0; i < textFields.size(); i++) {
                 if (i == 2) {
-                    final String description = (String) s.get(i);
+                    final String description = (String) v.get(i);
                     if (description.length() > 0) {
                         final JButton button = new JButton("Apri note");
                         button.addActionListener(e -> {
@@ -340,40 +381,38 @@ public class VisualizationPopups {
                         centerPanel.add(blank);
                     }
                 } else {
-                    final JTextArea field = new JTextArea((String) s.get(i));
+                    final JTextArea field = new JTextArea((String) v.get(i));
                     PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                     centerPanel.add(field);
                 }
             }
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }
 
-    public static void showAnalysesAndLaboratories(final List<List<String>> analyses) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showAnalysesAndLaboratories(final List<List<String>> values) {
         final List<JTextField> textFields = PopupUtilities.createTextFields(
                 List.of("Codice analisi", "Descrizione", "Nome laboratorio", "ID laboratorio", "Indirizzo laboratorio"),
                 TOP_TEXT_SIZE, LARGE_FIELD);
         final JPanel topPanel = PopupUtilities.createTopPanel(textFields);
-        final JPanel centerPanel = PopupUtilities.createCenterPanel(analyses.size(), textFields.size());
+        final JPanel centerPanel = PopupUtilities.createCenterPanel(values.size(), textFields.size());
         final JScrollPane scrollPane = PopupUtilities.createScrollPane(centerPanel,
                 Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * analyses.size());
-        analyses.forEach(s -> {
-            s.forEach(e -> {
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * values.size());
+        values.forEach(v -> {
+            v.forEach(e -> {
                 final JTextArea field = new JTextArea(e);
                 PopupUtilities.loadTextProperties(field, LARGE_FONT_SIZE, LARGE_FIELD);
                 centerPanel.add(field);
             });
         });
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        final JPanel mainPanel = PopupUtilities.createMainPanel(topPanel, scrollPane);
         final JFrame frame = PopupUtilities.createFrame(FRAME_TITLE, mainPanel);
         frame.setVisible(true);
     }

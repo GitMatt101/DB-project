@@ -98,12 +98,21 @@ public class OrganismTable implements Table<Organism, String> {
         }
     }
 
+    /**
+     * Retrieves all {@link Organism}s that have been sighted during a certain
+     * {@link Expedition}.
+     * 
+     * @param expeditionCode the code of the expedition
+     * @return a List of all the organisms, or an empty List if no organisms have
+     *         been sighted during the expedition or something went wrong
+     */
     public List<Organism> filterByExpedition(final String expeditionCode) {
         final SightingTable sighting = new SightingTable(null);
         final String query = "SELECT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME + ", "
                 + DESCRIPTION
                 + " FROM " + TABLE_NAME + ", " + sighting.getTableName()
-                + " WHERE " + sighting.getTableName() + "." + sighting.getExpeditionCodeName() + "='" + expeditionCode + "'"
+                + " WHERE " + sighting.getTableName() + "." + sighting.getExpeditionCodeName() + "='" + expeditionCode
+                + "'"
                 + " AND " + sighting.getTableName() + "." + sighting.getOrganismIDName() + "=" + TABLE_NAME + "." + ID;
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);

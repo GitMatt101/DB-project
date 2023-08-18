@@ -11,16 +11,23 @@ import javax.swing.JTextField;
 
 import it.unibo.common.Constants;
 
+/**
+ * This class is used to create the logo and title of the app.
+ */
 public class LogoPanel extends JPanel {
 
     private static final int IMAGE_WIDTH = 275;
     private static final int IMAGE_HEIGHT = 275;
+    private static final int FONT_SIZE = 20;
 
+    /**
+     * Creates a new {@link JPanel} that contains the logo of the app and the title.
+     */
     public LogoPanel() {
         super();
         this.setLayout(new java.awt.BorderLayout());
         final JTextField text = new JTextField("DeepSea Expeditions");
-        text.setFont(new Font("Serif", Font.CENTER_BASELINE, 30));
+        text.setFont(new Font("Serif", Font.CENTER_BASELINE, FONT_SIZE));
         text.setForeground(Color.CYAN);
         text.setBackground(Constants.BACKGROUND_COLOR);
         text.setBorder(new javax.swing.border.LineBorder(Color.CYAN, 0));

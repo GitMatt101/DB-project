@@ -5,8 +5,14 @@ import javax.swing.JFrame;
 
 import it.unibo.view.panels.MainPanel;
 
+/**
+ * Window of the application.
+ */
 public class MainFrame extends JFrame {
 
+    /**
+     * Creates and displays a new {@link MainFrame}.
+     */
     public MainFrame() {
         super("DeepSea Expeditions");
         this.setIconImage(new ImageIcon("app\\src\\main\\resources\\app_icon.jpg").getImage());
@@ -17,5 +23,5 @@ public class MainFrame extends JFrame {
         this.setResizable(false);
         this.setVisible(true);
     }
-    
+
 }

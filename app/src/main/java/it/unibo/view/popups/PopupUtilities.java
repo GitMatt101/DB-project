@@ -100,4 +100,12 @@ public class PopupUtilities {
         frame.setVisible(true);
     }
 
+    public static JPanel createMainPanel(final JPanel topPanel, final JScrollPane scrollPane) {
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
+        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
+        return mainPanel;
+    }
+
 }

@@ -32,14 +32,14 @@ public class Sighting implements Event {
      *                              expedition
      * @param expeditionCode        the code of the expedition
      * @param depth                 the depth
-     * @param image                 the image
      * @param notes                 the notes
      * @param organismID            the ID of the organism
      * @param wreckID               the ID of the wreck
      * @param geologicalFormationID the ID of the geological formation
      */
-    public Sighting(final String code, final String expeditionCode, final int number, final Optional<Integer> depth, final Optional<String> notes, final Optional<String> organismID,
-            final Optional<String> wreckID, final Optional<String> geologicalFormationID) {
+    public Sighting(final String code, final String expeditionCode, final int number, final Optional<Integer> depth,
+            final Optional<String> notes, final Optional<String> organismID, final Optional<String> wreckID,
+            final Optional<String> geologicalFormationID) {
         this.code = code;
         this.expeditionCode = expeditionCode;
         this.number = number;
