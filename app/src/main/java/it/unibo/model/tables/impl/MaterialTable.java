@@ -50,7 +50,7 @@ public class MaterialTable implements Table<Material, String> {
     public Optional<Material> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readMaterialsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
@@ -96,7 +96,7 @@ public class MaterialTable implements Table<Material, String> {
     public boolean save(final Material value) {
         final String query = "INSERT INTO " + TABLE_NAME + " VALUES (?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getName());
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, value.getName());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(MaterialTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -120,7 +120,7 @@ public class MaterialTable implements Table<Material, String> {
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(MaterialTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

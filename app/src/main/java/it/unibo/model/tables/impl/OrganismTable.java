@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Organism;
 import it.unibo.model.tables.api.Table;
@@ -55,7 +56,7 @@ public class OrganismTable implements Table<Organism, String> {
     public Optional<Organism> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readOrganismsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
@@ -108,8 +109,8 @@ public class OrganismTable implements Table<Organism, String> {
      */
     public List<Organism> filterByExpedition(final String expeditionCode) {
         final SightingTable sighting = new SightingTable(null);
-        final String query = "SELECT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME + ", "
-                + DESCRIPTION
+        final String query = "SELECT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME 
+                + ", " + DESCRIPTION
                 + " FROM " + TABLE_NAME + ", " + sighting.getTableName()
                 + Constants.WHERE + sighting.getTableName() + "." + sighting.getExpeditionCodeName() + "='"
                 + expeditionCode + "'" + Constants.AND + sighting.getTableName() + "." + sighting.getOrganismIDName()
@@ -132,11 +133,12 @@ public class OrganismTable implements Table<Organism, String> {
                 + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME + ", " + DESCRIPTION
                 + ") VALUES (?,?,?,?,?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getId());
-            statement.setString(2, value.getSpecies().orElse(null));
-            statement.setString(3, value.getTemporaryName().orElse(null));
-            statement.setString(4, value.getCommonName().orElse(null));
-            statement.setString(5, value.getDescription());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), value.getId());
+            statement.setString(counter.getValueAndIncrement(), value.getSpecies().orElse(null));
+            statement.setString(counter.getValueAndIncrement(), value.getTemporaryName().orElse(null));
+            statement.setString(counter.getValueAndIncrement(), value.getCommonName().orElse(null));
+            statement.setString(counter.getValue(), value.getDescription());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -156,11 +158,12 @@ public class OrganismTable implements Table<Organism, String> {
                 + DESCRIPTION + Constants.QUESTION_MARK
                 + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, updatedValue.getSpecies().orElse(null));
-            statement.setString(2, updatedValue.getTemporaryName().orElse(null));
-            statement.setString(3, updatedValue.getCommonName().orElse(null));
-            statement.setString(4, updatedValue.getDescription());
-            statement.setString(5, updatedValue.getId());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getSpecies().orElse(null));
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getTemporaryName().orElse(null));
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getCommonName().orElse(null));
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getDescription());
+            statement.setString(counter.getValue(), updatedValue.getId());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -175,7 +178,7 @@ public class OrganismTable implements Table<Organism, String> {
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

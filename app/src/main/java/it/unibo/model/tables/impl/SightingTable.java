@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Organism;
 import it.unibo.model.entities.impl.Sighting;
@@ -97,7 +98,7 @@ public class SightingTable implements Table<Sighting, String> {
     public Optional<Sighting> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readSightingsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
@@ -153,12 +154,9 @@ public class SightingTable implements Table<Sighting, String> {
         final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + Constants.WHERE + EXPEDITION
                 + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, expeditionCode);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, expeditionCode);
             final ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) + 1;
-            }
-            return -1;
+            return resultSet.next() ? resultSet.getInt(Constants.SINGLE_QUERY_VALUE_INDEX) + 1 : 1;
         } catch (final SQLException e) {
             Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return -1;
@@ -267,33 +265,34 @@ public class SightingTable implements Table<Sighting, String> {
                 + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION + ")"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getCode());
-            statement.setString(2, value.getExpeditionCode());
-            statement.setInt(3, value.getNumber());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), value.getCode());
+            statement.setString(counter.getValueAndIncrement(), value.getExpeditionCode());
+            statement.setInt(counter.getValueAndIncrement(), value.getNumber());
             if (value.getDepth().isEmpty()) {
-                statement.setNull(4, java.sql.Types.INTEGER);
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.INTEGER);
             } else {
-                statement.setInt(4, value.getDepth().get());
+                statement.setInt(counter.getValueAndIncrement(), value.getDepth().get());
             }
             if (value.getNotes().isEmpty()) {
-                statement.setNull(5, java.sql.Types.NCHAR);
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.NCHAR);
             } else {
-                statement.setString(5, value.getNotes().get());
+                statement.setString(counter.getValueAndIncrement(), value.getNotes().get());
             }
             if (value.getOrganismID().isEmpty()) {
-                statement.setNull(6, java.sql.Types.VARCHAR);
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.VARCHAR);
             } else {
-                statement.setString(6, value.getOrganismID().get());
+                statement.setString(counter.getValueAndIncrement(), value.getOrganismID().get());
             }
             if (value.getWreckID().isEmpty()) {
-                statement.setNull(7, java.sql.Types.VARCHAR);
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.VARCHAR);
             } else {
-                statement.setString(7, value.getWreckID().get());
+                statement.setString(counter.getValueAndIncrement(), value.getWreckID().get());
             }
             if (value.getGeologicalFormationID().isEmpty()) {
-                statement.setNull(8, java.sql.Types.VARCHAR);
+                statement.setNull(counter.getValue(), java.sql.Types.VARCHAR);
             } else {
-                statement.setString(8, value.getGeologicalFormationID().get());
+                statement.setString(counter.getValue(), value.getGeologicalFormationID().get());
             }
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
@@ -311,8 +310,9 @@ public class SightingTable implements Table<Sighting, String> {
                 + DEPTH + " = ?, " + NOTES + " = ?, "
                 + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setInt(1, updatedValue.getDepth().orElse(null));
-            statement.setString(2, updatedValue.getNotes().orElse(null));
+            final Counter counter = new Counter(1);
+            statement.setInt(counter.getValueAndIncrement(), updatedValue.getDepth().orElse(null));
+            statement.setString(counter.getValue(), updatedValue.getNotes().orElse(null));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -327,7 +327,7 @@ public class SightingTable implements Table<Sighting, String> {
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

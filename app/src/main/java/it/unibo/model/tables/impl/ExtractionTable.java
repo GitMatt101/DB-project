@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.impl.Extraction;
 import it.unibo.model.tables.api.Table;
@@ -57,7 +58,7 @@ public class ExtractionTable implements Table<Extraction, String> {
     public Optional<Extraction> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readExtractionsFromResultSet(resultSet).stream().findFirst();
         } catch (SQLException e) {
@@ -112,12 +113,9 @@ public class ExtractionTable implements Table<Extraction, String> {
         final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + Constants.WHERE + EXPEDITION
                 + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, expeditionCode);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, expeditionCode);
             final ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) + 1;
-            }
-            return -1;
+            return resultSet.next() ? resultSet.getInt(Constants.SINGLE_QUERY_VALUE_INDEX) + 1 : 1;
         } catch (final SQLException e) {
             Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
             return -1;
@@ -134,7 +132,7 @@ public class ExtractionTable implements Table<Extraction, String> {
     public List<Extraction> filterByMaterial(final String materialName) {
         final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + MATERIAL + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, materialName);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, materialName);
             final ResultSet resultSet = statement.executeQuery();
             return readExtractionsFromResultSet(resultSet);
         } catch (final SQLException e) {
@@ -214,13 +212,14 @@ public class ExtractionTable implements Table<Extraction, String> {
                 + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + MATERIAL + ", " + DEPTH + ", " + AMOUNT
                 + ", " + NOTES + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getCode());
-            statement.setString(2, value.getExpeditionCode());
-            statement.setInt(3, value.getNumber());
-            statement.setString(4, value.getMaterialName());
-            statement.setInt(5, value.getDepth().orElse(null));
-            statement.setFloat(6, value.getAmount());
-            statement.setString(7, value.getNotes().orElse(null));
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), value.getCode());
+            statement.setString(counter.getValueAndIncrement(), value.getExpeditionCode());
+            statement.setInt(counter.getValueAndIncrement(), value.getNumber());
+            statement.setString(counter.getValueAndIncrement(), value.getMaterialName());
+            statement.setInt(counter.getValueAndIncrement(), value.getDepth().orElse(null));
+            statement.setFloat(counter.getValueAndIncrement(), value.getAmount());
+            statement.setString(counter.getValue(), value.getNotes().orElse(null));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -242,13 +241,14 @@ public class ExtractionTable implements Table<Extraction, String> {
                 + NOTES + Constants.QUESTION_MARK
                 + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, updatedValue.getExpeditionCode());
-            statement.setInt(2, updatedValue.getNumber());
-            statement.setString(3, updatedValue.getMaterialName());
-            statement.setInt(4, updatedValue.getDepth().orElse(null));
-            statement.setFloat(5, updatedValue.getAmount());
-            statement.setString(6, updatedValue.getNotes().orElse(null));
-            statement.setString(7, updatedValue.getCode());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getExpeditionCode());
+            statement.setInt(counter.getValueAndIncrement(), updatedValue.getNumber());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getMaterialName());
+            statement.setInt(counter.getValueAndIncrement(), updatedValue.getDepth().orElse(null));
+            statement.setFloat(counter.getValueAndIncrement(), updatedValue.getAmount());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getNotes().orElse(null));
+            statement.setString(counter.getValue(), updatedValue.getCode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -263,7 +263,7 @@ public class ExtractionTable implements Table<Extraction, String> {
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

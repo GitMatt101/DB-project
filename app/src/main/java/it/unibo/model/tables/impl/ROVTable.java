@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.ROV;
 import it.unibo.model.tables.api.Table;
@@ -53,7 +54,7 @@ public class ROVTable implements Table<ROV, String> {
     public Optional<ROV> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readROVsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
@@ -103,10 +104,11 @@ public class ROVTable implements Table<ROV, String> {
     public boolean save(final ROV value) {
         final String query = "INSERT INTO " + TABLE_NAME + " VALUES (?,?,?,?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getLicensePlate());
-            statement.setString(2, value.getSerialNumber());
-            statement.setString(3, value.getManufacturerName());
-            statement.setDate(4, new java.sql.Date(value.getProductionDate().getTime()));
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), value.getLicensePlate());
+            statement.setString(counter.getValueAndIncrement(), value.getSerialNumber());
+            statement.setString(counter.getValueAndIncrement(), value.getManufacturerName());
+            statement.setDate(counter.getValue(), new java.sql.Date(value.getProductionDate().getTime()));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -125,10 +127,11 @@ public class ROVTable implements Table<ROV, String> {
                 + DATE + Constants.QUESTION_MARK
                 + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, updatedValue.getSerialNumber());
-            statement.setString(2, updatedValue.getManufacturerName());
-            statement.setDate(3, new java.sql.Date(updatedValue.getProductionDate().getTime()));
-            statement.setString(4, updatedValue.getLicensePlate());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getSerialNumber());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getManufacturerName());
+            statement.setDate(counter.getValueAndIncrement(), new java.sql.Date(updatedValue.getProductionDate().getTime()));
+            statement.setString(counter.getValue(), updatedValue.getLicensePlate());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -143,7 +146,7 @@ public class ROVTable implements Table<ROV, String> {
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

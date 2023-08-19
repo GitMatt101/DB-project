@@ -67,9 +67,10 @@ public class InputManagerImpl implements InputManager {
 
     /**
      * Creates empty Strings that will be used to create the text fields for user
-     * input
+     * input.
      * 
      * @param number the number of blank String
+     * @return a list of empty Strings
      */
     private List<String> createEmptyStrings(final int number) {
         final List<String> list = new ArrayList<>();
@@ -89,7 +90,7 @@ public class InputManagerImpl implements InputManager {
             if (jtf.getText().length() != 0) {
                 jtf.setEditable(false);
             }
-            textFields.put(counter.getCounterAndIncrement(), jtf);
+            textFields.put(counter.getValueAndIncrement(), jtf);
         });
         return textFields;
     }
@@ -147,13 +148,13 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.registerMember(
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounter()).getText());
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValue()).getText());
             frame.dispose();
             showResultPopup(result);
         });
@@ -180,11 +181,11 @@ public class InputManagerImpl implements InputManager {
             try {
                 final Counter counter = new Counter();
                 result = this.controller.registerROV(
-                        fields.get(counter.getCounterAndIncrement()).getText(),
-                        fields.get(counter.getCounterAndIncrement()).getText(),
-                        fields.get(counter.getCounterAndIncrement()).getText(),
+                        fields.get(counter.getValueAndIncrement()).getText(),
+                        fields.get(counter.getValueAndIncrement()).getText(),
+                        fields.get(counter.getValueAndIncrement()).getText(),
                         new SimpleDateFormat("yyyy-MM-dd", Locale.ITALIAN)
-                                .parse(fields.get(counter.getCounter()).getText()));
+                                .parse(fields.get(counter.getValue()).getText()));
             } catch (final ParseException e1) {
                 Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
                 result = false;
@@ -215,13 +216,13 @@ public class InputManagerImpl implements InputManager {
             try {
                 final Counter counter = new Counter();
                 result = this.controller.registerExpedition(
-                        fields.get(counter.getCounterAndIncrement()).getText(),
+                        fields.get(counter.getValueAndIncrement()).getText(),
                         new SimpleDateFormat("yyyy-MM-dd", Locale.ITALIAN)
-                                .parse(fields.get(counter.getCounterAndIncrement()).getText()),
-                        fields.get(counter.getCounterAndIncrement()).getText(),
-                        fields.get(counter.getCounterAndIncrement()).getText(),
-                        fields.get(counter.getCounterAndIncrement()).getText(),
-                        fields.get(counter.getCounter()).getText());
+                                .parse(fields.get(counter.getValueAndIncrement()).getText()),
+                        fields.get(counter.getValueAndIncrement()).getText(),
+                        fields.get(counter.getValueAndIncrement()).getText(),
+                        fields.get(counter.getValueAndIncrement()).getText(),
+                        fields.get(counter.getValue()).getText());
             } catch (final ParseException e1) {
                 Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
                 result = false;
@@ -251,13 +252,13 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.registerSighting(
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    getIntegerOrNull(fields.get(counter.getCounterAndIncrement()).getText()),
-                    getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText()),
-                    getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText()),
-                    getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText()),
-                    getStringOrNull(fields.get(counter.getCounter()).getText()));
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText()),
+                    getStringOrNull(fields.get(counter.getValueAndIncrement()).getText()),
+                    getStringOrNull(fields.get(counter.getValueAndIncrement()).getText()),
+                    getStringOrNull(fields.get(counter.getValueAndIncrement()).getText()),
+                    getStringOrNull(fields.get(counter.getValue()).getText()));
             frame.dispose();
             showResultPopup(result);
         });
@@ -282,12 +283,12 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.registerExtraction(
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    getIntegerOrNull(fields.get(counter.getCounterAndIncrement()).getText()),
-                    Float.valueOf(fields.get(counter.getCounterAndIncrement()).getText()),
-                    getStringOrNull(fields.get(counter.getCounter()).getText()));
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText()),
+                    Float.valueOf(fields.get(counter.getValueAndIncrement()).getText()),
+                    getStringOrNull(fields.get(counter.getValue()).getText()));
             frame.dispose();
             showResultPopup(result);
         });
@@ -311,8 +312,8 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.updateSpecies(
-                    fields.get(counter.getCounterAndIncrement()).getText(),
-                    fields.get(counter.getCounter()).getText());
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValue()).getText());
             frame.dispose();
             showResultPopup(result);
         });
@@ -338,13 +339,13 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final List<List<String>> result = this.controller.filterSightings(
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounter()).getText())));
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValue()).getText())));
             frame.dispose();
             this.outputManager.showSightings(result);
         });
@@ -369,11 +370,11 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final List<List<String>> result = this.controller.filterExtractions(
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounterAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getCounter()).getText())));
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValue()).getText())));
             frame.dispose();
             this.outputManager.showExtractions(result);
         });
@@ -442,7 +443,8 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final String field = fields.get(0).getText();
             final Integer value = Integer.valueOf(field);
-            if (field.length() != 0 && value >= 0 && value <= 5) {
+            if (field.length() != 0 && value >= Constants.MINIMUM_DANGER_LEVEL
+                    && value <= Constants.MAXIMUM_DANGER_LEVEL) {
                 final List<List<String>> result = this.controller.filterGeologicalFormationsByDangerLevel(value);
                 frame.dispose();
                 this.outputManager.showGeologicalFormationsAndLocations(result);

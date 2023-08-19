@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Company;
 import it.unibo.model.tables.api.Table;
@@ -54,7 +55,7 @@ public class CompanyTable implements Table<Company, String> {
     public Optional<Company> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + this.tableName + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readManufacturersFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
@@ -100,8 +101,9 @@ public class CompanyTable implements Table<Company, String> {
     public boolean save(final Company value) {
         final String query = "INSERT INTO " + this.tableName + " VALUES (?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getName());
-            statement.setString(2, value.getAddress());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), value.getName());
+            statement.setString(counter.getValue(), value.getAddress());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -118,8 +120,9 @@ public class CompanyTable implements Table<Company, String> {
                 + ADDRESS + Constants.QUESTION_MARK
                 + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, updatedValue.getAddress());
-            statement.setString(2, updatedValue.getName());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getAddress());
+            statement.setString(counter.getValue(), updatedValue.getName());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -134,7 +137,7 @@ public class CompanyTable implements Table<Company, String> {
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + this.tableName + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

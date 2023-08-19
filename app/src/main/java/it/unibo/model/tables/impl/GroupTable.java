@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Counter;
 import it.unibo.common.Pair;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Group;
@@ -56,8 +57,9 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
                 + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK
                 + Constants.AND + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey.getX());
-            statement.setString(2, primaryKey.getY());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), primaryKey.getX());
+            statement.setString(counter.getValue(), primaryKey.getY());
             final ResultSet resultSet = statement.executeQuery();
             return readGroupsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
@@ -107,9 +109,10 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
                 + ASSOCIATION + ", " + ID + ", " + NAME + ")"
                 + " VALUES (?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getAssociationName());
-            statement.setString(2, value.getID());
-            statement.setString(3, value.getName());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), value.getAssociationName());
+            statement.setString(counter.getValueAndIncrement(), value.getID());
+            statement.setString(counter.getValue(), value.getName());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -127,9 +130,10 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
                 + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK
                 + Constants.AND + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, updatedValue.getName());
-            statement.setString(2, updatedValue.getAssociationName());
-            statement.setString(3, updatedValue.getID());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getName());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getAssociationName());
+            statement.setString(counter.getValue(), updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -146,8 +150,9 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
                 + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK
                 + Constants.AND + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey.getX());
-            statement.setString(2, primaryKey.getY());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), primaryKey.getX());
+            statement.setString(counter.getValue(), primaryKey.getY());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

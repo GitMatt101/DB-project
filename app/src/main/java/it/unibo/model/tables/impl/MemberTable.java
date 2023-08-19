@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.impl.Member;
 import it.unibo.model.tables.api.Table;
@@ -57,7 +58,7 @@ public class MemberTable implements Table<Member, String> {
     public Optional<Member> findByPrimaryKey(final String primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readOperatorsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
@@ -133,13 +134,14 @@ public class MemberTable implements Table<Member, String> {
                 + ", " + ROLE
                 + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, value.getFirstName());
-            statement.setString(2, value.getLastName());
-            statement.setString(3, value.getFiscalCode());
-            statement.setString(4, value.getAssociationName());
-            statement.setString(5, value.getGroupID());
-            statement.setString(6, value.getID());
-            statement.setString(7, value.getRole());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), value.getFirstName());
+            statement.setString(counter.getValueAndIncrement(), value.getLastName());
+            statement.setString(counter.getValueAndIncrement(), value.getFiscalCode());
+            statement.setString(counter.getValueAndIncrement(), value.getAssociationName());
+            statement.setString(counter.getValueAndIncrement(), value.getGroupID());
+            statement.setString(counter.getValueAndIncrement(), value.getID());
+            statement.setString(counter.getValue(), value.getRole());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -161,12 +163,13 @@ public class MemberTable implements Table<Member, String> {
                 + ROLE + Constants.QUESTION_MARK
                 + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, updatedValue.getFirstName());
-            statement.setString(2, updatedValue.getLastName());
-            statement.setString(3, updatedValue.getAssociationName());
-            statement.setString(4, updatedValue.getGroupID());
-            statement.setString(5, updatedValue.getID());
-            statement.setString(6, updatedValue.getFiscalCode());
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getFirstName());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getLastName());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getAssociationName());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getGroupID());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getID());
+            statement.setString(counter.getValue(), updatedValue.getFiscalCode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
@@ -181,7 +184,7 @@ public class MemberTable implements Table<Member, String> {
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(1, primaryKey);
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);

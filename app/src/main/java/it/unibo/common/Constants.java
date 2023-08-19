@@ -82,6 +82,21 @@ public final class Constants {
      */
     public static final String AND = " AND ";
 
+    /**
+     * Number used for prepared statements when the query only has one "?".
+     */
+    public static final int SINGLE_QUERY_VALUE_INDEX = 1;
+
+    /**
+     * Minimum value for geological formations' danger level.
+     */
+    public static final int MINIMUM_DANGER_LEVEL = 0;
+
+    /**
+     * Maximum value for geological formations' danger level.
+     */
+    public static final int MAXIMUM_DANGER_LEVEL = 5;
+
     private Constants() {
     }
 

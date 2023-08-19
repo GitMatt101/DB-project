@@ -6,47 +6,56 @@ package it.unibo.common;
  */
 public class Counter {
 
-    private int counter;
+    private int value;
 
     /**
      * Creates an instance of {@code Counter} and sets it to 0.
      */
     public Counter() {
-        this.counter = 0;
+        this.value = 0;
     }
 
     /**
-     * Increments the counter by 1.
+     * Creates an instance of {@code Counter} and initializes the value.
+     * 
+     * @param startValue the starting value
+     */
+    public Counter(final int startValue) {
+        this.value = startValue;
+    }
+
+    /**
+     * Increments the value by 1.
      */
     public void increment() {
-        this.counter++;
+        this.value++;
     }
 
     /**
-     * Retrieves the current counter value.
+     * Retrieves the current value.
      * 
-     * @return the current counter value
+     * @return the current value
      */
-    public int getCounter() {
-        return this.counter;
+    public int getValue() {
+        return this.value;
     }
 
     /**
-     * Retrieves the current counter value and then increments it.
+     * Retrieves the current value and then increments it.
      * 
-     * @return the current counter value
+     * @return the current value
      */
-    public int getCounterAndIncrement() {
-        final int c = getCounter();
+    public int getValueAndIncrement() {
+        final int c = getValue();
         increment();
         return c;
     }
 
     /**
-     * Resets the counter to 0.
+     * Resets the value to 0.
      */
     public void reset() {
-        this.counter = 0;
+        this.value = 0;
     }
 
 }
