@@ -22,7 +22,6 @@ import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.common.Pair;
 import it.unibo.controller.api.Controller;
-import it.unibo.view.popups.PopupUtilities;
 import it.unibo.view.popups.api.InputManager;
 import it.unibo.view.popups.api.OutputManager;
 
@@ -129,6 +128,16 @@ public class InputManagerImpl implements InputManager {
         return text.length() != 0 ? Integer.valueOf(text) : null;
     }
 
+    private JFrame createFrame(final String title, final JPanel mainPanel) {
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setTitle(title);
+        frame.getContentPane().add(mainPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        return frame;
+    }
+
     /**
      * {@inheritDoc}.
      */
@@ -143,7 +152,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Registrazione membro", mainPanel);
+        final JFrame frame = createFrame("Registrazione membro", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
@@ -174,7 +183,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Registrazione ROV", mainPanel);
+        final JFrame frame = createFrame("Registrazione ROV", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             boolean result;
@@ -209,7 +218,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Registrazione spedizione", mainPanel);
+        final JFrame frame = createFrame("Registrazione spedizione", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             boolean result;
@@ -247,7 +256,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Registrazione avvistamento", mainPanel);
+        final JFrame frame = createFrame("Registrazione avvistamento", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
@@ -278,7 +287,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Registrazione prelievo", mainPanel);
+        final JFrame frame = createFrame("Registrazione prelievo", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
@@ -307,7 +316,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Aggiornamento specie", mainPanel);
+        final JFrame frame = createFrame("Aggiornamento specie", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
@@ -334,7 +343,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Filtro avvistamenti", mainPanel);
+        final JFrame frame = createFrame("Filtro avvistamenti", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
@@ -365,7 +374,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Filtro prelievi", mainPanel);
+        final JFrame frame = createFrame("Filtro prelievi", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
@@ -393,7 +402,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Selezione associazione", mainPanel);
+        final JFrame frame = createFrame("Selezione associazione", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<Object>> result = this.controller
@@ -416,7 +425,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Selezione codice spedizione", mainPanel);
+        final JFrame frame = createFrame("Selezione codice spedizione", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = this.controller.filterOrganismsByExpedition(fields.get(0).getText());
@@ -438,7 +447,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Selezione grado di pericolo", mainPanel);
+        final JFrame frame = createFrame("Selezione grado di pericolo", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final String field = fields.get(0).getText();
@@ -468,7 +477,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Selezione nome relitto", mainPanel);
+        final JFrame frame = createFrame("Selezione nome relitto", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = this.controller.filterLocationsByWreck(fields.get(0).getText());
@@ -490,7 +499,7 @@ public class InputManagerImpl implements InputManager {
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
         final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = PopupUtilities.createFrame("Selezione materiale", mainPanel);
+        final JFrame frame = createFrame("Selezione materiale", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = this.controller.getAnalysesInfo(fields.get(0).getText());

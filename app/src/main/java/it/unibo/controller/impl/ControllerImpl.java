@@ -235,7 +235,13 @@ public class ControllerImpl implements Controller {
             attributes.add(s.getCode());
             attributes.add(s.getExpeditionCode());
             attributes.add(String.valueOf(s.getNumber()));
-            s.getDepth().ifPresentOrElse(d -> attributes.add(d + "m"), () -> attributes.add("[NON SPECIFICATA]"));
+            s.getDepth().ifPresentOrElse(d -> {
+                if (d > 0) {
+                    attributes.add(d + "m");
+                } else {
+                    attributes.add("[NON SPECIFICATA]");
+                }
+            }, () -> attributes.add("[NON SPECIFICATA]"));
             s.getNotes().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             s.getOrganismID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             s.getWreckID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
@@ -373,7 +379,13 @@ public class ControllerImpl implements Controller {
             list.add(s.getCode());
             list.add(s.getExpeditionCode());
             list.add(String.valueOf(s.getNumber()));
-            s.getDepth().ifPresentOrElse(d -> list.add(String.valueOf(d)), () -> list.add("[NON SPECIFICATA]"));
+            s.getDepth().ifPresentOrElse(d -> {
+                if (d > 0) {
+                    list.add(d + "m");
+                } else {
+                    list.add("[NON SPECIFICATA]");
+                }
+            }, () -> list.add("[NON SPECIFICATA]"));
             s.getNotes().ifPresentOrElse(list::add, () -> list.add(""));
             s.getOrganismID().ifPresentOrElse(list::add, () -> list.add(""));
             s.getWreckID().ifPresentOrElse(list::add, () -> list.add(""));
@@ -399,7 +411,13 @@ public class ControllerImpl implements Controller {
             list.add(s.getExpeditionCode());
             list.add(String.valueOf(s.getNumber()));
             list.add(s.getMaterialName());
-            s.getDepth().ifPresentOrElse(d -> list.add(String.valueOf(d)), () -> list.add("[NON SPECIFICATA]"));
+            s.getDepth().ifPresentOrElse(d -> {
+                if (d > 0) {
+                    list.add(d + "m");
+                } else {
+                    list.add("[NON SPECIFICATA]");
+                }
+            }, () -> list.add("[NON SPECIFICATA]"));
             list.add(String.valueOf(s.getAmount()));
             s.getNotes().ifPresentOrElse(n -> list.add(n), () -> list.add(""));
             output.add(list);
