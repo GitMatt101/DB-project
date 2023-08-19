@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Laboratory;
 import it.unibo.model.tables.api.Table;
 
@@ -25,17 +26,16 @@ public class LaboratoryTable implements Table<Laboratory, String> {
     private static final String ID = "ID";
     private static final String NAME = "Nome";
     private static final String ADDRESS = "Indirizzo";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code LaboratoryTable}.
      * 
-     * @param connection
+     * @param provider the provider of the connection to the database
      */
-    public LaboratoryTable(final Connection connection) {
-        this.connection = connection;
+    public LaboratoryTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -51,7 +51,7 @@ public class LaboratoryTable implements Table<Laboratory, String> {
      */
     @Override
     public Optional<Laboratory> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ID + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -63,7 +63,8 @@ public class LaboratoryTable implements Table<Laboratory, String> {
     }
 
     /**
-     * Given a ResultSet read all the laboratories in it and collects them in a List.
+     * Given a ResultSet read all the laboratories in it and collects them in a
+     * List.
      * 
      * @param resultSet a ResultSet from which the Laboratories will be extracted
      * @return a List of all the laboratories in the ResultSet
@@ -119,9 +120,9 @@ public class LaboratoryTable implements Table<Laboratory, String> {
     @Override
     public boolean update(final Laboratory updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + NAME + PREPARE_FIELD + ", "
-                + ADDRESS + PREPARE_FIELD
-                + " WHERE " + ID + PREPARE_FIELD;
+                + NAME + Constants.QUESTION_MARK + ", "
+                + ADDRESS + Constants.QUESTION_MARK
+                + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getName());
             statement.setString(2, updatedValue.getAddress());
@@ -138,7 +139,7 @@ public class LaboratoryTable implements Table<Laboratory, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + ID + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

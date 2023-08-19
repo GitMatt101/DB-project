@@ -83,21 +83,12 @@ public interface OutputManager {
     void showWrecksAndLocations(List<List<String>> values);
 
     /**
-     * Displays a popup that shows a list of sightings and the location they occured
-     * in.
-     * 
-     * @param values a list of sightings and locations, each element represented by
-     *               a list of their attributes.
-     */
-    void showSightingsAndLocations(final List<List<Object>> values);
-
-    /**
      * Displays a popup that shows a list of analyses and the laboratories that
      * performed them.
      * 
      * @param values a list of analyses and laboratories, each element represented
      *               by a list of their attributes
      */
-    void showAnalysesAndLaboratories(final List<List<String>> values);
+    void showAnalysesAndLaboratories(List<List<String>> values);
 
 }

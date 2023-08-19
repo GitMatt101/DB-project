@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Country;
 import it.unibo.model.tables.api.Table;
 
@@ -22,17 +23,16 @@ public class CountryTable implements Table<Country, String> {
     private static final String TABLE_NAME = "paesi";
 
     private static final String NAME = "Nome";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code CountryTable}.
      * 
-     * @param connection
+     * @param provider the provider of the connection to the database
      */
-    public CountryTable(final Connection connection) {
-        this.connection = connection;
+    public CountryTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -57,7 +57,7 @@ public class CountryTable implements Table<Country, String> {
      */
     @Override
     public Optional<Country> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -127,7 +127,7 @@ public class CountryTable implements Table<Country, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

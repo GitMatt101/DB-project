@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.impl.Extraction;
 import it.unibo.model.tables.api.Table;
 
@@ -29,17 +30,16 @@ public class ExtractionTable implements Table<Extraction, String> {
     private static final String DEPTH = "Profondita";
     private static final String AMOUNT = "Quantita";
     private static final String NOTES = "Note";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code AnalysisTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection to the database
      */
-    public ExtractionTable(final Connection connection) {
-        this.connection = connection;
+    public ExtractionTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -55,7 +55,7 @@ public class ExtractionTable implements Table<Extraction, String> {
      */
     @Override
     public Optional<Extraction> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -109,7 +109,8 @@ public class ExtractionTable implements Table<Extraction, String> {
      * @return the next number if everything went fine, -1 otherwise
      */
     public int getNextNumber(final String expeditionCode) {
-        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + " WHERE " + EXPEDITION + PREPARE_FIELD;
+        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + Constants.WHERE + EXPEDITION
+                + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, expeditionCode);
             final ResultSet resultSet = statement.executeQuery();
@@ -131,7 +132,7 @@ public class ExtractionTable implements Table<Extraction, String> {
      *         wrong
      */
     public List<Extraction> filterByMaterial(final String materialName) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + MATERIAL + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + MATERIAL + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, materialName);
             final ResultSet resultSet = statement.executeQuery();
@@ -146,11 +147,11 @@ public class ExtractionTable implements Table<Extraction, String> {
      * Method used to check if the next condition in a query is the first or not.
      * 
      * @param query the query
-     * @return " AND " if the query already has other conditions, " WHERE "
-     *         otherwise
+     * @return Constants.AND if the query already has other conditions,
+     *         Constants.WHERE otherwise
      */
     private String appendToQuery(final String query) {
-        return query.length() > 0 ? " AND " : " WHERE ";
+        return query.length() > 0 ? Constants.AND : Constants.WHERE;
     }
 
     /**
@@ -172,8 +173,9 @@ public class ExtractionTable implements Table<Extraction, String> {
         final StringBuilder queryBuilder = new StringBuilder(1000);
         locationName.ifPresent(l -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + " = " + exp.getTableName() + "." + exp.getCodeName()
-                    + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get() + "'");
+            queryBuilder.append(EXPEDITION + Constants.EQUALS + exp.getTableName() + "." + exp.getCodeName()
+                    + Constants.AND + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get()
+                    + "'");
         });
         minDepth.ifPresent(m -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
@@ -185,11 +187,11 @@ public class ExtractionTable implements Table<Extraction, String> {
         });
         expeditionCode.ifPresent(e -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + " = '" + expeditionCode.get() + "'");
+            queryBuilder.append(EXPEDITION + Constants.EQUALS_GIVEN_STRING + expeditionCode.get() + "'");
         });
         materialName.ifPresent(m -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(MATERIAL + " = '" + materialName.get() + "'");
+            queryBuilder.append(MATERIAL + Constants.EQUALS_GIVEN_STRING + materialName.get() + "'");
         });
         final String query = "SELECT " + TABLE_NAME + "." + CODE + "," + EXPEDITION + "," + NUMBER + "," + MATERIAL
                 + "," + DEPTH + ","
@@ -209,9 +211,8 @@ public class ExtractionTable implements Table<Extraction, String> {
     @Override
     public boolean save(final Extraction value) {
         final String query = "INSERT INTO " + TABLE_NAME + "("
-                + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + MATERIAL + ", " + DEPTH + ", " + AMOUNT + ", "
-                + NOTES
-                + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + MATERIAL + ", " + DEPTH + ", " + AMOUNT
+                + ", " + NOTES + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, value.getCode());
             statement.setString(2, value.getExpeditionCode());
@@ -233,13 +234,13 @@ public class ExtractionTable implements Table<Extraction, String> {
     @Override
     public boolean update(final Extraction updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + EXPEDITION + PREPARE_FIELD + ", "
-                + NUMBER + PREPARE_FIELD + ", "
-                + MATERIAL + PREPARE_FIELD + ", "
-                + DEPTH + PREPARE_FIELD + ", "
-                + AMOUNT + PREPARE_FIELD + ", "
-                + NOTES + PREPARE_FIELD
-                + " WHERE " + CODE + PREPARE_FIELD;
+                + EXPEDITION + Constants.QUESTION_MARK + ", "
+                + NUMBER + Constants.QUESTION_MARK + ", "
+                + MATERIAL + Constants.QUESTION_MARK + ", "
+                + DEPTH + Constants.QUESTION_MARK + ", "
+                + AMOUNT + Constants.QUESTION_MARK + ", "
+                + NOTES + Constants.QUESTION_MARK
+                + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getExpeditionCode());
             statement.setInt(2, updatedValue.getNumber());
@@ -260,7 +261,7 @@ public class ExtractionTable implements Table<Extraction, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

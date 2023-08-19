@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Location;
 import it.unibo.model.tables.api.Table;
 
@@ -22,17 +23,16 @@ public class LocationTable implements Table<Location, String> {
     private static final String TABLE_NAME = "luoghi";
     private static final String NAME = "Nome";
     private static final String COUNTRY_NAME = "NomePaese";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code LocationTable}.
      * 
-     * @param connection
+     * @param provider the provider of the connection to the database
      */
-    public LocationTable(final Connection connection) {
-        this.connection = connection;
+    public LocationTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -66,7 +66,7 @@ public class LocationTable implements Table<Location, String> {
      */
     @Override
     public Optional<Location> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + NAME + " = ?";
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + NAME + " = ?";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -141,7 +141,7 @@ public class LocationTable implements Table<Location, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

@@ -26,7 +26,7 @@ public class ROV {
         this.licensePlate = licensePlate;
         this.manufacturerName = manufacturerName;
         this.serialNumber = serialNumber;
-        this.productionDate = productionDate;
+        this.productionDate = new Date(productionDate.getTime());
     }
 
     /**
@@ -62,7 +62,7 @@ public class ROV {
      * @return the production date
      */
     public Date getProductionDate() {
-        return this.productionDate;
+        return new Date(this.productionDate.getTime());
     }
 
     /**

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import it.unibo.view.popups.api.OutputManager;
  */
 public class InputManagerImpl implements InputManager {
 
+    private static final String CONFIRM = "Conferma";
     private static final int FIELD_WIDTH = 300;
     private static final int FIELD_HEIGHT = 40;
     private static final int HORIZONTAL_CELL_SPACING = 0;
@@ -38,6 +40,8 @@ public class InputManagerImpl implements InputManager {
     /**
      * Creates an instance of {@code InputManagerImpl} that also uses an
      * {@link OutputManager}.
+     * 
+     * @param controller the {@link Controller} used to execute operations
      */
     public InputManagerImpl(final Controller controller) {
         this.outputManager = new OutputManagerImpl();
@@ -75,7 +79,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void memberRegistration() {
@@ -104,7 +108,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Registrazione membro", mainPanel);
         frame.setVisible(true);
@@ -123,7 +127,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void rovRegistration() {
@@ -145,14 +149,14 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Registrazione ROV", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            boolean result = false;
+            boolean result;
             try {
-                final Date date = new SimpleDateFormat("yyyy-MM-dd").parse(productionDateField.getText());
+                final Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALIAN).parse(productionDateField.getText());
                 result = this.controller.registerROV(
                         licensePlateField.getText(),
                         manufacturerField.getText(),
@@ -168,7 +172,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void expeditionRegistration() {
@@ -194,14 +198,14 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Registrazione spedizione", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            boolean result = false;
+            boolean result;
             try {
-                final Date tmpDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateField.getText());
+                final Date tmpDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALIAN).parse(dateField.getText());
                 result = this.controller.registerExpedition(
                         codeField.getText(),
                         tmpDate,
@@ -219,7 +223,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void sightingRegistration() {
@@ -248,7 +252,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Registrazione avvistamento", mainPanel);
         frame.setVisible(true);
@@ -272,7 +276,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void extractionRegistration() {
@@ -304,12 +308,12 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Registrazione prelievo", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final int depth = depthField.getText().length() != 0 ? Integer.valueOf(depthField.getText()) : null;
+            final Integer depth = depthField.getText().length() != 0 ? Integer.valueOf(depthField.getText()) : null;
             final String notes = notesField.getText().length() != 0 ? notesField.getText() : null;
             final boolean result = this.controller.registerExtraction(
                     codeField.getText(),
@@ -324,7 +328,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void speciesUpdate() {
@@ -341,7 +345,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Aggiornamento specie", mainPanel);
         frame.setVisible(true);
@@ -355,7 +359,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void sightingsFilter() {
@@ -384,7 +388,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Filtro avvistamenti", mainPanel);
         frame.setVisible(true);
@@ -405,7 +409,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void extractionsFilter() {
@@ -429,7 +433,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Filtro prelievi", mainPanel);
         frame.setVisible(true);
@@ -448,7 +452,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void expeditionsFilterByAssociation() {
@@ -462,19 +466,20 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Selezione associazione", mainPanel);
         frame.setVisible(true);
         confirmButton.addActionListener(e -> {
-            final List<List<Object>> result = this.controller.filterExpeditionsByAssociation(associationField.getText());
+            final List<List<Object>> result = this.controller
+                    .filterExpeditionsByAssociation(associationField.getText());
             frame.dispose();
             this.outputManager.showExpeditions(result);
         });
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void organismsFilterByExpedition() {
@@ -488,7 +493,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Selezione codice spedizione", mainPanel);
         frame.setVisible(true);
@@ -500,7 +505,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void geologicalFormationFilterByDangerLevel() {
@@ -514,7 +519,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Selezione grado di pericolo", mainPanel);
         frame.setVisible(true);
@@ -532,7 +537,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void wrecksFitlerByName() {
@@ -546,7 +551,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Selezione nome relitto", mainPanel);
         frame.setVisible(true);
@@ -558,7 +563,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * {@inhertidoc}
+     * {@inheritDoc}.
      */
     @Override
     public void analysesFilterByMaterial() {
@@ -572,7 +577,7 @@ public class InputManagerImpl implements InputManager {
         final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new java.awt.BorderLayout());
         mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
-        final JButton confirmButton = new JButton("Conferma");
+        final JButton confirmButton = new JButton(CONFIRM);
         mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
         final JFrame frame = PopupUtilities.createFrame("Selezione materiale", mainPanel);
         frame.setVisible(true);

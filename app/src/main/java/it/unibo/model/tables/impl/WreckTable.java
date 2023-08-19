@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Wreck;
 import it.unibo.model.tables.api.Table;
 
@@ -26,17 +27,17 @@ public class WreckTable implements Table<Wreck, String> {
     private static final String WRECKAGE_DATE = "DataAffondamento";
     private static final String SIZE = "Dimensioni";
     private static final String DESCRIPTION = "Descrizione";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code WreckTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
-    public WreckTable(final Connection connection) {
-        this.connection = connection;
+    public WreckTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -52,7 +53,7 @@ public class WreckTable implements Table<Wreck, String> {
      */
     @Override
     public Optional<Wreck> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ID + " = ?";
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + " = ?";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -102,7 +103,7 @@ public class WreckTable implements Table<Wreck, String> {
      * @return a List of all the wrecks with the given name
      */
     public List<Wreck> filterByName(final String wreckName) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + NAME + "='" + wreckName + "'";
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + NAME + "='" + wreckName + "'";
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);
             return readWrecksFromResultSet(resultSet);
@@ -143,11 +144,11 @@ public class WreckTable implements Table<Wreck, String> {
     @Override
     public boolean update(final Wreck updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + NAME + PREPARE_FIELD + ", "
-                + WRECKAGE_DATE + PREPARE_FIELD + ", "
-                + SIZE + PREPARE_FIELD + ", "
-                + DESCRIPTION + PREPARE_FIELD
-                + " WHERE " + ID + PREPARE_FIELD;
+                + NAME + Constants.QUESTION_MARK + ", "
+                + WRECKAGE_DATE + Constants.QUESTION_MARK + ", "
+                + SIZE + Constants.QUESTION_MARK + ", "
+                + DESCRIPTION + Constants.QUESTION_MARK
+                + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getName().orElse(null));
             if (updatedValue.getWreckageDate().isPresent()) {
@@ -170,7 +171,7 @@ public class WreckTable implements Table<Wreck, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + ID + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Organism;
 import it.unibo.model.entities.impl.Sighting;
 import it.unibo.model.tables.api.Table;
@@ -31,17 +32,16 @@ public class SightingTable implements Table<Sighting, String> {
     private static final String ORGANISM = "IDorganismo";
     private static final String WRECK = "IDrelitto";
     private static final String GEOLOGICAL_FORMATION = "IDformazionegeologica";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code AnalysisTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection to the database
      */
-    public SightingTable(final Connection connection) {
-        this.connection = connection;
+    public SightingTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -95,7 +95,7 @@ public class SightingTable implements Table<Sighting, String> {
      */
     @Override
     public Optional<Sighting> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -150,7 +150,8 @@ public class SightingTable implements Table<Sighting, String> {
      * @return the next number if everything went fine, -1 otherwise
      */
     public int getNextNumber(final String expeditionCode) {
-        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + " WHERE " + EXPEDITION + PREPARE_FIELD;
+        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + Constants.WHERE + EXPEDITION
+                + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, expeditionCode);
             final ResultSet resultSet = statement.executeQuery();
@@ -172,7 +173,7 @@ public class SightingTable implements Table<Sighting, String> {
      *         found
      */
     public List<Sighting> filterByOrganism(final String organismID) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ORGANISM + "='" + organismID + "'";
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ORGANISM + "='" + organismID + "'";
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);
             return readSightingsFromResultSet(resultSet);
@@ -186,11 +187,12 @@ public class SightingTable implements Table<Sighting, String> {
      * Method used to check if the next condition in a query is the first or not.
      * 
      * @param query the query
-     * @return " AND " if the query already has other conditions, " WHERE "
+     * @return Constants.AND if the query already has other conditions,
+     *         Constants.WHERE
      *         otherwise
      */
     private String appendToQuery(final String query) {
-        return query.length() > 0 ? " AND " : " WHERE ";
+        return query.length() > 0 ? Constants.AND : Constants.WHERE;
     }
 
     /**
@@ -208,15 +210,15 @@ public class SightingTable implements Table<Sighting, String> {
      *         wrong
      */
     public List<Sighting> filter(final Optional<String> locationName, final Optional<Integer> minDepth,
-            final Optional<Integer> maxDepth,
-            final Optional<String> expeditionCode, final Optional<String> organismID, final Optional<String> wreckID,
-            final Optional<String> geologicalFormationID) {
+            final Optional<Integer> maxDepth, final Optional<String> expeditionCode, final Optional<String> organismID,
+            final Optional<String> wreckID, final Optional<String> geologicalFormationID) {
         final ExpeditionTable exp = new ExpeditionTable(null);
         final StringBuilder queryBuilder = new StringBuilder(1000);
         locationName.ifPresent(l -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + " = " + exp.getTableName() + "." + exp.getCodeName()
-                    + " AND " + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get() + "'");
+            queryBuilder.append(EXPEDITION + Constants.EQUALS + exp.getTableName() + "." + exp.getCodeName()
+                    + Constants.AND + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get()
+                    + "'");
         });
         minDepth.ifPresent(m -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
@@ -228,17 +230,18 @@ public class SightingTable implements Table<Sighting, String> {
         });
         expeditionCode.ifPresent(e -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + " = '" + expeditionCode.get() + "'");
+            queryBuilder.append(EXPEDITION + Constants.EQUALS_GIVEN_STRING + expeditionCode.get() + "'");
         });
         if (organismID.isPresent()) {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(ORGANISM + " = '" + organismID.get() + "'");
+            queryBuilder.append(ORGANISM + Constants.EQUALS_GIVEN_STRING + organismID.get() + "'");
         } else if (wreckID.isPresent()) {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(WRECK + " = '" + wreckID.get() + "'");
+            queryBuilder.append(WRECK + Constants.EQUALS_GIVEN_STRING + wreckID.get() + "'");
         } else if (geologicalFormationID.isPresent()) {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(GEOLOGICAL_FORMATION + " = '" + geologicalFormationID.get() + "'");
+            queryBuilder
+                    .append(GEOLOGICAL_FORMATION + Constants.EQUALS_GIVEN_STRING + geologicalFormationID.get() + "'");
         }
         final String query = "SELECT " + TABLE_NAME + "." + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + DEPTH
                 + ", " + NOTES + ", " + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION
@@ -306,7 +309,7 @@ public class SightingTable implements Table<Sighting, String> {
     public boolean update(final Sighting updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
                 + DEPTH + " = ?, " + NOTES + " = ?, "
-                + " WHERE " + CODE + PREPARE_FIELD;
+                + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, updatedValue.getDepth().orElse(null));
             statement.setString(2, updatedValue.getNotes().orElse(null));
@@ -322,7 +325,7 @@ public class SightingTable implements Table<Sighting, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

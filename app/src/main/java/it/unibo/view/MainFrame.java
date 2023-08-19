@@ -10,6 +10,8 @@ import it.unibo.view.panels.MainPanel;
  */
 public class MainFrame extends JFrame {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Creates and displays a new {@link MainFrame}.
      */

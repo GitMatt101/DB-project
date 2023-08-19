@@ -1,6 +1,5 @@
 package it.unibo.controller.impl;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -50,26 +49,18 @@ import it.unibo.controller.api.Controller;
  */
 public class ControllerImpl implements Controller {
 
-    private final Connection connection;
+    private final ConnectionProvider provider;
     private final InputManager inputManager;
     private final OutputManager outputManager;
 
+    /**
+     * Creates an instance of {@code ControllerImpl}, setting up the connection to
+     * the database and the input/output managers.
+     */
     public ControllerImpl() {
-        this.connection = new ConnectionProvider(
-                Constants.USERNAME,
-                Constants.PASSWORD,
-                Constants.DATABASE_NAME)
-                .getMySQLConnection();
+        this.provider = new ConnectionProvider(Constants.USERNAME, Constants.PASSWORD, Constants.DATABASE_NAME);
         this.inputManager = new InputManagerImpl(this);
         this.outputManager = new OutputManagerImpl();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Connection getConnection() {
-        return this.connection;
     }
 
     /**
@@ -181,7 +172,7 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public void showAllOrganisms() {
-        final List<Organism> organisms = new OrganismTable(this.connection).findAll();
+        final List<Organism> organisms = new OrganismTable(this.provider).findAll();
         final List<List<String>> output = new LinkedList<>();
         organisms.forEach(o -> {
             final List<String> attributes = new ArrayList<>();
@@ -200,14 +191,14 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public void showAllWrecks() {
-        final List<Wreck> wrecks = new WreckTable(this.connection).findAll();
+        final List<Wreck> wrecks = new WreckTable(this.provider).findAll();
         final List<List<String>> output = new LinkedList<>();
         wrecks.forEach(w -> {
             final List<String> attributes = new ArrayList<>();
             attributes.add(w.getId());
             w.getName().ifPresentOrElse(n -> attributes.add(n), () -> attributes.add(""));
             w.getWreckageDate().ifPresentOrElse(d -> attributes.add(d.toString()), () -> attributes.add("Sconosciuta"));
-            attributes.add(String.valueOf(w.getLength()) + "m");
+            attributes.add(w.getLength() + "m");
             attributes.add(w.getDescription());
             output.add(attributes);
         });
@@ -219,13 +210,13 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public void showAllGeologicalFormations() {
-        final List<GeologicalFormation> geologicalFormations = new GeologicalFormationTable(this.connection).findAll();
+        final List<GeologicalFormation> geologicalFormations = new GeologicalFormationTable(this.provider).findAll();
         final List<List<String>> output = new LinkedList<>();
         geologicalFormations.forEach(g -> {
             final List<String> attributes = new ArrayList<>();
             attributes.add(g.getID());
             attributes.add(g.getType());
-            attributes.add(String.valueOf(g.getSize()) + "m2");
+            attributes.add(g.getSize() + "m2");
             attributes.add(g.getDescription());
             output.add(attributes);
         });
@@ -237,20 +228,14 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public void showAllSightings() {
-        final List<Sighting> sightings = new SightingTable(this.connection).findAll();
+        final List<Sighting> sightings = new SightingTable(this.provider).findAll();
         final List<List<String>> output = new LinkedList<>();
         sightings.forEach(s -> {
             final List<String> attributes = new ArrayList<>();
             attributes.add(s.getCode());
             attributes.add(s.getExpeditionCode());
             attributes.add(String.valueOf(s.getNumber()));
-            s.getDepth().ifPresentOrElse(d -> {
-                if (d > 0) {
-                    attributes.add(String.valueOf(d) + "m");
-                } else {
-                    attributes.add("[NON SPECIFICATA]");
-                }
-            }, () -> attributes.add("[NON SPECIFICATA]"));
+            s.getDepth().ifPresentOrElse(d -> attributes.add(d + "m"), () -> attributes.add("[NON SPECIFICATA]"));
             s.getNotes().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             s.getOrganismID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             s.getWreckID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
@@ -265,7 +250,7 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public void showAllAssociations() {
-        final List<Company> associations = new CompanyTable(this.connection, "associazioni").findAll();
+        final List<Company> associations = new CompanyTable(this.provider, "associazioni").findAll();
         final List<List<String>> output = new LinkedList<>();
         associations.forEach(a -> {
             final List<String> attributes = new ArrayList<>();
@@ -281,7 +266,7 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public void showAllExpeditions() {
-        final List<Expedition> expeditions = new ExpeditionTable(this.connection).findAll();
+        final List<Expedition> expeditions = new ExpeditionTable(this.provider).findAll();
         final List<List<Object>> output = new LinkedList<>();
         expeditions.forEach(e -> {
             final List<Object> attributes = new ArrayList<>();
@@ -291,7 +276,7 @@ public class ControllerImpl implements Controller {
             attributes.add(e.getAssociationName());
             attributes.add(e.getGroupID());
             final List<Object> names = new ArrayList<>();
-            new MemberTable(this.connection).getExpeditionPartecipants(e.getAssociationName(), e.getGroupID())
+            new MemberTable(this.provider).getExpeditionPartecipants(e.getAssociationName(), e.getGroupID())
                     .forEach(o -> {
                         names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());
                     });
@@ -307,7 +292,7 @@ public class ControllerImpl implements Controller {
     @Override
     public boolean registerMember(final String firstName, final String lastName, final String fiscalCode,
             final String associationName, final String groupID, final String id, final String role) {
-        return new MemberTable(this.connection)
+        return new MemberTable(this.provider)
                 .save(new Member(firstName, lastName, fiscalCode, associationName, groupID, id, role));
     }
 
@@ -317,7 +302,7 @@ public class ControllerImpl implements Controller {
     @Override
     public boolean registerROV(final String licensePlate, final String manufacturerName,
             final String serialNumber, final Date productionDate) {
-        return new ROVTable(this.connection)
+        return new ROVTable(this.provider)
                 .save(new ROV(licensePlate, manufacturerName, serialNumber, productionDate));
     }
 
@@ -327,7 +312,7 @@ public class ControllerImpl implements Controller {
     @Override
     public boolean registerExpedition(final String code, final Date date, final String locationName,
             final String rovLicencePlate, final String associationName, final String groupID) {
-        return new ExpeditionTable(this.connection)
+        return new ExpeditionTable(this.provider)
                 .save(new Expedition(code, date, locationName, rovLicencePlate, groupID, associationName));
     }
 
@@ -338,13 +323,12 @@ public class ControllerImpl implements Controller {
     public boolean registerSighting(final String code, final String expeditionCode,
             final Integer depth, final String notes, final String organismID, final String wreckID,
             final String geologicalFormationID) {
-        final int number = new SightingTable(this.connection).getNextNumber(expeditionCode);
-        return number != -1 ? new SightingTable(this.connection)
+        final int number = new SightingTable(this.provider).getNextNumber(expeditionCode);
+        return number != -1 && new SightingTable(this.provider)
                 .save(new Sighting(code, expeditionCode, number,
                         Optional.ofNullable(depth), Optional.ofNullable(notes),
                         Optional.ofNullable(organismID), Optional.ofNullable(wreckID),
-                        Optional.ofNullable(geologicalFormationID)))
-                : false;
+                        Optional.ofNullable(geologicalFormationID)));
     }
 
     /**
@@ -352,12 +336,11 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public boolean registerExtraction(final String code, final String expeditionCode, final String materialName,
-            final int depth, final float amount, final String notes) {
-        final int number = new ExtractionTable(this.connection).getNextNumber(expeditionCode);
-        return number != -1 ? new ExtractionTable(this.connection)
+            final Integer depth, final Float amount, final String notes) {
+        final int number = new ExtractionTable(this.provider).getNextNumber(expeditionCode);
+        return number != -1 && new ExtractionTable(this.provider)
                 .save(new Extraction(code, expeditionCode, number, materialName, Optional.ofNullable(depth), amount,
-                        Optional.ofNullable(notes)))
-                : false;
+                        Optional.ofNullable(notes)));
     }
 
     /**
@@ -365,10 +348,10 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public boolean updateSpecies(final String organismID, final String updatedSpecies) {
-        final Optional<Organism> organism = new OrganismTable(this.connection).findByPrimaryKey(organismID);
+        final Optional<Organism> organism = new OrganismTable(this.provider).findByPrimaryKey(organismID);
         if (organism.isPresent()) {
             final Organism org = organism.get();
-            return new OrganismTable(this.connection).update(new Organism(organismID, Optional.of(updatedSpecies),
+            return new OrganismTable(this.provider).update(new Organism(organismID, Optional.of(updatedSpecies),
                     Optional.empty(), org.getCommonName(), org.getDescription()));
         }
         return false;
@@ -382,7 +365,7 @@ public class ControllerImpl implements Controller {
             final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
             final Optional<String> expeditionCode, final Optional<String> organismID, final Optional<String> wreckID,
             final Optional<String> geologicalFormationID) {
-        final List<Sighting> sightings = new SightingTable(this.connection)
+        final List<Sighting> sightings = new SightingTable(this.provider)
                 .filter(locationName, minDepth, maxDepth, expeditionCode, organismID, wreckID, geologicalFormationID);
         final List<List<String>> output = new LinkedList<>();
         sightings.forEach(s -> {
@@ -407,7 +390,7 @@ public class ControllerImpl implements Controller {
     public List<List<String>> filterExtractions(final Optional<String> locationName,
             final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
             final Optional<String> expeditionCode, final Optional<String> materialName) {
-        final List<Extraction> extractions = new ExtractionTable(this.connection)
+        final List<Extraction> extractions = new ExtractionTable(this.provider)
                 .filter(locationName, minDepth, maxDepth, expeditionCode, materialName);
         final List<List<String>> output = new LinkedList<>();
         extractions.forEach(s -> {
@@ -429,7 +412,7 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public List<List<Object>> filterExpeditionsByAssociation(final String associationName) {
-        final List<Expedition> expeditions = new ExpeditionTable(this.connection).filterByAssociation(associationName);
+        final List<Expedition> expeditions = new ExpeditionTable(this.provider).filterByAssociation(associationName);
         final List<List<Object>> output = new LinkedList<>();
         expeditions.forEach(s -> {
             final List<Object> list = new ArrayList<>();
@@ -439,7 +422,7 @@ public class ControllerImpl implements Controller {
             list.add(s.getAssociationName());
             list.add(s.getGroupID());
             final List<Object> names = new ArrayList<>();
-            new MemberTable(this.connection).getExpeditionPartecipants(s.getAssociationName(), s.getGroupID())
+            new MemberTable(this.provider).getExpeditionPartecipants(s.getAssociationName(), s.getGroupID())
                     .forEach(o -> {
                         names.add(o.getFirstName() + " " + o.getLastName() + "-" + o.getRole());
                     });
@@ -454,7 +437,7 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public List<List<String>> filterOrganismsByExpedition(final String expeditionCode) {
-        final List<Organism> organisms = new OrganismTable(this.connection).filterByExpedition(expeditionCode);
+        final List<Organism> organisms = new OrganismTable(this.provider).filterByExpedition(expeditionCode);
         final List<List<String>> output = new LinkedList<>();
         organisms.forEach(o -> {
             final List<String> attributes = new ArrayList<>();
@@ -472,8 +455,8 @@ public class ControllerImpl implements Controller {
      * {@inheritDoc}
      */
     @Override
-    public List<List<String>> filterGeologicalFormationsByDangerLevel(final int dangerLevel) {
-        final List<GeologicalFormation> geologicalFormations = new GeologicalFormationTable(this.connection)
+    public List<List<String>> filterGeologicalFormationsByDangerLevel(final Integer dangerLevel) {
+        final List<GeologicalFormation> geologicalFormations = new GeologicalFormationTable(this.provider)
                 .filterByDangerLevel(dangerLevel);
         final ExpeditionTable expeditionTable = new ExpeditionTable(null);
         final SightingTable sightingTable = new SightingTable(null);
@@ -483,13 +466,13 @@ public class ControllerImpl implements Controller {
             final String query = "SELECT " + locationTable.getName() + "," + locationTable.getCountryName()
                     + " FROM " + locationTable.getTableName() + "," + expeditionTable.getTableName() + ","
                     + sightingTable.getTableName()
-                    + " WHERE " + locationTable.getTableName() + "." + locationTable.getName()
+                    + Constants.WHERE + locationTable.getTableName() + "." + locationTable.getName()
                     + "=" + expeditionTable.getTableName() + "." + expeditionTable.getLocationName()
-                    + " AND " + sightingTable.getTableName() + "." + sightingTable.getExpeditionCodeName()
+                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getExpeditionCodeName()
                     + "=" + expeditionTable.getTableName() + "." + expeditionTable.getCodeName()
-                    + " AND " + sightingTable.getTableName() + "." + sightingTable.getGeologicalFormationName()
+                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getGeologicalFormationName()
                     + "='" + g.getID() + "'";
-            try (Statement statement = this.connection.createStatement()) {
+            try (Statement statement = this.provider.getMySQLConnection().createStatement()) {
                 final ResultSet resultSet = statement.executeQuery(query);
                 final List<String> list = new ArrayList<>();
                 list.add(g.getID());
@@ -512,7 +495,7 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public List<List<String>> filterLocationsByWreck(final String wreckName) {
-        final List<Wreck> wrecks = new WreckTable(this.connection).filterByName(wreckName);
+        final List<Wreck> wrecks = new WreckTable(this.provider).filterByName(wreckName);
         final ExpeditionTable expeditionTable = new ExpeditionTable(null);
         final SightingTable sightingTable = new SightingTable(null);
         final LocationTable locationTable = new LocationTable(null);
@@ -523,13 +506,13 @@ public class ControllerImpl implements Controller {
             final String query = "SELECT " + locationTable.getName() + "," + locationTable.getCountryName()
                     + " FROM " + locationTable.getTableName() + "," + expeditionTable.getTableName() + ","
                     + sightingTable.getTableName()
-                    + " WHERE " + locationTable.getTableName() + "." + locationTable.getName()
+                    + Constants.WHERE + locationTable.getTableName() + "." + locationTable.getName()
                     + "=" + expeditionTable.getTableName() + "." + expeditionTable.getLocationName()
-                    + " AND " + sightingTable.getTableName() + "." + sightingTable.getExpeditionCodeName()
+                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getExpeditionCodeName()
                     + "=" + expeditionTable.getTableName() + "." + expeditionTable.getCodeName()
-                    + " AND " + sightingTable.getTableName() + "." + sightingTable.getWreckName()
+                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getWreckName()
                     + "='" + w.getId() + "'";
-            try (Statement statement = this.connection.createStatement()) {
+            try (Statement statement = this.provider.getMySQLConnection().createStatement()) {
                 final ResultSet resultSet = statement.executeQuery(query);
                 list.add(resultSet.getString(locationTable.getName()));
                 list.add(resultSet.getString(locationTable.getCountryName()));
@@ -547,13 +530,13 @@ public class ControllerImpl implements Controller {
      */
     @Override
     public List<List<String>> getAnalysesInfo(final String materialName) {
-        final List<Extraction> extractions = new ExtractionTable(this.connection).filterByMaterial(materialName);
-        final AnalysisTable analysisTable = new AnalysisTable(this.connection);
+        final List<Extraction> extractions = new ExtractionTable(this.provider).filterByMaterial(materialName);
+        final AnalysisTable analysisTable = new AnalysisTable(this.provider);
         final List<List<String>> output = new LinkedList<>();
         extractions.forEach(e -> {
             final Optional<Analysis> analysis = analysisTable.findByExtractionCode(e.getCode());
             analysis.ifPresent(a -> {
-                final Optional<Laboratory> laboratory = new LaboratoryTable(this.connection)
+                final Optional<Laboratory> laboratory = new LaboratoryTable(this.provider)
                         .findByPrimaryKey(analysis.get().getLaboratoryID());
                 laboratory.ifPresent(l -> {
                     final List<String> attributes = new ArrayList<>();

@@ -13,6 +13,8 @@ import it.unibo.controller.impl.ControllerImpl;
  */
 public class OperationPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int ROWS = 5;
     private static final int COLUMNS = 3;
     private static final int HORIZONTAL_SPACING = 10;

@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Analysis;
 import it.unibo.model.tables.api.Table;
 
@@ -25,17 +26,16 @@ public class AnalysisTable implements Table<Analysis, String> {
     private static final String EXTRACTION_CODE = "CodicePrelievo";
     private static final String DESCRIPTION = "Descrizione";
     private static final String LABORATORY_ID = "IDlaboratorio";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code AnalysisTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database
      */
-    public AnalysisTable(final Connection connection) {
-        this.connection = connection;
+    public AnalysisTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -51,7 +51,7 @@ public class AnalysisTable implements Table<Analysis, String> {
      */
     @Override
     public Optional<Analysis> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -103,7 +103,8 @@ public class AnalysisTable implements Table<Analysis, String> {
      *         empty {@link Optional} otherwise
      */
     public Optional<Analysis> findByExtractionCode(final String extractionCode) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + EXTRACTION_CODE + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + EXTRACTION_CODE
+                + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, extractionCode);
             final ResultSet resultSet = statement.executeQuery();
@@ -140,10 +141,10 @@ public class AnalysisTable implements Table<Analysis, String> {
     @Override
     public boolean update(final Analysis updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + EXTRACTION_CODE + PREPARE_FIELD + ", "
-                + DESCRIPTION + PREPARE_FIELD + ", "
-                + LABORATORY_ID + PREPARE_FIELD
-                + " WHERE " + CODE + PREPARE_FIELD;
+                + EXTRACTION_CODE + Constants.QUESTION_MARK + ", "
+                + DESCRIPTION + Constants.QUESTION_MARK + ", "
+                + LABORATORY_ID + Constants.QUESTION_MARK
+                + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getExtractionCode());
             statement.setString(2, updatedValue.getDescription());
@@ -161,7 +162,7 @@ public class AnalysisTable implements Table<Analysis, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

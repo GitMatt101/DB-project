@@ -1,6 +1,5 @@
 package it.unibo.controller.api;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -15,14 +14,10 @@ import it.unibo.model.entities.impl.Extraction;
 import it.unibo.model.entities.impl.Member;
 import it.unibo.model.entities.impl.Sighting;
 
+/**
+ * This interface models a controller according to the MVC architecture pattern.
+ */
 public interface Controller {
-
-    /**
-     * Retrieves the connection to the database.
-     * 
-     * @return the connection to the database
-     */
-    Connection getConnection();
 
     /**
      * Shows all the {@link Organism}s in the database.
@@ -196,7 +191,7 @@ public interface Controller {
      * @param notes          the notes of the extraction (null if not specified)
      * @return true if the operation is successful, false otherwise
      */
-    boolean registerExtraction(String code, String expeditionCode, String materialName, int depth, float amount,
+    boolean registerExtraction(String code, String expeditionCode, String materialName, Integer depth, Float amount,
             String notes);
 
     /**
@@ -311,7 +306,7 @@ public interface Controller {
      *         <li>name of the country</li>
      *         </ul>
      */
-    List<List<String>> filterGeologicalFormationsByDangerLevel(int dangerLevel);
+    List<List<String>> filterGeologicalFormationsByDangerLevel(Integer dangerLevel);
 
     /**
      * Retrieves all the locations where a certain {@link Wreck} was spotted.

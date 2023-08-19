@@ -9,6 +9,8 @@ import javax.swing.JTextField;
  */
 public class CenterPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int FONT_SIZE = 17;
 
     /**
@@ -26,7 +28,7 @@ public class CenterPanel extends JPanel {
         this.add(operationText, java.awt.BorderLayout.NORTH);
         this.add(new OperationPanel(), java.awt.BorderLayout.CENTER);
         final JTextField searchText = new JTextField("Ricerche generiche");
-        searchText.setFont(new java.awt.Font("Serif", java.awt.Font.CENTER_BASELINE, 17));
+        searchText.setFont(new java.awt.Font("Serif", java.awt.Font.CENTER_BASELINE, FONT_SIZE));
         searchText.setForeground(java.awt.Color.CYAN);
         searchText.setBackground(it.unibo.common.Constants.BACKGROUND_COLOR);
         searchText.setEditable(false);

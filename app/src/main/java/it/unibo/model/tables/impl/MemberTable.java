@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.impl.Member;
 import it.unibo.model.tables.api.Table;
 
@@ -29,17 +30,16 @@ public class MemberTable implements Table<Member, String> {
     private static final String GROUP = "IDgruppo";
     private static final String ID = "ID";
     private static final String ROLE = "Ruolo";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code OrganismTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection to the database
      */
-    public MemberTable(final Connection connection) {
-        this.connection = connection;
+    public MemberTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -55,7 +55,7 @@ public class MemberTable implements Table<Member, String> {
      */
     @Override
     public Optional<Member> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + FISCAL_CODE + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -113,7 +113,7 @@ public class MemberTable implements Table<Member, String> {
      */
     public List<Member> getExpeditionPartecipants(final String associationName, final String groupID) {
         final String query = "SELECT * FROM " + TABLE_NAME
-                + " WHERE " + ASSOCIATION + "='" + associationName + "' AND " + GROUP + "='" + groupID + "'";
+                + Constants.WHERE + ASSOCIATION + "='" + associationName + "' AND " + GROUP + "='" + groupID + "'";
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);
             return readOperatorsFromResultSet(resultSet);
@@ -153,13 +153,13 @@ public class MemberTable implements Table<Member, String> {
     @Override
     public boolean update(final Member updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + FIRST_NAME + PREPARE_FIELD + ", "
-                + LAST_NAME + PREPARE_FIELD + ", "
-                + ASSOCIATION + PREPARE_FIELD + ", "
-                + GROUP + PREPARE_FIELD + ", "
-                + ID + PREPARE_FIELD
-                + ROLE + PREPARE_FIELD
-                + " WHERE " + FISCAL_CODE + PREPARE_FIELD;
+                + FIRST_NAME + Constants.QUESTION_MARK + ", "
+                + LAST_NAME + Constants.QUESTION_MARK + ", "
+                + ASSOCIATION + Constants.QUESTION_MARK + ", "
+                + GROUP + Constants.QUESTION_MARK + ", "
+                + ID + Constants.QUESTION_MARK
+                + ROLE + Constants.QUESTION_MARK
+                + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getFirstName());
             statement.setString(2, updatedValue.getLastName());
@@ -179,7 +179,7 @@ public class MemberTable implements Table<Member, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + FISCAL_CODE + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

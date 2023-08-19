@@ -9,6 +9,8 @@ import it.unibo.common.Constants;
  */
 public class MainPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 700;
 

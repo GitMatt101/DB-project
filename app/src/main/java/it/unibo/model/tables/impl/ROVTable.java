@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.ROV;
 import it.unibo.model.tables.api.Table;
 
@@ -25,17 +26,16 @@ public class ROVTable implements Table<ROV, String> {
     private static final String SERIAL_NUMBER = "NumeroSerie";
     private static final String MANUFACTURER = "NomeCasaProduttrice";
     private static final String DATE = "DataProduzione";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code OrganismTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection to the database
      */
-    public ROVTable(final Connection connection) {
-        this.connection = connection;
+    public ROVTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -51,7 +51,7 @@ public class ROVTable implements Table<ROV, String> {
      */
     @Override
     public Optional<ROV> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + LICENSE_PLATE + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -120,10 +120,10 @@ public class ROVTable implements Table<ROV, String> {
     @Override
     public boolean update(final ROV updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + SERIAL_NUMBER + PREPARE_FIELD + ", "
-                + MANUFACTURER + PREPARE_FIELD + ", "
-                + DATE + PREPARE_FIELD
-                + " WHERE " + LICENSE_PLATE + PREPARE_FIELD;
+                + SERIAL_NUMBER + Constants.QUESTION_MARK + ", "
+                + MANUFACTURER + Constants.QUESTION_MARK + ", "
+                + DATE + Constants.QUESTION_MARK
+                + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getSerialNumber());
             statement.setString(2, updatedValue.getManufacturerName());
@@ -141,7 +141,7 @@ public class ROVTable implements Table<ROV, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + LICENSE_PLATE + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

@@ -57,6 +57,31 @@ public final class Constants {
      */
     public static final String POPUP_MESSAGE = "Notifica di fine operazione";
 
+    /**
+     * String used for query conditions.
+     */
+    public static final String EQUALS = " = ";
+
+    /**
+     * String used for query condition with a given string.
+     */
+    public static final String EQUALS_GIVEN_STRING = " = '";
+
+    /**
+     * Question mark used to prepare queries.
+     */
+    public static final String QUESTION_MARK = " = ?";
+
+    /**
+     * String used to create conditions for queries.
+     */
+    public static final String WHERE = " WHERE ";
+
+    /**
+     * String used to add conditions in queries.
+     */
+    public static final String AND = " AND ";
+
     private Constants() {
     }
 

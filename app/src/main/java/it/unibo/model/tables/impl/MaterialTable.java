@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Material;
 import it.unibo.model.tables.api.Table;
 
@@ -22,17 +23,16 @@ public class MaterialTable implements Table<Material, String> {
 
     private static final String TABLE_NAME = "materiali";
     private static final String NAME = "Nome";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code MaterialTable}.
      * 
-     * @param connection
+     * @param provider the provider of the connection to the database
      */
-    public MaterialTable(final Connection connection) {
-        this.connection = connection;
+    public MaterialTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -48,7 +48,7 @@ public class MaterialTable implements Table<Material, String> {
      */
     @Override
     public Optional<Material> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -118,7 +118,7 @@ public class MaterialTable implements Table<Material, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

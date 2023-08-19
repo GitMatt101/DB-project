@@ -14,6 +14,8 @@ import it.unibo.controller.impl.ControllerImpl;
  */
 public class EntityPanel extends JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private static final int NUMBER_OF_ENTITIES = 6;
     private static final int IMAGE_WIDTH = 75;
     private static final int IMAGE_HEIGHT = 75;

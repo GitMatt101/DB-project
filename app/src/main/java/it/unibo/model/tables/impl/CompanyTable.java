@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Company;
 import it.unibo.model.tables.api.Table;
 
@@ -23,7 +24,6 @@ public class CompanyTable implements Table<Company, String> {
 
     private static final String NAME = "Nome";
     private static final String ADDRESS = "Indirizzo";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
     private final String tableName;
@@ -31,11 +31,11 @@ public class CompanyTable implements Table<Company, String> {
     /**
      * Creates an instance of {@code AssociationTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection to the database
      * @param tableName  the name of the table
      */
-    public CompanyTable(final Connection connection, final String tableName) {
-        this.connection = connection;
+    public CompanyTable(final ConnectionProvider provider, final String tableName) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
         this.tableName = tableName;
     }
 
@@ -52,7 +52,7 @@ public class CompanyTable implements Table<Company, String> {
      */
     @Override
     public Optional<Company> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + this.tableName + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + this.tableName + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -115,8 +115,8 @@ public class CompanyTable implements Table<Company, String> {
     @Override
     public boolean update(final Company updatedValue) {
         final String query = "UPDATE " + this.tableName + " SET "
-                + ADDRESS + PREPARE_FIELD
-                + " WHERE " + NAME + PREPARE_FIELD;
+                + ADDRESS + Constants.QUESTION_MARK
+                + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getAddress());
             statement.setString(2, updatedValue.getName());
@@ -132,7 +132,7 @@ public class CompanyTable implements Table<Company, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + this.tableName + " WHERE " + NAME + PREPARE_FIELD;
+        final String query = "DELETE FROM " + this.tableName + Constants.WHERE + NAME + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;

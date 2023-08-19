@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.GeologicalFormation;
 import it.unibo.model.tables.api.Table;
 
@@ -26,17 +27,17 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
     private static final String SIZE = "Dimensioni";
     private static final String DANGER_LEVEL = "GradoPericolo";
     private static final String DESCRIPTION = "Descrizione";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code OrganismTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
-    public GeologicalFormationTable(final Connection connection) {
-        this.connection = connection;
+    public GeologicalFormationTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -52,13 +53,14 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      */
     @Override
     public Optional<GeologicalFormation> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ID + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readGeologicalFormationsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
+            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
+                    Constants.STATEMENT_CREATION_ERROR,
                     e);
             return Optional.empty();
         }
@@ -95,7 +97,8 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
             final ResultSet resultSet = statement.executeQuery();
             return readGeologicalFormationsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
+            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
+                    Constants.STATEMENT_CREATION_ERROR,
                     e);
             return Collections.emptyList();
         }
@@ -103,16 +106,18 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
 
     /**
      * Retrieves all the geological formations with the given danger level.
+     * 
      * @param dangerLevel the danger level
      * @return a List of all the geological formations with the given danger level
      */
     public List<GeologicalFormation> filterByDangerLevel(final int dangerLevel) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + DANGER_LEVEL + "=" + dangerLevel;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + DANGER_LEVEL + "=" + dangerLevel;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final ResultSet resultSet = statement.executeQuery();
             return readGeologicalFormationsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
+            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
+                    Constants.STATEMENT_CREATION_ERROR,
                     e);
             return Collections.emptyList();
         }
@@ -134,7 +139,8 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
             statement.setString(5, value.getDescription());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
+            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
+                    Constants.STATEMENT_CREATION_ERROR,
                     e);
             return false;
         }
@@ -147,10 +153,10 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
     public boolean update(final GeologicalFormation updatedValue) {
         // We are going to assume that type of geological formation doesn't change
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + SIZE + PREPARE_FIELD + ", "
-                + DANGER_LEVEL + PREPARE_FIELD + ", "
-                + DESCRIPTION + PREPARE_FIELD
-                + " WHERE " + ID + PREPARE_FIELD;
+                + SIZE + Constants.QUESTION_MARK + ", "
+                + DANGER_LEVEL + Constants.QUESTION_MARK + ", "
+                + DESCRIPTION + Constants.QUESTION_MARK
+                + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setInt(1, updatedValue.getSize());
             statement.setInt(2, updatedValue.getDangerLevel());
@@ -158,7 +164,8 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
             statement.setString(4, updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
+            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
+                    Constants.STATEMENT_CREATION_ERROR,
                     e);
             return false;
         }
@@ -169,12 +176,13 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + ID + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
+            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
+                    Constants.STATEMENT_CREATION_ERROR,
                     e);
             return false;
         }

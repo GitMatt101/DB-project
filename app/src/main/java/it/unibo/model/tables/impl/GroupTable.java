@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Pair;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Group;
 import it.unibo.model.tables.api.Table;
 
@@ -26,17 +27,16 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
     private static final String ASSOCIATION = "NomeAssociazione";
     private static final String ID = "ID";
     private static final String NAME = "Nome";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code OrganismTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection to the database
      */
-    public GroupTable(final Connection connection) {
-        this.connection = connection;
+    public GroupTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -53,8 +53,8 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
     @Override
     public Optional<Group> findByPrimaryKey(final Pair<String, String> primaryKey) {
         final String query = "SELECT * FROM " + TABLE_NAME
-                + " WHERE " + ASSOCIATION + PREPARE_FIELD
-                + " AND " + ID + PREPARE_FIELD;
+                + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK
+                + Constants.AND + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey.getX());
             statement.setString(2, primaryKey.getY());
@@ -123,9 +123,9 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
     @Override
     public boolean update(final Group updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + NAME + PREPARE_FIELD
-                + " WHERE " + ASSOCIATION + PREPARE_FIELD
-                + " AND " + ID + PREPARE_FIELD;
+                + NAME + Constants.QUESTION_MARK
+                + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK
+                + Constants.AND + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, updatedValue.getName());
             statement.setString(2, updatedValue.getAssociationName());
@@ -143,8 +143,8 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
     @Override
     public boolean delete(final Pair<String, String> primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME
-                + " WHERE " + ASSOCIATION + PREPARE_FIELD
-                + " AND " + ID + PREPARE_FIELD;
+                + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK
+                + Constants.AND + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey.getX());
             statement.setString(2, primaryKey.getY());

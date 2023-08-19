@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
+import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Expedition;
 import it.unibo.model.tables.api.Table;
 
@@ -28,17 +29,17 @@ public class ExpeditionTable implements Table<Expedition, String> {
     private static final String ROV = "TargaROV";
     private static final String ASSOCIATION = "NomeAssociazione";
     private static final String GROUP = "IDgruppo";
-    private static final String PREPARE_FIELD = " = ?";
 
     private final Connection connection;
 
     /**
      * Creates an instance of {@code ExpeditionTable}.
      * 
-     * @param connection the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
-    public ExpeditionTable(final Connection connection) {
-        this.connection = connection;
+    public ExpeditionTable(final ConnectionProvider provider) {
+        this.connection = provider != null ? provider.getMySQLConnection() : null;
     }
 
     /**
@@ -72,7 +73,7 @@ public class ExpeditionTable implements Table<Expedition, String> {
      */
     @Override
     public Optional<Expedition> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
@@ -128,7 +129,8 @@ public class ExpeditionTable implements Table<Expedition, String> {
      *         found
      */
     public List<Expedition> filterByAssociation(final String associationName) {
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + ASSOCIATION + "='" + associationName + "'";
+        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ASSOCIATION
+                + Constants.EQUALS_GIVEN_STRING + associationName + "'";
         try (Statement statement = this.connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(query);
             return readExpeditionsFromResultSet(resultSet);
@@ -166,12 +168,12 @@ public class ExpeditionTable implements Table<Expedition, String> {
     @Override
     public boolean update(final Expedition updatedValue) {
         final String query = "UPDATE " + TABLE_NAME + " SET "
-                + DATE + PREPARE_FIELD + ", "
-                + LOCATION + PREPARE_FIELD + ", "
-                + ROV + PREPARE_FIELD + ", "
-                + ASSOCIATION + PREPARE_FIELD + ", "
-                + GROUP + PREPARE_FIELD
-                + " WHERE " + CODE + PREPARE_FIELD;
+                + DATE + Constants.QUESTION_MARK + ", "
+                + LOCATION + Constants.QUESTION_MARK + ", "
+                + ROV + Constants.QUESTION_MARK + ", "
+                + ASSOCIATION + Constants.QUESTION_MARK + ", "
+                + GROUP + Constants.QUESTION_MARK
+                + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setDate(1, new java.sql.Date(updatedValue.getDate().getTime()));
             statement.setString(2, updatedValue.getLocationName());
@@ -191,7 +193,7 @@ public class ExpeditionTable implements Table<Expedition, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + TABLE_NAME + " WHERE " + CODE + PREPARE_FIELD;
+        final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(1, primaryKey);
             return statement.executeUpdate() > 0;
