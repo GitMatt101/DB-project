@@ -251,8 +251,8 @@ public class OutputManagerImpl implements OutputManager {
             for (int i = 0; i < textFields.size() - 1; i++) {
                 centerPanel.add(createDefaultTextArea((String) e.get(i), width));
             }
-            Object obj = e.get(textFields.size() - 1);
-            String[] list = new String[((List<?>) obj).size()];
+            final Object obj = e.get(textFields.size() - 1);
+            final String[] list = new String[((List<?>) obj).size()];
             if (obj instanceof List) {
                 for (int i = 0; i < ((List<?>) obj).size(); i++) {
                     if (((List<?>) obj).get(i) instanceof String) {
@@ -265,15 +265,6 @@ public class OutputManagerImpl implements OutputManager {
             names.setEditable(false);
             names.setPreferredSize(new java.awt.Dimension(width, FIELD_HEIGHT));
             centerPanel.add(names);
-            obj = e.get(textFields.size() - 1);
-            list = new String[((List<?>) obj).size()];
-            if (obj instanceof List) {
-                for (int i = 0; i < ((List<?>) obj).size(); i++) {
-                    if (((List<?>) obj).get(i) instanceof String) {
-                        list[i] = (String) ((List<?>) obj).get(i);
-                    }
-                }
-            }
         });
         mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
         final JFrame frame = createFrame(FRAME_TITLE, mainPanel);

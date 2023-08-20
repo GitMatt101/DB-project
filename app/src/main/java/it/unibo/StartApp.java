@@ -1,6 +1,6 @@
 package it.unibo;
 
-import it.unibo.view.MainFrame;
+import it.unibo.view.GraphicUtilities;
 
 /**
  * Class that starts the application.
@@ -16,7 +16,7 @@ public final class StartApp {
      * @param args
      */
     public static void main(final String[] args) {
-        new MainFrame();
+        GraphicUtilities.createMainFrame().setVisible(true);
     }
 
 }

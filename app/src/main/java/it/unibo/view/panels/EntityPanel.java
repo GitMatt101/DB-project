@@ -21,7 +21,7 @@ public class EntityPanel extends JPanel {
     private static final int IMAGE_HEIGHT = 75;
     private static final String ICONS_PATH = "app\\src\\\\main\\resources\\button_images\\";
 
-    private final Controller controller;
+    private final transient Controller controller;
 
     /**
      * Creates a new {@link JPanel} with all the {@link JButton}s for the main

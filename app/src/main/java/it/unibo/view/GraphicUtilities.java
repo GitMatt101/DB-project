@@ -1,5 +1,10 @@
 package it.unibo.view;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+
+import it.unibo.view.panels.MainPanel;
+
 /**
  * Utility class used to get graphic values used for popups.
  */
@@ -34,6 +39,23 @@ public final class GraphicUtilities {
      */
     public static int getScreenHeight() {
         return Double.valueOf(getScreenSize().getHeight()).intValue();
+    }
+
+    /**
+     * Creates the main frame for the application.
+     * 
+     * @return a {@link JFrame}
+     */
+    public static JFrame createMainFrame() {
+        final JFrame frame = new JFrame();
+        frame.setTitle("DeepSea Expeditions");
+        frame.setIconImage(new ImageIcon("app\\src\\main\\resources\\app_icon.jpg").getImage());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(new MainPanel());
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        return frame;
     }
 
 }

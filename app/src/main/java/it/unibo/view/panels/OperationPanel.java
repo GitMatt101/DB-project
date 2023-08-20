@@ -20,7 +20,7 @@ public class OperationPanel extends JPanel {
     private static final int HORIZONTAL_SPACING = 10;
     private static final int VERTICAL_SPACING = 10;
 
-    private final Controller controller;
+    private final transient Controller controller;
 
     /**
      * Creates a {@code JPanel} with the buttons.
