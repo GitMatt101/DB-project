@@ -115,7 +115,7 @@ public class InputManagerImpl implements InputManager {
     }
 
     /**
-     * Checks if a String is empty and if it is, it will return null.
+     * Checks if a String is empty and decides what to return.
      * 
      * @param text the string to check
      * @return the string if its length isn't 0, null otherwise
@@ -124,8 +124,24 @@ public class InputManagerImpl implements InputManager {
         return text.length() != 0 ? text : null;
     }
 
+    /**
+     * Checks if a String is empty and decides what to return.
+     * 
+     * @param text the string to check
+     * @return the string's int value if its length isn't 0, null otherwise
+     */
     private Integer getIntegerOrNull(final String text) {
         return text.length() != 0 ? Integer.valueOf(text) : null;
+    }
+
+    /**
+     * Checks if a String is empty and decides what to return.
+     * 
+     * @param text the string to check
+     * @return the string's float value if its length isn't 0, null otherwise
+     */
+    private Float getFloatOrNull(final String text) {
+        return text.length() != 0 ? Float.valueOf(text) : null;
     }
 
     private JFrame createFrame(final String title, final JPanel mainPanel) {
@@ -296,7 +312,7 @@ public class InputManagerImpl implements InputManager {
                     fields.get(counter.getValueAndIncrement()).getText(),
                     fields.get(counter.getValueAndIncrement()).getText(),
                     getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText()),
-                    Float.valueOf(fields.get(counter.getValueAndIncrement()).getText()),
+                    getFloatOrNull(fields.get(counter.getValueAndIncrement()).getText()),
                     getStringOrNull(fields.get(counter.getValue()).getText()));
             frame.dispose();
             showResultPopup(result);
