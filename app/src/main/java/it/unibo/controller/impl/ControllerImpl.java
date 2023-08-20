@@ -239,9 +239,9 @@ public class ControllerImpl implements Controller {
                 if (d > 0) {
                     attributes.add(d + "m");
                 } else {
-                    attributes.add("[NON SPECIFICATA]");
+                    attributes.add(Constants.DEPTH_NOT_SPECIFIED);
                 }
-            }, () -> attributes.add("[NON SPECIFICATA]"));
+            }, () -> attributes.add(Constants.DEPTH_NOT_SPECIFIED));
             s.getNotes().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             s.getOrganismID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             s.getWreckID().ifPresentOrElse(attributes::add, () -> attributes.add(""));
@@ -383,9 +383,9 @@ public class ControllerImpl implements Controller {
                 if (d > 0) {
                     list.add(d + "m");
                 } else {
-                    list.add("[NON SPECIFICATA]");
+                    list.add(Constants.DEPTH_NOT_SPECIFIED);
                 }
-            }, () -> list.add("[NON SPECIFICATA]"));
+            }, () -> list.add(Constants.DEPTH_NOT_SPECIFIED));
             s.getNotes().ifPresentOrElse(list::add, () -> list.add(""));
             s.getOrganismID().ifPresentOrElse(list::add, () -> list.add(""));
             s.getWreckID().ifPresentOrElse(list::add, () -> list.add(""));
@@ -415,9 +415,9 @@ public class ControllerImpl implements Controller {
                 if (d > 0) {
                     list.add(d + "m");
                 } else {
-                    list.add("[NON SPECIFICATA]");
+                    list.add(Constants.DEPTH_NOT_SPECIFIED);
                 }
-            }, () -> list.add("[NON SPECIFICATA]"));
+            }, () -> list.add(Constants.DEPTH_NOT_SPECIFIED));
             list.add(String.valueOf(s.getAmount()));
             s.getNotes().ifPresentOrElse(n -> list.add(n), () -> list.add(""));
             output.add(list);

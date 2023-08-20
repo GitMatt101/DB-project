@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 
+import it.unibo.common.Constants;
 import it.unibo.view.GraphicUtilities;
 import it.unibo.view.popups.api.OutputManager;
 
@@ -31,18 +32,19 @@ public class OutputManagerImpl implements OutputManager {
     private static final String FRAME_TITLE = "Risultati";
     private static final int FONT_SIZE = 15;
     private static final int FIELD_HEIGHT = 40;
-
     private static final int HORIZONTAL_CELL_SPACING = 0;
     private static final int VERTICAL_CELL_SPACING = 0;
     private static final int DEFAULT_TEXTAREA_WIDTH = 300;
     private static final int DEFAULT_TEXTAREA_HEIGHT = 300;
     private static final int SCROLL_SPEED = 16;
     private static final int SCROLLPANE_MAX_HEIGHT = 600;
+    private static final int POPUP_FONT_SIZE = 20;
 
     /**
      * Creates a {@link JTextArea}.
      * 
-     * @param text the text to use
+     * @param text  the text to use
+     * @param width the width of the text area
      * @return a {@link JTextArea} with the given text
      */
     private JTextArea createDefaultTextArea(final String text, final int width) {
@@ -56,6 +58,7 @@ public class OutputManagerImpl implements OutputManager {
      * 
      * @param text           the text of the button
      * @param actionListener the {@link ActionListener} the button will use
+     * @param width          the width of the button
      * @return a {@link JButton} with the given text and the given action to perform
      *         on click
      */
@@ -98,7 +101,7 @@ public class OutputManagerImpl implements OutputManager {
         names.forEach(n -> textFields.add(new JTextField(n)));
         textFields.forEach(t -> {
             t.setPreferredSize(new java.awt.Dimension(width, height));
-            t.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, fontSize));
+            t.setFont(new java.awt.Font(Constants.DEFAULT_FONT, java.awt.Font.PLAIN, fontSize));
             t.setEditable(false);
             t.setBorder(new javax.swing.border.LineBorder(java.awt.Color.BLACK, 1, true));
         });
@@ -108,7 +111,7 @@ public class OutputManagerImpl implements OutputManager {
     private void loadTextAreaProperties(final JTextArea textArea, final int fontSize, final int width,
             final int height) {
         textArea.setPreferredSize(new java.awt.Dimension(width, height));
-        textArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, fontSize));
+        textArea.setFont(new java.awt.Font(Constants.DEFAULT_FONT, java.awt.Font.PLAIN, fontSize));
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
@@ -151,7 +154,7 @@ public class OutputManagerImpl implements OutputManager {
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        textArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 20));
+        textArea.setFont(new java.awt.Font(Constants.DEFAULT_FONT, java.awt.Font.PLAIN, POPUP_FONT_SIZE));
         textArea.setPreferredSize(new java.awt.Dimension(DEFAULT_TEXTAREA_WIDTH, DEFAULT_TEXTAREA_HEIGHT));
         frame.getContentPane().add(textArea);
         frame.pack();
@@ -258,7 +261,7 @@ public class OutputManagerImpl implements OutputManager {
                 }
             }
             final JComboBox<String> names = new JComboBox<>(list);
-            names.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, FONT_SIZE));
+            names.setFont(new java.awt.Font(Constants.DEFAULT_FONT, java.awt.Font.PLAIN, FONT_SIZE));
             names.setEditable(false);
             names.setPreferredSize(new java.awt.Dimension(width, FIELD_HEIGHT));
             centerPanel.add(names);
@@ -436,7 +439,8 @@ public class OutputManagerImpl implements OutputManager {
      */
     @Override
     public void showAnalysesAndLaboratories(final List<List<String>> values) {
-        final List<String> fieldNames = List.of("Codice analisi", DESCRIPTION, "Nome laboratorio", "ID laboratorio", "Indirizzo laboratorio");
+        final List<String> fieldNames = List.of("Codice analisi", DESCRIPTION, "Nome laboratorio", "ID laboratorio",
+                "Indirizzo laboratorio");
         final int width = SCRREN_WIDTH / fieldNames.size();
         final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
         final JPanel topPanel = createTopPanel(textFields);

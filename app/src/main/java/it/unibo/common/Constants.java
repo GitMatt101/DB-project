@@ -97,6 +97,16 @@ public final class Constants {
      */
     public static final int MAXIMUM_DANGER_LEVEL = 5;
 
+    /**
+     * String used when the depth isn't specified.
+     */
+    public static final String DEPTH_NOT_SPECIFIED = "[NON SPECIFICATA]";
+
+    /**
+     * Font used in the popups.
+     */
+    public static final String DEFAULT_FONT = "Arial";
+
     private Constants() {
     }
 
