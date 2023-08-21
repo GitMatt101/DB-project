@@ -218,6 +218,7 @@ public class ControllerImpl implements Controller {
             final List<String> attributes = new ArrayList<>();
             attributes.add(g.getID());
             attributes.add(g.getType());
+            attributes.add(g.getDangerLevel() + "/5");
             attributes.add(g.getSize() + "m2");
             attributes.add(g.getDescription());
             output.add(attributes);
@@ -482,14 +483,16 @@ public class ControllerImpl implements Controller {
             try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
                 statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, g.getID());
                 final ResultSet resultSet = statement.executeQuery();
-                final List<String> list = new ArrayList<>();
-                list.add(g.getID());
-                list.add(g.getType());
-                list.add(String.valueOf(g.getSize()));
-                list.add(g.getDescription());
-                list.add(resultSet.getString("Nome"));
-                list.add(resultSet.getString("NomePaese"));
-                output.add(list);
+                if (resultSet.next()) {
+                    final List<String> list = new ArrayList<>();
+                    list.add(g.getID());
+                    list.add(g.getType());
+                    list.add(String.valueOf(g.getSize()));
+                    list.add(g.getDescription());
+                    list.add(resultSet.getString("Nome"));
+                    list.add(resultSet.getString("NomePaese"));
+                    output.add(list);
+                }
             } catch (final SQLException e) {
                 TableUtilities.logSQLException(this, e);
             }
