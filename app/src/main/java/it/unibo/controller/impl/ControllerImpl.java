@@ -514,7 +514,7 @@ public class ControllerImpl implements Controller {
     @Override
     public List<List<String>> filterOrganismsByExpedition(final String expeditionCode) {
         final List<Organism> organisms = new OrganismTable(this.provider).filterByExpedition(expeditionCode);
-        return new LinkedList<>(new HashSet<>(createOrganismList(organisms)));
+        return createOrganismList(organisms);
     }
 
     /**

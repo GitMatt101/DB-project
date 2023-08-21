@@ -109,7 +109,7 @@ public class OrganismTable implements Table<Organism, String> {
      *         been sighted during the expedition or something went wrong
      */
     public List<Organism> filterByExpedition(final String expeditionCode) {
-        final String query = "SELECT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME
+        final String query = "SELECT DISTINCT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME
                 + ", " + DESCRIPTION + " FROM " + TABLE_NAME + ", " + Constants.SIGHTINGS
                 + Constants.WHERE + Constants.SIGHTINGS + ".CodiceSpedizione" + Constants.QUESTION_MARK
                 + Constants.AND + Constants.SIGHTINGS + ".IDorganismo" + Constants.EQUALS + TABLE_NAME + "." + ID;
