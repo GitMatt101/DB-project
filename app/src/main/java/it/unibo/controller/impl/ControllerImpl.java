@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import it.unibo.common.ConnectionProvider;
 import it.unibo.common.Constants;
-import it.unibo.connection.ConnectionProvider;
 import it.unibo.controller.api.Controller;
 import it.unibo.model.entities.Analysis;
 import it.unibo.model.entities.Company;
