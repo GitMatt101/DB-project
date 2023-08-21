@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.common.Pair;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Group;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -53,7 +52,7 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
      */
     @Override
     public Optional<Group> findByPrimaryKey(final Pair<String, String> primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME
+        final String query = Constants.SELECT_ALL + TABLE_NAME
                 + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK
                 + Constants.AND + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
@@ -63,7 +62,7 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
             final ResultSet resultSet = statement.executeQuery();
             return readGroupsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, e.getMessage());
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -92,10 +91,10 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
     @Override
     public List<Group> findAll() {
         try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + TABLE_NAME);
             return readGroupsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -115,7 +114,7 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
             statement.setString(counter.getValue(), value.getName());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -136,7 +135,7 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
             statement.setString(counter.getValue(), updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -155,7 +154,7 @@ public class GroupTable implements Table<Group, Pair<String, String>> {
             statement.setString(counter.getValue(), primaryKey.getY());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(GroupTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }

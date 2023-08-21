@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
-import it.unibo.model.entities.Organism;
+import it.unibo.model.entities.impl.Organism;
 import it.unibo.model.entities.impl.Sighting;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -39,7 +38,8 @@ public class SightingTable implements Table<Sighting, String> {
     /**
      * Creates an instance of {@code AnalysisTable}.
      * 
-     * @param provider the provider of the connection to the database the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
     public SightingTable(final ConnectionProvider provider) {
         this.connection = provider != null ? provider.getMySQLConnection() : null;
@@ -96,13 +96,13 @@ public class SightingTable implements Table<Sighting, String> {
      */
     @Override
     public Optional<Sighting> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readSightingsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -136,30 +136,11 @@ public class SightingTable implements Table<Sighting, String> {
     @Override
     public List<Sighting> findAll() {
         try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + TABLE_NAME);
             return readSightingsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Retrieves the next number for a sighting in a given expedition.
-     * 
-     * @param expeditionCode the code of the expedition
-     * @return the next number if everything went fine, -1 otherwise
-     */
-    public int getNextNumber(final String expeditionCode) {
-        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + Constants.WHERE + EXPEDITION
-                + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, expeditionCode);
-            final ResultSet resultSet = statement.executeQuery();
-            return resultSet.next() ? resultSet.getInt(Constants.SINGLE_QUERY_VALUE_INDEX) + 1 : 1;
-        } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return -1;
         }
     }
 
@@ -171,12 +152,13 @@ public class SightingTable implements Table<Sighting, String> {
      *         found
      */
     public List<Sighting> filterByOrganism(final String organismID) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ORGANISM + "='" + organismID + "'";
-        try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(query);
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + ORGANISM + Constants.QUESTION_MARK;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, organismID);
+            final ResultSet resultSet = statement.executeQuery();
             return readSightingsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -210,47 +192,70 @@ public class SightingTable implements Table<Sighting, String> {
     public List<Sighting> filter(final Optional<String> locationName, final Optional<Integer> minDepth,
             final Optional<Integer> maxDepth, final Optional<String> expeditionCode, final Optional<String> organismID,
             final Optional<String> wreckID, final Optional<String> geologicalFormationID) {
-        final ExpeditionTable exp = new ExpeditionTable(null);
         final StringBuilder queryBuilder = new StringBuilder(1000);
         locationName.ifPresent(l -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + Constants.EQUALS + exp.getTableName() + "." + exp.getCodeName()
-                    + Constants.AND + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get()
-                    + "'");
+            queryBuilder.append(EXPEDITION + Constants.EQUALS + Constants.EXPEDITIONS + "." + CODE
+                    + Constants.AND + Constants.EXPEDITIONS + ".NomeLuogo" + Constants.QUESTION_MARK);
         });
         minDepth.ifPresent(m -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(DEPTH + " >= " + minDepth.get());
+            queryBuilder.append(DEPTH + " >= ?");
         });
         maxDepth.ifPresent(m -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(DEPTH + " <= " + maxDepth.get());
+            queryBuilder.append(DEPTH + " <= ?");
         });
         expeditionCode.ifPresent(e -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + Constants.EQUALS_GIVEN_STRING + expeditionCode.get() + "'");
+            queryBuilder.append(EXPEDITION + Constants.QUESTION_MARK);
         });
-        if (organismID.isPresent()) {
+        organismID.ifPresentOrElse(o -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(ORGANISM + Constants.EQUALS_GIVEN_STRING + organismID.get() + "'");
-        } else if (wreckID.isPresent()) {
-            queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(WRECK + Constants.EQUALS_GIVEN_STRING + wreckID.get() + "'");
-        } else if (geologicalFormationID.isPresent()) {
-            queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder
-                    .append(GEOLOGICAL_FORMATION + Constants.EQUALS_GIVEN_STRING + geologicalFormationID.get() + "'");
-        }
-        final String query = "SELECT " + TABLE_NAME + "." + CODE + ", " + EXPEDITION + ", " + NUMBER + ", " + DEPTH
+            queryBuilder.append(ORGANISM + Constants.QUESTION_MARK);
+        }, () -> {
+            wreckID.ifPresentOrElse(w -> {
+                queryBuilder.append(appendToQuery(queryBuilder.toString()));
+                queryBuilder.append(WRECK + Constants.QUESTION_MARK);
+            }, () -> {
+                geologicalFormationID.ifPresent(g -> {
+                    queryBuilder.append(appendToQuery(queryBuilder.toString()));
+                    queryBuilder.append(GEOLOGICAL_FORMATION + Constants.QUESTION_MARK);
+                });
+            });
+        });
+        final String query = "SELECT " + TABLE_NAME + ".Codice, " + EXPEDITION + ", " + NUMBER + ", " + DEPTH
                 + ", " + NOTES + ", " + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION
-                + " FROM " + TABLE_NAME + ", "
-                + exp.getTableName()
-                + queryBuilder.toString();
-        try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(query);
+                + " FROM " + TABLE_NAME + "," + Constants.EXPEDITIONS + queryBuilder.toString();
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            int c = 1;
+            if (locationName.isPresent()) {
+                statement.setString(c, locationName.get());
+                c++;
+            }
+            if (minDepth.isPresent()) {
+                statement.setInt(c, minDepth.get());
+                c++;
+            }
+            if (maxDepth.isPresent()) {
+                statement.setInt(c, maxDepth.get());
+                c++;
+            }
+            if (expeditionCode.isPresent()) {
+                statement.setString(c, expeditionCode.get());
+                c++;
+            }
+            if (organismID.isPresent()) {
+                statement.setString(c, organismID.get());
+            } else if (wreckID.isPresent()) {
+                statement.setString(c, wreckID.get());
+            } else if (geologicalFormationID.isPresent()) {
+                statement.setString(c, geologicalFormationID.get());
+            }
+            final ResultSet resultSet = statement.executeQuery();
             return readSightingsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -296,7 +301,7 @@ public class SightingTable implements Table<Sighting, String> {
             }
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -315,7 +320,7 @@ public class SightingTable implements Table<Sighting, String> {
             statement.setString(counter.getValue(), updatedValue.getNotes().orElse(null));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -326,13 +331,7 @@ public class SightingTable implements Table<Sighting, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

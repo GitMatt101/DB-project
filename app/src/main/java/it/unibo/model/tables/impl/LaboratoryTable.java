@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Laboratory;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -52,13 +51,13 @@ public class LaboratoryTable implements Table<Laboratory, String> {
      */
     @Override
     public Optional<Laboratory> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readLaboratoriesFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(LaboratoryTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -88,10 +87,10 @@ public class LaboratoryTable implements Table<Laboratory, String> {
     @Override
     public List<Laboratory> findAll() {
         try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + TABLE_NAME);
             return readLaboratoriesFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(LaboratoryTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -111,7 +110,7 @@ public class LaboratoryTable implements Table<Laboratory, String> {
             statement.setString(counter.getValue(), value.getAddress());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(LaboratoryTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -132,7 +131,7 @@ public class LaboratoryTable implements Table<Laboratory, String> {
             statement.setString(counter.getValue(), updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(LaboratoryTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -143,13 +142,7 @@ public class LaboratoryTable implements Table<Laboratory, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(LaboratoryTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

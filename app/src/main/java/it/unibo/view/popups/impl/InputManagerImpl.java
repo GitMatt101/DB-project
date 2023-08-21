@@ -144,14 +144,25 @@ public class InputManagerImpl implements InputManager {
         return text.length() != 0 ? Float.valueOf(text) : null;
     }
 
-    private JFrame createFrame(final String title, final JPanel mainPanel) {
+    private void createFrame(final String title, final JPanel mainPanel) {
         final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle(title);
         frame.getContentPane().add(mainPanel);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        return frame;
+        frame.setVisible(true);
+    }
+
+    private void showUserInputPopup(final List<String> fieldNames, final Map<Integer, JTextField> fields,
+            final JButton confirmButton, final String title) {
+        final Map<Integer, JTextField> tips = createTextFields(fieldNames);
+        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
+        final JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new java.awt.BorderLayout());
+        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
+        createFrame(title, mainPanel);
     }
 
     /**
@@ -159,17 +170,10 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void memberRegistration() {
-        final Map<Integer, JTextField> tips = createTextFields(
-                List.of("Nome*", "Cognome*", "Codice fiscale*", "Associazione*", "ID gruppo*", "ID*", "Ruolo*"));
-        final Map<Integer, JTextField> fields = createTextFields(List.of("", "", "", "", "", "", ""));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Nome*", "Cognome*", "Codice fiscale*", "Associazione*", "ID gruppo*",
+                "ID*", "Ruolo*");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Registrazione membro", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.registerMember(
@@ -180,9 +184,9 @@ public class InputManagerImpl implements InputManager {
                     fields.get(counter.getValueAndIncrement()).getText(),
                     fields.get(counter.getValueAndIncrement()).getText(),
                     fields.get(counter.getValue()).getText());
-            frame.dispose();
             showResultPopup(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione membro");
     }
 
     /**
@@ -190,17 +194,10 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void rovRegistration() {
-        final Map<Integer, JTextField> tips = createTextFields(
-                List.of("Targa*", "Casa produttrice*", "Numero di serie*", "Data di produzione (YYYY-MM-DD)*"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Targa*", "Casa produttrice*", "Numero di serie*",
+                "Data di produzione (YYYY-MM-DD)*");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Registrazione ROV", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             boolean result;
             try {
@@ -215,9 +212,10 @@ public class InputManagerImpl implements InputManager {
                 Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
                 result = false;
             }
-            frame.dispose();
             showResultPopup(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione ROV");
+
     }
 
     /**
@@ -225,17 +223,10 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void expeditionRegistration() {
-        final Map<Integer, JTextField> tips = createTextFields(
-                List.of("Codice*", "Data* (YYYY-MM-DD)*", "Luogo*", "Targa del ROV*", "Associazione*", "ID gruppo*"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Codice*", "Data* (YYYY-MM-DD)*", "Luogo*", "Targa del ROV*",
+                "Associazione*", "ID gruppo*");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Registrazione spedizione", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             boolean result;
             try {
@@ -252,9 +243,9 @@ public class InputManagerImpl implements InputManager {
                 Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
                 result = false;
             }
-            frame.dispose();
             showResultPopup(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione spedizione");
     }
 
     /**
@@ -262,18 +253,10 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void sightingRegistration() {
-        final Map<Integer, JTextField> tips = createTextFields(
-                List.of("Codice*", "Codice spedizione*", "Profondità", "Note", "ID organismo", "ID relitto*",
-                        "ID formazione geologica"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Codice*", "Codice spedizione*", "Profondità", "Note", "ID organismo",
+                "ID relitto*", "ID formazione geologica");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Registrazione avvistamento", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.registerSighting(
@@ -284,9 +267,9 @@ public class InputManagerImpl implements InputManager {
                     getStringOrNull(fields.get(counter.getValueAndIncrement()).getText()),
                     getStringOrNull(fields.get(counter.getValueAndIncrement()).getText()),
                     getStringOrNull(fields.get(counter.getValue()).getText()));
-            frame.dispose();
             showResultPopup(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione avvistamento");
     }
 
     /**
@@ -294,17 +277,10 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void extractionRegistration() {
-        final Map<Integer, JTextField> tips = createTextFields(
-                List.of("Codice*", "Codice spedizione*", "Materiale*", "Profondità", "Quantità*", "Note"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Codice*", "Codice spedizione*", "Materiale*", "Profondità",
+                "Quantità*", "Note");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Registrazione prelievo", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.registerExtraction(
@@ -314,9 +290,9 @@ public class InputManagerImpl implements InputManager {
                     getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText()),
                     getFloatOrNull(fields.get(counter.getValueAndIncrement()).getText()),
                     getStringOrNull(fields.get(counter.getValue()).getText()));
-            frame.dispose();
             showResultPopup(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione prelievo");
     }
 
     /**
@@ -324,24 +300,17 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void speciesUpdate() {
-        final Map<Integer, JTextField> tips = createTextFields(List.of("ID*", "Nuova Specie*"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("ID*", "Nuova Specie*");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Aggiornamento specie", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final boolean result = this.controller.updateSpecies(
                     fields.get(counter.getValueAndIncrement()).getText(),
                     fields.get(counter.getValue()).getText());
-            frame.dispose();
             showResultPopup(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Aggiornamento specie");
     }
 
     /**
@@ -349,31 +318,23 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void sightingsFilter() {
-        final Map<Integer, JTextField> tips = createTextFields(
-                List.of("Luogo", "Profondità minima", "Profondità massima", "Codice spedizione", "ID organismo",
-                        "ID relitto", "ID formazione geologica"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Luogo", "Profondità minima", "Profondità massima", "Codice spedizione",
+                "ID organismo", "ID relitto", "ID formazione geologica");
+        final Map<Integer, JTextField> fieldsValues = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Filtro avvistamenti", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final List<List<String>> result = this.controller.filterSightings(
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
-                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
-                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
-                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValue()).getText())));
-            frame.dispose();
+                    Optional.ofNullable(getStringOrNull(fieldsValues.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getIntegerOrNull(fieldsValues.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getIntegerOrNull(fieldsValues.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fieldsValues.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fieldsValues.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fieldsValues.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(getStringOrNull(fieldsValues.get(counter.getValue()).getText())));
             this.outputManager.showSightings(result);
         });
+        showUserInputPopup(fieldNames, fieldsValues, confirmButton, "Filtro avvistamenti");
     }
 
     /**
@@ -381,17 +342,10 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void extractionsFilter() {
-        final Map<Integer, JTextField> tips = createTextFields(
-                List.of("Luogo", "Profondità minima", "Profondità massima", "Codice spedizione", "Materiale"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Luogo", "Profondità minima", "Profondità massima", "Codice spedizione",
+                "Materiale");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Filtro prelievi", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
             final List<List<String>> result = this.controller.filterExtractions(
@@ -400,9 +354,9 @@ public class InputManagerImpl implements InputManager {
                     Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
                     Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
                     Optional.ofNullable(getStringOrNull(fields.get(counter.getValue()).getText())));
-            frame.dispose();
             this.outputManager.showExtractions(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Filtro prelievi");
     }
 
     /**
@@ -410,22 +364,15 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void expeditionsFilterByAssociation() {
-        final Map<Integer, JTextField> tips = createTextFields(List.of("Associazione"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Associazione");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Selezione associazione", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<Object>> result = this.controller
                     .filterExpeditionsByAssociation(fields.get(0).getText());
-            frame.dispose();
             this.outputManager.showExpeditions(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Ricerca spedizioni di un'associazione");
     }
 
     /**
@@ -433,21 +380,14 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void organismsFilterByExpedition() {
-        final Map<Integer, JTextField> tips = createTextFields(List.of("Codice spedizione"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Codice spedizione");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Selezione codice spedizione", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = this.controller.filterOrganismsByExpedition(fields.get(0).getText());
-            frame.dispose();
             this.outputManager.showOrganisms(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Ricerca organismi in una spedizione");
     }
 
     /**
@@ -455,29 +395,23 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void geologicalFormationFilterByDangerLevel() {
-        final Map<Integer, JTextField> tips = createTextFields(List.of("Grado di pericolo (1-5)"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Grado di pericolo (1-5)");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Selezione grado di pericolo", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final String field = fields.get(0).getText();
             final Integer value = Integer.valueOf(field);
             if (field.length() != 0 && value >= Constants.MINIMUM_DANGER_LEVEL
                     && value <= Constants.MAXIMUM_DANGER_LEVEL) {
                 final List<List<String>> result = this.controller.filterGeologicalFormationsByDangerLevel(value);
-                frame.dispose();
+
                 this.outputManager.showGeologicalFormationsAndLocations(result);
             } else {
-                frame.dispose();
+
                 this.outputManager.showGeologicalFormationsAndLocations(Collections.emptyList());
             }
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Filtro formazioni geologiche pericolose");
     }
 
     /**
@@ -485,21 +419,14 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void wrecksFitlerByName() {
-        final Map<Integer, JTextField> tips = createTextFields(List.of("Nome"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Nome");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Selezione nome relitto", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = this.controller.filterLocationsByWreck(fields.get(0).getText());
-            frame.dispose();
             this.outputManager.showWrecksAndLocations(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Ricerca relitti per nome");
     }
 
     /**
@@ -507,21 +434,14 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void analysesFilterByMaterial() {
-        final Map<Integer, JTextField> tips = createTextFields(List.of("Materiale"));
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(tips.size()));
-        final JPanel centerPanel = createCenterPanel(tips.size(), COLUMNS, tips, fields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+        final List<String> fieldNames = List.of("Materiale");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
-        mainPanel.add(confirmButton, java.awt.BorderLayout.SOUTH);
-        final JFrame frame = createFrame("Selezione materiale", mainPanel);
-        frame.setVisible(true);
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = this.controller.getAnalysesInfo(fields.get(0).getText());
-            frame.dispose();
             this.outputManager.showAnalysesAndLaboratories(result);
         });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Ricerca analisi per materiale");
     }
 
 }

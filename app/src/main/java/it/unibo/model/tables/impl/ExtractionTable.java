@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.impl.Extraction;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -23,7 +22,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class ExtractionTable implements Table<Extraction, String> {
 
-    private static final String TABLE_NAME = "prelievi";
+    private static final String TABLE_NAME = Constants.EXTRACTIONS;
     private static final String CODE = "Codice";
     private static final String EXPEDITION = "CodiceSpedizione";
     private static final String NUMBER = "Numero";
@@ -37,7 +36,8 @@ public class ExtractionTable implements Table<Extraction, String> {
     /**
      * Creates an instance of {@code AnalysisTable}.
      * 
-     * @param provider the provider of the connection to the database the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
     public ExtractionTable(final ConnectionProvider provider) {
         this.connection = provider != null ? provider.getMySQLConnection() : null;
@@ -56,13 +56,13 @@ public class ExtractionTable implements Table<Extraction, String> {
      */
     @Override
     public Optional<Extraction> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readExtractionsFromResultSet(resultSet).stream().findFirst();
-        } catch (SQLException e) {
-            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, e.getMessage());
+        } catch (final SQLException e) {
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -95,30 +95,11 @@ public class ExtractionTable implements Table<Extraction, String> {
     @Override
     public List<Extraction> findAll() {
         try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + TABLE_NAME);
             return readExtractionsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Retrieves the next number for an extraction in a given expedition.
-     * 
-     * @param expeditionCode the code of the expedition
-     * @return the next number if everything went fine, -1 otherwise
-     */
-    public int getNextNumber(final String expeditionCode) {
-        final String query = "SELECT MAX(" + NUMBER + ") FROM " + TABLE_NAME + Constants.WHERE + EXPEDITION
-                + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, expeditionCode);
-            final ResultSet resultSet = statement.executeQuery();
-            return resultSet.next() ? resultSet.getInt(Constants.SINGLE_QUERY_VALUE_INDEX) + 1 : 1;
-        } catch (final SQLException e) {
-            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return -1;
         }
     }
 
@@ -130,13 +111,13 @@ public class ExtractionTable implements Table<Extraction, String> {
      *         wrong
      */
     public List<Extraction> filterByMaterial(final String materialName) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + MATERIAL + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + MATERIAL + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, materialName);
             final ResultSet resultSet = statement.executeQuery();
             return readExtractionsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -150,6 +131,27 @@ public class ExtractionTable implements Table<Extraction, String> {
      */
     private String appendToQuery(final String query) {
         return query.length() > 0 ? Constants.AND : Constants.WHERE;
+    }
+
+    private void build(final StringBuilder builder, final Optional<?> obj, final String append) {
+        obj.ifPresent(o -> {
+            builder.append(appendToQuery(builder.toString()));
+            builder.append(append);
+        });
+    }
+
+    private void buildStringStatement(final PreparedStatement statement, final Optional<String> field,
+            final Counter counter) throws SQLException {
+        if (field.isPresent()) {
+            statement.setString(counter.getValueAndIncrement(), field.get());
+        }
+    }
+
+    private void buildIntStatement(final PreparedStatement statement, final Optional<Integer> field,
+            final Counter counter) throws SQLException {
+        if (field.isPresent()) {
+            statement.setInt(counter.getValueAndIncrement(), field.get());
+        }
     }
 
     /**
@@ -167,38 +169,27 @@ public class ExtractionTable implements Table<Extraction, String> {
     public List<Extraction> filter(final Optional<String> locationName,
             final Optional<Integer> minDepth, final Optional<Integer> maxDepth,
             final Optional<String> expeditionCode, final Optional<String> materialName) {
-        final ExpeditionTable exp = new ExpeditionTable(null);
         final StringBuilder queryBuilder = new StringBuilder(1000);
-        locationName.ifPresent(l -> {
-            queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + Constants.EQUALS + exp.getTableName() + "." + exp.getCodeName()
-                    + Constants.AND + exp.getTableName() + "." + exp.getLocationName() + "='" + locationName.get()
-                    + "'");
-        });
-        minDepth.ifPresent(m -> {
-            queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(DEPTH + " >= " + minDepth.get());
-        });
-        maxDepth.ifPresent(m -> {
-            queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(DEPTH + " <= " + maxDepth.get());
-        });
-        expeditionCode.ifPresent(e -> {
-            queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(EXPEDITION + Constants.EQUALS_GIVEN_STRING + expeditionCode.get() + "'");
-        });
-        materialName.ifPresent(m -> {
-            queryBuilder.append(appendToQuery(queryBuilder.toString()));
-            queryBuilder.append(MATERIAL + Constants.EQUALS_GIVEN_STRING + materialName.get() + "'");
-        });
+        build(queryBuilder, locationName, EXPEDITION + Constants.EQUALS + Constants.EXPEDITIONS + "." + CODE
+                + Constants.AND + Constants.EXPEDITIONS + ".NomeLuogo" + Constants.QUESTION_MARK);
+        build(queryBuilder, minDepth, DEPTH + " >= ?");
+        build(queryBuilder, maxDepth, DEPTH + " <= ?");
+        build(queryBuilder, expeditionCode, EXPEDITION + Constants.QUESTION_MARK);
+        build(queryBuilder, materialName, MATERIAL + Constants.QUESTION_MARK);
         final String query = "SELECT " + TABLE_NAME + "." + CODE + "," + EXPEDITION + "," + NUMBER + "," + MATERIAL
-                + "," + DEPTH + ","
-                + AMOUNT + "," + NOTES + " FROM " + TABLE_NAME + "," + exp.getTableName() + queryBuilder.toString();
-        try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(query);
+                + "," + DEPTH + "," + AMOUNT + "," + NOTES + " FROM " + TABLE_NAME + "," + Constants.EXPEDITIONS
+                + queryBuilder.toString();
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            final Counter counter = new Counter(1);
+            buildStringStatement(statement, locationName, counter);
+            buildIntStatement(statement, minDepth, counter);
+            buildIntStatement(statement, maxDepth, counter);
+            buildStringStatement(statement, expeditionCode, counter);
+            buildStringStatement(statement, materialName, counter);
+            final ResultSet resultSet = statement.executeQuery();
             return readExtractionsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(SightingTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -222,7 +213,7 @@ public class ExtractionTable implements Table<Extraction, String> {
             statement.setString(counter.getValue(), value.getNotes().orElse(null));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -251,7 +242,7 @@ public class ExtractionTable implements Table<Extraction, String> {
             statement.setString(counter.getValue(), updatedValue.getCode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -262,13 +253,7 @@ public class ExtractionTable implements Table<Extraction, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(ExtractionTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

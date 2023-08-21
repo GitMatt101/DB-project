@@ -23,7 +23,7 @@ import it.unibo.view.popups.api.OutputManager;
  */
 public class OutputManagerImpl implements OutputManager {
 
-    private static final int SCRREN_WIDTH = GraphicUtilities.getScreenWidth() - 200;
+    private static final int SCREEN_WIDTH = GraphicUtilities.getScreenWidth() - 200;
 
     private static final String OPEN_DESCRIPTION = "Apri descrizione";
     private static final String OPEN_NOTES = "Apri note";
@@ -170,22 +170,29 @@ public class OutputManagerImpl implements OutputManager {
         return mainPanel;
     }
 
+    private void showResults(final JPanel centerPanel, final List<String> fields, final int rows) {
+        final List<JTextField> textFields = createTextFields(fields, FONT_SIZE, SCREEN_WIDTH / fields.size(),
+                FIELD_HEIGHT);
+        final JPanel topPanel = createTopPanel(textFields);
+        final JScrollPane scrollPane = createScrollPane(centerPanel,
+                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
+                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * rows);
+        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
+        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
+        frame.setVisible(true);
+    }
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public void showSightings(final List<List<String>> sightings) {
-        final List<String> fieldnames = List.of("Codice avvistamento", "Codice spedizione", "Numero", "Profondità",
+        final List<String> fieldNames = List.of("Codice avvistamento", "Codice spedizione", "Numero", "Profondità",
                 NOTES, "ID organismo", "ID relitto", "ID formazione");
-        final int width = SCRREN_WIDTH / fieldnames.size();
-        final List<JTextField> textFields = createTextFields(fieldnames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(sightings.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * sightings.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(sightings.size(), fieldNames.size());
         sightings.forEach(s -> {
-            for (int i = 0; i < textFields.size(); i++) {
+            for (int i = 0; i < fieldNames.size(); i++) {
                 final String text = s.get(i);
                 if (i == 4) {
                     final Component component = text.length() > 0
@@ -197,9 +204,7 @@ public class OutputManagerImpl implements OutputManager {
                 }
             }
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, sightings.size());
     }
 
     /**
@@ -209,26 +214,19 @@ public class OutputManagerImpl implements OutputManager {
     public void showExtractions(final List<List<String>> extractions) {
         final List<String> fieldNames = List.of("Codice prelievo", "Codice spedizione", "Numero", "Materiale",
                 "Profondità", "Quantità", NOTES);
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(extractions.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * extractions.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(extractions.size(), fieldNames.size());
         extractions.forEach(e -> {
-            for (int i = 0; i < textFields.size() - 1; i++) {
+            for (int i = 0; i < fieldNames.size() - 1; i++) {
                 centerPanel.add(createDefaultTextArea(e.get(i), width));
             }
-            final String description = e.get(textFields.size() - 1);
+            final String description = e.get(fieldNames.size() - 1);
             final Component component = description.length() > 0
                     ? createPopupButton(OPEN_DESCRIPTION, ev -> showPopup(description, DESCRIPTION), width)
                     : createDefaultTextArea("", width);
             centerPanel.add(component);
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, extractions.size());
     }
 
     /**
@@ -237,21 +235,13 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showExpeditions(final List<List<Object>> expeditions) {
         final List<String> fieldNames = List.of("Codice", "Data", "Luogo", "Associazione", "Gruppo", "Membri-Ruoli");
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new java.awt.BorderLayout());
-        mainPanel.add(topPanel, java.awt.BorderLayout.NORTH);
-        final JPanel centerPanel = createCenterPanel(expeditions.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * expeditions.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(expeditions.size(), fieldNames.size());
         expeditions.forEach(e -> {
-            for (int i = 0; i < textFields.size() - 1; i++) {
+            for (int i = 0; i < fieldNames.size() - 1; i++) {
                 centerPanel.add(createDefaultTextArea((String) e.get(i), width));
             }
-            final Object obj = e.get(textFields.size() - 1);
+            final Object obj = e.get(fieldNames.size() - 1);
             final String[] list = new String[((List<?>) obj).size()];
             if (obj instanceof List) {
                 for (int i = 0; i < ((List<?>) obj).size(); i++) {
@@ -266,9 +256,7 @@ public class OutputManagerImpl implements OutputManager {
             names.setPreferredSize(new java.awt.Dimension(width, FIELD_HEIGHT));
             centerPanel.add(names);
         });
-        mainPanel.add(scrollPane, java.awt.BorderLayout.CENTER);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, expeditions.size());
     }
 
     /**
@@ -277,25 +265,18 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showOrganisms(final List<List<String>> organisms) {
         final List<String> fieldNames = List.of("ID", "Specie", "Nome provvisorio", "Nome comune", DESCRIPTION);
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(organisms.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * organisms.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(organisms.size(), fieldNames.size());
         organisms.forEach(o -> {
-            for (int i = 0; i < textFields.size() - 1; i++) {
+            for (int i = 0; i < fieldNames.size() - 1; i++) {
                 centerPanel.add(createDefaultTextArea(o.get(i), width));
             }
             centerPanel.add(createPopupButton(OPEN_DESCRIPTION, e -> {
                 final String descriptionStart = "[NON IDENTIFICATO]".equals(o.get(1)) ? o.get(2) : o.get(1);
-                showPopup(descriptionStart + ":\n" + o.get(textFields.size() - 1), DESCRIPTION);
+                showPopup(descriptionStart + ":\n" + o.get(fieldNames.size() - 1), DESCRIPTION);
             }, width));
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, organisms.size());
     }
 
     /**
@@ -304,23 +285,16 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showWrecks(final List<List<String>> wrecks) {
         final List<String> fieldNames = List.of("ID", "Nome modello", "Data affondamento", "Lunghezza", DESCRIPTION);
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(wrecks.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * wrecks.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(wrecks.size(), fieldNames.size());
         wrecks.forEach(w -> {
-            for (int i = 0; i < textFields.size() - 1; i++) {
+            for (int i = 0; i < fieldNames.size() - 1; i++) {
                 centerPanel.add(createDefaultTextArea(w.get(i), width));
             }
             centerPanel.add(createPopupButton(OPEN_DESCRIPTION,
-                    e -> showPopup(w.get(textFields.size() - 1), FRAME_TITLE), width));
+                    e -> showPopup(w.get(fieldNames.size() - 1), FRAME_TITLE), width));
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, wrecks.size());
     }
 
     /**
@@ -329,23 +303,16 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showGeologicalFormations(final List<List<String>> geos) {
         final List<String> fieldNames = List.of("ID", "Tipologia", "Grado di pericolo", "Dimensioni", DESCRIPTION);
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(geos.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * geos.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(geos.size(), fieldNames.size());
         geos.forEach(g -> {
-            for (int i = 0; i < textFields.size() - 1; i++) {
+            for (int i = 0; i < fieldNames.size() - 1; i++) {
                 centerPanel.add(createDefaultTextArea(g.get(i), width));
             }
             centerPanel.add(createPopupButton(OPEN_DESCRIPTION,
-                    e -> showPopup(g.get(textFields.size() - 1), DESCRIPTION), width));
+                    e -> showPopup(g.get(fieldNames.size() - 1), DESCRIPTION), width));
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, width);
     }
 
     /**
@@ -354,21 +321,14 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showAssociations(final List<List<String>> associations) {
         final List<String> fieldNames = List.of("Nome", "Indirizzo");
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(associations.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * associations.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(associations.size(), fieldNames.size());
         associations.forEach(w -> {
             w.forEach(a -> {
                 centerPanel.add(createDefaultTextArea(a, width));
             });
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, associations.size());
     }
 
     /**
@@ -377,15 +337,10 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showGeologicalFormationsAndLocations(final List<List<String>> geologicalFormations) {
         final List<String> fieldNames = List.of("ID", "Tipologia", "Dimensioni", DESCRIPTION, "Luogo", "Paese");
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(geologicalFormations.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * geologicalFormations.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(geologicalFormations.size(), fieldNames.size());
         geologicalFormations.forEach(g -> {
-            for (int i = 0; i < textFields.size(); i++) {
+            for (int i = 0; i < fieldNames.size(); i++) {
                 final String text = g.get(i);
                 if (i == 3) {
                     final Component component = text.length() > 0
@@ -397,9 +352,7 @@ public class OutputManagerImpl implements OutputManager {
                 }
             }
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, geologicalFormations.size());
     }
 
     /**
@@ -408,21 +361,14 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showWrecksAndLocations(final List<List<String>> values) {
         final List<String> fieldNames = List.of("ID", "Luogo", "Paese");
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(values.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * values.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(values.size(), fieldNames.size());
         values.forEach(s -> {
             s.forEach(e -> {
                 centerPanel.add(createDefaultTextArea(e, width));
             });
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, values.size());
     }
 
     /**
@@ -432,21 +378,14 @@ public class OutputManagerImpl implements OutputManager {
     public void showAnalysesAndLaboratories(final List<List<String>> values) {
         final List<String> fieldNames = List.of("Codice analisi", DESCRIPTION, "Nome laboratorio", "ID laboratorio",
                 "Indirizzo laboratorio");
-        final int width = SCRREN_WIDTH / fieldNames.size();
-        final List<JTextField> textFields = createTextFields(fieldNames, FONT_SIZE, width, FIELD_HEIGHT);
-        final JPanel topPanel = createTopPanel(textFields);
-        final JPanel centerPanel = createCenterPanel(values.size(), textFields.size());
-        final JScrollPane scrollPane = createScrollPane(centerPanel,
-                Double.valueOf(topPanel.getPreferredSize().getWidth()).intValue(),
-                Double.valueOf(topPanel.getPreferredSize().getHeight()).intValue() * values.size());
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(values.size(), fieldNames.size());
         values.forEach(v -> {
             v.forEach(e -> {
                 centerPanel.add(createDefaultTextArea(e, width));
             });
         });
-        final JPanel mainPanel = createMainPanel(topPanel, scrollPane);
-        final JFrame frame = createFrame(FRAME_TITLE, mainPanel);
-        frame.setVisible(true);
+        showResults(centerPanel, fieldNames, values.size());
     }
 
 }

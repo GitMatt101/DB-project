@@ -4,17 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
-import it.unibo.model.entities.Wreck;
+import it.unibo.model.entities.impl.Wreck;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -54,13 +52,13 @@ public class WreckTable implements Table<Wreck, String> {
      */
     @Override
     public Optional<Wreck> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + " = ?";
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + ID + " = ?";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readWrecksFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -88,11 +86,11 @@ public class WreckTable implements Table<Wreck, String> {
      */
     @Override
     public List<Wreck> findAll() {
-        try (PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM " + TABLE_NAME)) {
+        try (PreparedStatement statement = this.connection.prepareStatement(Constants.SELECT_ALL + TABLE_NAME)) {
             final ResultSet resultSet = statement.executeQuery();
             return readWrecksFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -104,12 +102,13 @@ public class WreckTable implements Table<Wreck, String> {
      * @return a List of all the wrecks with the given name
      */
     public List<Wreck> filterByName(final String wreckName) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + NAME + "='" + wreckName + "'";
-        try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(query);
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + NAME + Constants.QUESTION_MARK;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, wreckName);
+            final ResultSet resultSet = statement.executeQuery();
             return readWrecksFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -124,7 +123,7 @@ public class WreckTable implements Table<Wreck, String> {
                 + ") VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter counter = new Counter(1);
-            statement.setString(counter.getValueAndIncrement(), value.getId());
+            statement.setString(counter.getValueAndIncrement(), value.getID());
             statement.setString(counter.getValueAndIncrement(), value.getName().orElse(null));
             if (value.getWreckageDate().isPresent()) {
                 statement.setDate(counter.getValueAndIncrement(),
@@ -136,7 +135,7 @@ public class WreckTable implements Table<Wreck, String> {
             statement.setString(counter.getValueAndIncrement(), value.getDescription());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -163,10 +162,10 @@ public class WreckTable implements Table<Wreck, String> {
             }
             statement.setInt(counter.getValueAndIncrement(), updatedValue.getLength());
             statement.setString(counter.getValueAndIncrement(), updatedValue.getDescription());
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getId());
+            statement.setString(counter.getValueAndIncrement(), updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -177,13 +176,7 @@ public class WreckTable implements Table<Wreck, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(WreckTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

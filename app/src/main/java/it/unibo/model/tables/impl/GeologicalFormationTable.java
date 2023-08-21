@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
-import it.unibo.model.entities.GeologicalFormation;
+import it.unibo.model.entities.impl.GeologicalFormation;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -54,14 +53,13 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      */
     @Override
     public Optional<GeologicalFormation> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readGeologicalFormationsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
-                    Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -93,12 +91,11 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      */
     @Override
     public List<GeologicalFormation> findAll() {
-        try (PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM " + TABLE_NAME)) {
+        try (PreparedStatement statement = this.connection.prepareStatement(Constants.SELECT_ALL + TABLE_NAME)) {
             final ResultSet resultSet = statement.executeQuery();
             return readGeologicalFormationsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
-                    Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -110,13 +107,12 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
      * @return a List of all the geological formations with the given danger level
      */
     public List<GeologicalFormation> filterByDangerLevel(final int dangerLevel) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + DANGER_LEVEL + "=" + dangerLevel;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + DANGER_LEVEL + "=" + dangerLevel;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final ResultSet resultSet = statement.executeQuery();
             return readGeologicalFormationsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
-                    Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -138,8 +134,7 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
             statement.setString(counter.getValue(), value.getDescription());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
-                    Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -163,8 +158,7 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
             statement.setString(counter.getValue(), updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
-                    Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -175,14 +169,7 @@ public class GeologicalFormationTable implements Table<GeologicalFormation, Stri
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(GeologicalFormationTable.class.getName()).log(Level.SEVERE,
-                    Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import it.unibo.model.entities.Expedition;
-import it.unibo.model.entities.GeologicalFormation;
 import it.unibo.model.entities.Material;
-import it.unibo.model.entities.Organism;
 import it.unibo.model.entities.ROV;
-import it.unibo.model.entities.Wreck;
 import it.unibo.model.entities.impl.Extraction;
+import it.unibo.model.entities.impl.GeologicalFormation;
 import it.unibo.model.entities.impl.Member;
+import it.unibo.model.entities.impl.Organism;
 import it.unibo.model.entities.impl.Sighting;
+import it.unibo.model.entities.impl.Wreck;
 
 /**
  * This interface models a controller according to the MVC architecture pattern.

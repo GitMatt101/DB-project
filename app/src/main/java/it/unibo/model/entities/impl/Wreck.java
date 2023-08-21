@@ -1,15 +1,16 @@
-package it.unibo.model.entities;
+package it.unibo.model.entities.impl;
 
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
 import it.unibo.common.Constants;
+import it.unibo.model.entities.api.Subject;
 
 /**
  * This class models a ship/plane wreck, identified by a unique ID.
  */
-public class Wreck {
+public class Wreck implements Subject {
 
     private final String id;
     private final Optional<String> name;
@@ -36,11 +37,10 @@ public class Wreck {
     }
 
     /**
-     * Retrieves the id of the wreck.
-     * 
-     * @return the id
+     * {@inheritDoc}
      */
-    public String getId() {
+    @Override
+    public String getID() {
         return this.id;
     }
 
@@ -72,10 +72,9 @@ public class Wreck {
     }
 
     /**
-     * Retrieves the description of the wreck.
-     * 
-     * @return the description
+     * {@inheritDoc}
      */
+    @Override
     public String getDescription() {
         return this.description;
     }
@@ -104,7 +103,7 @@ public class Wreck {
     @Override
     public boolean equals(final Object other) {
         return other instanceof Wreck
-                && this.id.equals(((Wreck) other).getId())
+                && this.id.equals(((Wreck) other).getID())
                 && this.name.equals(((Wreck) other).getName())
                 && this.wreckageDate.equals(((Wreck) other).getWreckageDate())
                 && this.length == ((Wreck) other).getLength()

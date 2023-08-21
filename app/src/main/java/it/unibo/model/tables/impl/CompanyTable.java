@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Company;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -32,8 +31,9 @@ public class CompanyTable implements Table<Company, String> {
     /**
      * Creates an instance of {@code AssociationTable}.
      * 
-     * @param provider the provider of the connection to the database the connection to the database
-     * @param tableName  the name of the table
+     * @param provider  the provider of the connection to the database the
+     *                  connection to the database
+     * @param tableName the name of the table
      */
     public CompanyTable(final ConnectionProvider provider, final String tableName) {
         this.connection = provider != null ? provider.getMySQLConnection() : null;
@@ -49,19 +49,43 @@ public class CompanyTable implements Table<Company, String> {
     }
 
     /**
+     * Checks if the name of the table is the name for associations.
+     * 
+     * @return true if the name is for association, false if it's a laboratory
+     */
+    private boolean checkTableNameIsAssociations() {
+        return Constants.ASSOCIATIONS.equals(this.tableName);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public Optional<Company> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + this.tableName + Constants.WHERE + NAME + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            final ResultSet resultSet = statement.executeQuery();
-            return readManufacturersFromResultSet(resultSet).stream().findFirst();
-        } catch (final SQLException e) {
-            Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return Optional.empty();
+        final String query1 = Constants.SELECT_ALL + Constants.ASSOCIATIONS + Constants.WHERE + NAME
+                + Constants.QUESTION_MARK;
+        final String query2 = Constants.SELECT_ALL + Constants.MANUFACTURERS + Constants.WHERE + NAME
+                + Constants.QUESTION_MARK;
+        if (checkTableNameIsAssociations()) {
+            try (PreparedStatement statement = this.connection.prepareStatement(query1)) {
+                statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
+                final ResultSet resultSet = statement.executeQuery();
+                return readManufacturersFromResultSet(resultSet).stream().findFirst();
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return Optional.empty();
+            }
+        } else {
+            try (PreparedStatement statement = this.connection.prepareStatement(query2)) {
+                statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
+                final ResultSet resultSet = statement.executeQuery();
+                return readManufacturersFromResultSet(resultSet).stream().findFirst();
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return Optional.empty();
+            }
         }
+
     }
 
     /**
@@ -85,12 +109,22 @@ public class CompanyTable implements Table<Company, String> {
      */
     @Override
     public List<Company> findAll() {
-        try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + this.tableName);
-            return readManufacturersFromResultSet(resultSet);
-        } catch (final SQLException e) {
-            Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return Collections.emptyList();
+        if (checkTableNameIsAssociations()) {
+            try (Statement statement = this.connection.createStatement()) {
+                final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + Constants.ASSOCIATIONS);
+                return readManufacturersFromResultSet(resultSet);
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return Collections.emptyList();
+            }
+        } else {
+            try (Statement statement = this.connection.createStatement()) {
+                final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + Constants.MANUFACTURERS);
+                return readManufacturersFromResultSet(resultSet);
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return Collections.emptyList();
+            }
         }
     }
 
@@ -99,15 +133,28 @@ public class CompanyTable implements Table<Company, String> {
      */
     @Override
     public boolean save(final Company value) {
-        final String query = "INSERT INTO " + this.tableName + " VALUES (?, ?)";
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            final Counter counter = new Counter(1);
-            statement.setString(counter.getValueAndIncrement(), value.getName());
-            statement.setString(counter.getValue(), value.getAddress());
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
+        final String query1 = "INSERT INTO " + Constants.ASSOCIATIONS + " VALUES (?, ?)";
+        final String query2 = "INSERT INTO " + Constants.MANUFACTURERS + " VALUES (?, ?)";
+        if (checkTableNameIsAssociations()) {
+            try (PreparedStatement statement = this.connection.prepareStatement(query1)) {
+                final Counter counter = new Counter(1);
+                statement.setString(counter.getValueAndIncrement(), value.getName());
+                statement.setString(counter.getValue(), value.getAddress());
+                return statement.executeUpdate() > 0;
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return false;
+            }
+        } else {
+            try (PreparedStatement statement = this.connection.prepareStatement(query2)) {
+                final Counter counter = new Counter(1);
+                statement.setString(counter.getValueAndIncrement(), value.getName());
+                statement.setString(counter.getValue(), value.getAddress());
+                return statement.executeUpdate() > 0;
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return false;
+            }
         }
     }
 
@@ -116,17 +163,32 @@ public class CompanyTable implements Table<Company, String> {
      */
     @Override
     public boolean update(final Company updatedValue) {
-        final String query = "UPDATE " + this.tableName + " SET "
+        final String query1 = "UPDATE " + Constants.ASSOCIATIONS + " SET "
                 + ADDRESS + Constants.QUESTION_MARK
                 + Constants.WHERE + NAME + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            final Counter counter = new Counter(1);
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getAddress());
-            statement.setString(counter.getValue(), updatedValue.getName());
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
+        final String query2 = "UPDATE " + Constants.MANUFACTURERS + " SET "
+                + ADDRESS + Constants.QUESTION_MARK
+                + Constants.WHERE + NAME + Constants.QUESTION_MARK;
+        if (checkTableNameIsAssociations()) {
+            try (PreparedStatement statement = this.connection.prepareStatement(query1)) {
+                final Counter counter = new Counter(1);
+                statement.setString(counter.getValueAndIncrement(), updatedValue.getAddress());
+                statement.setString(counter.getValue(), updatedValue.getName());
+                return statement.executeUpdate() > 0;
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return false;
+            }
+        } else {
+            try (PreparedStatement statement = this.connection.prepareStatement(query2)) {
+                final Counter counter = new Counter(1);
+                statement.setString(counter.getValueAndIncrement(), updatedValue.getAddress());
+                statement.setString(counter.getValue(), updatedValue.getName());
+                return statement.executeUpdate() > 0;
+            } catch (final SQLException e) {
+                TableUtilities.logSQLException(this, e);
+                return false;
+            }
         }
     }
 
@@ -135,13 +197,14 @@ public class CompanyTable implements Table<Company, String> {
      */
     @Override
     public boolean delete(final String primaryKey) {
-        final String query = "DELETE FROM " + this.tableName + Constants.WHERE + NAME + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(CompanyTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
+        final String query1 = "DELETE FROM " + Constants.ASSOCIATIONS + Constants.WHERE + NAME
+                + Constants.QUESTION_MARK;
+        final String query2 = "DELETE FROM " + Constants.MANUFACTURERS + Constants.WHERE + NAME
+                + Constants.QUESTION_MARK;
+        if (checkTableNameIsAssociations()) {
+            return TableUtilities.deleteOperation(query1, primaryKey, this.connection, this);
+        } else {
+            return TableUtilities.deleteOperation(query2, primaryKey, this.connection, this);
         }
     }
 

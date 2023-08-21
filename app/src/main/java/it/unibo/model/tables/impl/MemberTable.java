@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.impl.Member;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -23,7 +22,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class MemberTable implements Table<Member, String> {
 
-    private static final String TABLE_NAME = "membri";
+    private static final String TABLE_NAME = Constants.MEMBERS;
     private static final String FIRST_NAME = "Nome";
     private static final String LAST_NAME = "Cognome";
     private static final String FISCAL_CODE = "CodiceFiscale";
@@ -37,7 +36,8 @@ public class MemberTable implements Table<Member, String> {
     /**
      * Creates an instance of {@code OrganismTable}.
      * 
-     * @param provider the provider of the connection to the database the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
     public MemberTable(final ConnectionProvider provider) {
         this.connection = provider != null ? provider.getMySQLConnection() : null;
@@ -56,13 +56,13 @@ public class MemberTable implements Table<Member, String> {
      */
     @Override
     public Optional<Member> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readOperatorsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -95,10 +95,10 @@ public class MemberTable implements Table<Member, String> {
     @Override
     public List<Member> findAll() {
         try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + TABLE_NAME);
             return readOperatorsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -113,13 +113,16 @@ public class MemberTable implements Table<Member, String> {
      * @return a list of {@link Member}, or an empty list if no members were found
      */
     public List<Member> getExpeditionPartecipants(final String associationName, final String groupID) {
-        final String query = "SELECT * FROM " + TABLE_NAME
-                + Constants.WHERE + ASSOCIATION + "='" + associationName + "' AND " + GROUP + "='" + groupID + "'";
-        try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(query);
+        final String query = Constants.SELECT_ALL + TABLE_NAME
+                + Constants.WHERE + ASSOCIATION + Constants.QUESTION_MARK + " AND " + GROUP + Constants.QUESTION_MARK;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            final Counter counter = new Counter(1);
+            statement.setString(counter.getValueAndIncrement(), associationName);
+            statement.setString(counter.getValue(), groupID);
+            final ResultSet resultSet = statement.executeQuery();
             return readOperatorsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -144,7 +147,7 @@ public class MemberTable implements Table<Member, String> {
             statement.setString(counter.getValue(), value.getRole());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -172,7 +175,7 @@ public class MemberTable implements Table<Member, String> {
             statement.setString(counter.getValue(), updatedValue.getFiscalCode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -183,13 +186,7 @@ public class MemberTable implements Table<Member, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + FISCAL_CODE + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(MemberTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

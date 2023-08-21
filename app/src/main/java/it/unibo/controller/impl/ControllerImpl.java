@@ -1,8 +1,8 @@
 package it.unibo.controller.impl;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -10,29 +10,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.connection.ConnectionProvider;
+import it.unibo.controller.api.Controller;
 import it.unibo.model.entities.Analysis;
 import it.unibo.model.entities.Company;
 import it.unibo.model.entities.Expedition;
-import it.unibo.model.entities.GeologicalFormation;
 import it.unibo.model.entities.Laboratory;
-import it.unibo.model.entities.Organism;
 import it.unibo.model.entities.ROV;
-import it.unibo.model.entities.Wreck;
 import it.unibo.model.entities.impl.Extraction;
+import it.unibo.model.entities.impl.GeologicalFormation;
 import it.unibo.model.entities.impl.Member;
+import it.unibo.model.entities.impl.Organism;
 import it.unibo.model.entities.impl.Sighting;
+import it.unibo.model.entities.impl.Wreck;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.impl.AnalysisTable;
 import it.unibo.model.tables.impl.CompanyTable;
 import it.unibo.model.tables.impl.ExpeditionTable;
 import it.unibo.model.tables.impl.ExtractionTable;
 import it.unibo.model.tables.impl.GeologicalFormationTable;
 import it.unibo.model.tables.impl.LaboratoryTable;
-import it.unibo.model.tables.impl.LocationTable;
 import it.unibo.model.tables.impl.MemberTable;
 import it.unibo.model.tables.impl.OrganismTable;
 import it.unibo.model.tables.impl.ROVTable;
@@ -42,7 +41,6 @@ import it.unibo.view.popups.api.InputManager;
 import it.unibo.view.popups.api.OutputManager;
 import it.unibo.view.popups.impl.InputManagerImpl;
 import it.unibo.view.popups.impl.OutputManagerImpl;
-import it.unibo.controller.api.Controller;
 
 /**
  * This class is used as an intermediary between view and model.
@@ -167,23 +165,27 @@ public class ControllerImpl implements Controller {
         this.inputManager.analysesFilterByMaterial();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void showAllOrganisms() {
-        final List<Organism> organisms = new OrganismTable(this.provider).findAll();
+    private List<List<String>> createOrganismList(final List<Organism> organisms) {
         final List<List<String>> output = new LinkedList<>();
         organisms.forEach(o -> {
             final List<String> attributes = new ArrayList<>();
-            attributes.add(o.getId());
+            attributes.add(o.getID());
             o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("[NON IDENTIFICATO]"));
             o.getTemporaryName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             o.getCommonName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             attributes.add(o.getDescription());
             output.add(attributes);
         });
-        this.outputManager.showOrganisms(output);
+        return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showAllOrganisms() {
+        final List<Organism> organisms = new OrganismTable(this.provider).findAll();
+        this.outputManager.showOrganisms(createOrganismList(organisms));
     }
 
     /**
@@ -195,7 +197,7 @@ public class ControllerImpl implements Controller {
         final List<List<String>> output = new LinkedList<>();
         wrecks.forEach(w -> {
             final List<String> attributes = new ArrayList<>();
-            attributes.add(w.getId());
+            attributes.add(w.getID());
             w.getName().ifPresentOrElse(n -> attributes.add(n), () -> attributes.add(""));
             w.getWreckageDate().ifPresentOrElse(d -> attributes.add(d.toString()), () -> attributes.add("Sconosciuta"));
             attributes.add(w.getLength() + "m");
@@ -329,7 +331,8 @@ public class ControllerImpl implements Controller {
     public boolean registerSighting(final String code, final String expeditionCode,
             final Integer depth, final String notes, final String organismID, final String wreckID,
             final String geologicalFormationID) {
-        final int number = new SightingTable(this.provider).getNextNumber(expeditionCode);
+        final int number = TableUtilities.getNextNumber(Constants.SIGHTINGS, expeditionCode,
+                this.provider.getMySQLConnection(), this);
         return number != -1 && new SightingTable(this.provider)
                 .save(new Sighting(code, expeditionCode, number,
                         Optional.ofNullable(depth), Optional.ofNullable(notes),
@@ -343,7 +346,8 @@ public class ControllerImpl implements Controller {
     @Override
     public boolean registerExtraction(final String code, final String expeditionCode, final String materialName,
             final Integer depth, final Float amount, final String notes) {
-        final int number = new ExtractionTable(this.provider).getNextNumber(expeditionCode);
+        final int number = TableUtilities.getNextNumber(Constants.EXTRACTIONS, expeditionCode,
+                this.provider.getMySQLConnection(), this);
         return number != -1 && new ExtractionTable(this.provider)
                 .save(new Extraction(code, expeditionCode, number, materialName, Optional.ofNullable(depth), amount,
                         Optional.ofNullable(notes)));
@@ -456,17 +460,7 @@ public class ControllerImpl implements Controller {
     @Override
     public List<List<String>> filterOrganismsByExpedition(final String expeditionCode) {
         final List<Organism> organisms = new OrganismTable(this.provider).filterByExpedition(expeditionCode);
-        final List<List<String>> output = new LinkedList<>();
-        organisms.forEach(o -> {
-            final List<String> attributes = new ArrayList<>();
-            attributes.add(o.getId());
-            o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("[NON IDENTIFICATO]"));
-            o.getTemporaryName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
-            o.getCommonName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
-            attributes.add(o.getDescription());
-            output.add(attributes);
-        });
-        return new LinkedList<>(new HashSet<>(output));
+        return new LinkedList<>(new HashSet<>(createOrganismList(organisms)));
     }
 
     /**
@@ -476,33 +470,28 @@ public class ControllerImpl implements Controller {
     public List<List<String>> filterGeologicalFormationsByDangerLevel(final Integer dangerLevel) {
         final List<GeologicalFormation> geologicalFormations = new GeologicalFormationTable(this.provider)
                 .filterByDangerLevel(dangerLevel);
-        final ExpeditionTable expeditionTable = new ExpeditionTable(null);
-        final SightingTable sightingTable = new SightingTable(null);
-        final LocationTable locationTable = new LocationTable(null);
         final List<List<String>> output = new LinkedList<>();
         geologicalFormations.forEach(g -> {
-            final String query = "SELECT " + locationTable.getName() + "," + locationTable.getCountryName()
-                    + " FROM " + locationTable.getTableName() + "," + expeditionTable.getTableName() + ","
-                    + sightingTable.getTableName()
-                    + Constants.WHERE + locationTable.getTableName() + "." + locationTable.getName()
-                    + "=" + expeditionTable.getTableName() + "." + expeditionTable.getLocationName()
-                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getExpeditionCodeName()
-                    + "=" + expeditionTable.getTableName() + "." + expeditionTable.getCodeName()
-                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getGeologicalFormationName()
-                    + "='" + g.getID() + "'";
-            try (Statement statement = this.provider.getMySQLConnection().createStatement()) {
-                final ResultSet resultSet = statement.executeQuery(query);
+            final String query = "SELECT Nome, NomePaese FROM "
+                    + Constants.LOCATIONS + "," + Constants.EXPEDITIONS + "," + Constants.SIGHTINGS
+                    + Constants.WHERE + Constants.LOCATIONS + ".Nome"
+                    + Constants.EQUALS + Constants.EXPEDITIONS + ".NomeLuogo"
+                    + Constants.AND + Constants.SIGHTINGS + ".CodiceSpedizione"
+                    + Constants.EQUALS + Constants.EXPEDITIONS + ".Codice"
+                    + Constants.AND + Constants.SIGHTINGS + ".IDformazionegeologica" + Constants.QUESTION_MARK;
+            try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
+                statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, g.getID());
+                final ResultSet resultSet = statement.executeQuery();
                 final List<String> list = new ArrayList<>();
                 list.add(g.getID());
                 list.add(g.getType());
                 list.add(String.valueOf(g.getSize()));
                 list.add(g.getDescription());
-                list.add(resultSet.getString(locationTable.getName()));
-                list.add(resultSet.getString(locationTable.getCountryName()));
+                list.add(resultSet.getString("Nome"));
+                list.add(resultSet.getString("NomePaese"));
                 output.add(list);
             } catch (final SQLException e) {
-                Logger.getLogger(ControllerImpl.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
-                        e);
+                TableUtilities.logSQLException(this, e);
             }
         });
         return output;
@@ -514,30 +503,25 @@ public class ControllerImpl implements Controller {
     @Override
     public List<List<String>> filterLocationsByWreck(final String wreckName) {
         final List<Wreck> wrecks = new WreckTable(this.provider).filterByName(wreckName);
-        final ExpeditionTable expeditionTable = new ExpeditionTable(null);
-        final SightingTable sightingTable = new SightingTable(null);
-        final LocationTable locationTable = new LocationTable(null);
         final Set<List<String>> output = new HashSet<>();
         wrecks.forEach(w -> {
             final List<String> list = new ArrayList<>();
-            list.add(w.getId());
-            final String query = "SELECT " + locationTable.getName() + "," + locationTable.getCountryName()
-                    + " FROM " + locationTable.getTableName() + "," + expeditionTable.getTableName() + ","
-                    + sightingTable.getTableName()
-                    + Constants.WHERE + locationTable.getTableName() + "." + locationTable.getName()
-                    + "=" + expeditionTable.getTableName() + "." + expeditionTable.getLocationName()
-                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getExpeditionCodeName()
-                    + "=" + expeditionTable.getTableName() + "." + expeditionTable.getCodeName()
-                    + Constants.AND + sightingTable.getTableName() + "." + sightingTable.getWreckName()
-                    + "='" + w.getId() + "'";
-            try (Statement statement = this.provider.getMySQLConnection().createStatement()) {
-                final ResultSet resultSet = statement.executeQuery(query);
-                list.add(resultSet.getString(locationTable.getName()));
-                list.add(resultSet.getString(locationTable.getCountryName()));
+            final String query = "SELECT Nome, NomePaese " + " FROM "
+                    + Constants.LOCATIONS + "," + Constants.EXPEDITIONS + "," + Constants.SIGHTINGS
+                    + Constants.WHERE + Constants.LOCATIONS + ".Nome"
+                    + Constants.EQUALS + Constants.EXPEDITIONS + ".NomeLuogo"
+                    + Constants.AND + Constants.SIGHTINGS + ".CodiceSpedizione"
+                    + Constants.EQUALS + Constants.EXPEDITIONS + ".Codice"
+                    + Constants.AND + Constants.SIGHTINGS + ".IDrelitto" + Constants.QUESTION_MARK;
+            try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
+                statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, w.getID());
+                final ResultSet resultSet = statement.executeQuery();
+                list.add(w.getID());
+                list.add(resultSet.getString("Nome"));
+                list.add(resultSet.getString("NomePaese"));
                 output.add(list);
             } catch (final SQLException e) {
-                Logger.getLogger(ControllerImpl.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR,
-                        e);
+                TableUtilities.logSQLException(this, e);
             }
         });
         return new LinkedList<>(output);

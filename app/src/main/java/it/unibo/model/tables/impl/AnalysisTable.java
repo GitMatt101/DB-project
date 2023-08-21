@@ -8,13 +8,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.Analysis;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -52,13 +51,13 @@ public class AnalysisTable implements Table<Analysis, String> {
      */
     @Override
     public Optional<Analysis> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readAnalysesFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getGlobal().log(Level.SEVERE, e.getMessage());
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -88,10 +87,10 @@ public class AnalysisTable implements Table<Analysis, String> {
     @Override
     public List<Analysis> findAll() {
         try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + TABLE_NAME);
             return readAnalysesFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getGlobal().log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return new ArrayList<>();
         }
     }
@@ -104,14 +103,14 @@ public class AnalysisTable implements Table<Analysis, String> {
      *         empty {@link Optional} otherwise
      */
     public Optional<Analysis> findByExtractionCode(final String extractionCode) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + EXTRACTION_CODE
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + EXTRACTION_CODE
                 + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, extractionCode);
             final ResultSet resultSet = statement.executeQuery();
             return readAnalysesFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getGlobal().log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -132,7 +131,7 @@ public class AnalysisTable implements Table<Analysis, String> {
             statement.setString(counter.getValue(), value.getLaboratoryID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(AnalysisTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -155,7 +154,7 @@ public class AnalysisTable implements Table<Analysis, String> {
             statement.setString(counter.getValue(), updatedValue.getCode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(AnalysisTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -166,13 +165,7 @@ public class AnalysisTable implements Table<Analysis, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + CODE + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(AnalysisTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
-import it.unibo.model.entities.Organism;
+import it.unibo.model.entities.Expedition;
+import it.unibo.model.entities.impl.Organism;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -23,7 +23,7 @@ import it.unibo.model.tables.api.Table;
  */
 public class OrganismTable implements Table<Organism, String> {
 
-    private static final String TABLE_NAME = "organismi";
+    private static final String TABLE_NAME = Constants.ORGANISMS;
     private static final String ID = "ID";
     private static final String SPECIES = "Specie";
     private static final String TEMPORARY_NAME = "NomeProvvisorio";
@@ -35,7 +35,8 @@ public class OrganismTable implements Table<Organism, String> {
     /**
      * Creates an instance of {@code OrganismTable}.
      * 
-     * @param provider the provider of the connection to the database the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
     public OrganismTable(final ConnectionProvider provider) {
         this.connection = provider != null ? provider.getMySQLConnection() : null;
@@ -54,13 +55,13 @@ public class OrganismTable implements Table<Organism, String> {
      */
     @Override
     public Optional<Organism> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readOrganismsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -91,10 +92,10 @@ public class OrganismTable implements Table<Organism, String> {
     @Override
     public List<Organism> findAll() {
         try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + TABLE_NAME);
+            final ResultSet resultSet = statement.executeQuery(Constants.SELECT_ALL + TABLE_NAME);
             return readOrganismsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -108,18 +109,16 @@ public class OrganismTable implements Table<Organism, String> {
      *         been sighted during the expedition or something went wrong
      */
     public List<Organism> filterByExpedition(final String expeditionCode) {
-        final SightingTable sighting = new SightingTable(null);
-        final String query = "SELECT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME 
-                + ", " + DESCRIPTION
-                + " FROM " + TABLE_NAME + ", " + sighting.getTableName()
-                + Constants.WHERE + sighting.getTableName() + "." + sighting.getExpeditionCodeName() + "='"
-                + expeditionCode + "'" + Constants.AND + sighting.getTableName() + "." + sighting.getOrganismIDName()
-                + Constants.EQUALS + TABLE_NAME + "." + ID;
-        try (Statement statement = this.connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(query);
+        final String query = "SELECT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME
+                + ", " + DESCRIPTION + " FROM " + TABLE_NAME + ", " + Constants.SIGHTINGS
+                + Constants.WHERE + Constants.SIGHTINGS + ".CodiceSpedizione" + Constants.QUESTION_MARK
+                + Constants.AND + Constants.SIGHTINGS + ".IDorganismo" + Constants.EQUALS + TABLE_NAME + "." + ID;
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, expeditionCode);
+            final ResultSet resultSet = statement.executeQuery();
             return readOrganismsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -134,14 +133,14 @@ public class OrganismTable implements Table<Organism, String> {
                 + ") VALUES (?,?,?,?,?)";
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter counter = new Counter(1);
-            statement.setString(counter.getValueAndIncrement(), value.getId());
+            statement.setString(counter.getValueAndIncrement(), value.getID());
             statement.setString(counter.getValueAndIncrement(), value.getSpecies().orElse(null));
             statement.setString(counter.getValueAndIncrement(), value.getTemporaryName().orElse(null));
             statement.setString(counter.getValueAndIncrement(), value.getCommonName().orElse(null));
             statement.setString(counter.getValue(), value.getDescription());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -158,15 +157,15 @@ public class OrganismTable implements Table<Organism, String> {
                 + DESCRIPTION + Constants.QUESTION_MARK
                 + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            final Counter counter = new Counter(1);
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getSpecies().orElse(null));
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getTemporaryName().orElse(null));
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getCommonName().orElse(null));
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getDescription());
-            statement.setString(counter.getValue(), updatedValue.getId());
+            final Counter ct = new Counter(1);
+            statement.setString(ct.getValueAndIncrement(), updatedValue.getSpecies().orElse(null));
+            statement.setString(ct.getValueAndIncrement(), updatedValue.getTemporaryName().orElse(null));
+            statement.setString(ct.getValueAndIncrement(), updatedValue.getCommonName().orElse(null));
+            statement.setString(ct.getValueAndIncrement(), updatedValue.getDescription());
+            statement.setString(ct.getValue(), updatedValue.getID());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -177,13 +176,7 @@ public class OrganismTable implements Table<Organism, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + ID + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(OrganismTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }

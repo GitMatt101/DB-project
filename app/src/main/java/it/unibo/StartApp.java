@@ -1,6 +1,8 @@
 package it.unibo;
 
-import it.unibo.view.GraphicUtilities;
+import javax.swing.SwingUtilities;
+
+import it.unibo.view.AppWindow;
 
 /**
  * Class that starts the application.
@@ -16,7 +18,7 @@ public final class StartApp {
      * @param args
      */
     public static void main(final String[] args) {
-        GraphicUtilities.createMainFrame().setVisible(true);
+        SwingUtilities.invokeLater(() -> new AppWindow().display());
     }
 
 }

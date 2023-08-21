@@ -43,6 +43,86 @@ public final class Constants {
     public static final String PASSWORD = "frtMTT02%101";
 
     /**
+     * Name of the analyses table in the database.
+     */
+    public static final String ANALYSIS = "analisi";
+
+    /**
+     * Name of the associations table in the database.
+     */
+    public static final String ASSOCIATIONS = "associazioni";
+
+    /**
+     * Name of the sightings table in the database.
+     */
+    public static final String SIGHTINGS = "avvistamenti";
+
+    /**
+     * Name of the manufacturers table in the database.
+     */
+    public static final String MANUFACTURERS = "case_produttrici";
+
+    /**
+     * Name of the geological formations table in the database.
+     */
+    public static final String GEOLOGICAL_FORMATIONS = "formazioni_geologiche";
+
+    /**
+     * Name of the geological formations table in the database.
+     */
+    public static final String GROUPS = "gruppi_di_esplorazione";
+
+    /**
+     * Name of the laboratories table in the database.
+     */
+    public static final String LBAORATORIES = "laboratori";
+
+    /**
+     * Name of the locations table in the database.
+     */
+    public static final String LOCATIONS = "luoghi";
+
+    /**
+     * Name of the materials table in the database.
+     */
+    public static final String MATERIALS = "materiali";
+
+    /**
+     * Name of the members table in the database.
+     */
+    public static final String MEMBERS = "membri";
+
+    /**
+     * Name of the organisms table in the database.
+     */
+    public static final String ORGANISMS = "organismi";
+
+    /**
+     * Name of the countries table in the database.
+     */
+    public static final String COUNTRIES = "paesi";
+
+    /**
+     * Name of the extractions table in the database.
+     */
+    public static final String EXTRACTIONS = "prelievi";
+
+    /**
+     * Name of the wrecks table in the database.
+     */
+    public static final String WRECKS = "relitti";
+
+    /**
+     * Name of the ROVs table in the database.
+     */
+    public static final String ROV = "rov";
+
+    /**
+     * Name of the expeditions table in the database.
+     */
+    public static final String EXPEDITIONS = "spedizioni";
+
+    /**
      * Message for a successful registration query operation.
      */
     public static final String SUCCESSFUL_REGISTRATION = "Registrazione avvenuta con successo";
@@ -81,6 +161,11 @@ public final class Constants {
      * String used to add conditions in queries.
      */
     public static final String AND = " AND ";
+
+    /**
+     * String used for queries that select all attributes.
+     */
+    public static final String SELECT_ALL = "SELECT * FROM ";
 
     /**
      * Number used for prepared statements when the query only has one "?".

@@ -1,13 +1,14 @@
-package it.unibo.model.entities;
+package it.unibo.model.entities.impl;
 
 import java.util.Objects;
 
 import it.unibo.common.Constants;
+import it.unibo.model.entities.api.Subject;
 
 /**
  * This class models a geological formation, identified by a unique id.
  */
-public class GeologicalFormation {
+public class GeologicalFormation implements Subject {
 
     private final String id;
     private final String type;
@@ -34,10 +35,9 @@ public class GeologicalFormation {
     }
 
     /**
-     * Retrieves the id of the geological formation.
-     * 
-     * @return the id
+     * {@inheritDoc}
      */
+    @Override
     public String getID() {
         return this.id;
     }
@@ -70,10 +70,9 @@ public class GeologicalFormation {
     }
 
     /**
-     * Retrieves the description of the geological formation.
-     * 
-     * @return the description
+     * {@inheritDoc}
      */
+    @Override
     public String getDescription() {
         return this.description;
     }

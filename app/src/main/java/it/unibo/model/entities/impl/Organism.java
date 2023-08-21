@@ -1,14 +1,15 @@
-package it.unibo.model.entities;
+package it.unibo.model.entities.impl;
 
 import java.util.Objects;
 import java.util.Optional;
 
 import it.unibo.common.Constants;
+import it.unibo.model.entities.api.Subject;
 
 /**
  * Class modelling a generic organism.
  */
-public class Organism {
+public class Organism implements Subject {
 
     private final String id;
     private Optional<String> species;
@@ -35,11 +36,10 @@ public class Organism {
     }
 
     /**
-     * Retrieves the identifier of the organism.
-     * 
-     * @return the identifier
+     * {@inheritDoc}
      */
-    public String getId() {
+    @Override
+    public String getID() {
         return this.id;
     }
 
@@ -81,10 +81,9 @@ public class Organism {
     }
 
     /**
-     * Retrieves the description of the organism.
-     * 
-     * @return the description
+     * {@inheritDoc}
      */
+    @Override
     public String getDescription() {
         return this.description;
     }
@@ -112,7 +111,7 @@ public class Organism {
     @Override
     public boolean equals(final Object other) {
         return other instanceof Organism
-                && this.id.equals(((Organism) other).getId())
+                && this.id.equals(((Organism) other).getID())
                 && this.species.equals(((Organism) other).getSpecies())
                 && this.temporaryName.equals(((Organism) other).getTemporaryName())
                 && this.commonName.equals(((Organism) other).getCommonName())

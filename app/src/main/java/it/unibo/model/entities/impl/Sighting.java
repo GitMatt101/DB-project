@@ -4,9 +4,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import it.unibo.common.Constants;
-import it.unibo.model.entities.GeologicalFormation;
-import it.unibo.model.entities.Organism;
-import it.unibo.model.entities.Wreck;
 import it.unibo.model.entities.api.Event;
 
 /**

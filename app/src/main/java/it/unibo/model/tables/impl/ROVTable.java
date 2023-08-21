@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
 import it.unibo.connection.ConnectionProvider;
 import it.unibo.model.entities.ROV;
+import it.unibo.model.tables.TableUtilities;
 import it.unibo.model.tables.api.Table;
 
 /**
@@ -33,7 +32,8 @@ public class ROVTable implements Table<ROV, String> {
     /**
      * Creates an instance of {@code OrganismTable}.
      * 
-     * @param provider the provider of the connection to the database the connection to the database
+     * @param provider the provider of the connection to the database the connection
+     *                 to the database
      */
     public ROVTable(final ConnectionProvider provider) {
         this.connection = provider != null ? provider.getMySQLConnection() : null;
@@ -52,13 +52,14 @@ public class ROVTable implements Table<ROV, String> {
      */
     @Override
     public Optional<ROV> findByPrimaryKey(final String primaryKey) {
-        final String query = "SELECT * FROM " + TABLE_NAME + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
+        final String query = Constants.SELECT_ALL + TABLE_NAME + Constants.WHERE + LICENSE_PLATE
+                + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
             final ResultSet resultSet = statement.executeQuery();
             return readROVsFromResultSet(resultSet).stream().findFirst();
         } catch (final SQLException e) {
-            Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Optional.empty();
         }
     }
@@ -87,12 +88,12 @@ public class ROVTable implements Table<ROV, String> {
      */
     @Override
     public List<ROV> findAll() {
-        final String query = "SELECT * FROM " + TABLE_NAME;
+        final String query = Constants.SELECT_ALL + TABLE_NAME;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final ResultSet resultSet = statement.executeQuery();
             return readROVsFromResultSet(resultSet);
         } catch (final SQLException e) {
-            Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return Collections.emptyList();
         }
     }
@@ -111,7 +112,7 @@ public class ROVTable implements Table<ROV, String> {
             statement.setDate(counter.getValue(), new java.sql.Date(value.getProductionDate().getTime()));
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -130,11 +131,12 @@ public class ROVTable implements Table<ROV, String> {
             final Counter counter = new Counter(1);
             statement.setString(counter.getValueAndIncrement(), updatedValue.getSerialNumber());
             statement.setString(counter.getValueAndIncrement(), updatedValue.getManufacturerName());
-            statement.setDate(counter.getValueAndIncrement(), new java.sql.Date(updatedValue.getProductionDate().getTime()));
+            statement.setDate(counter.getValueAndIncrement(),
+                    new java.sql.Date(updatedValue.getProductionDate().getTime()));
             statement.setString(counter.getValue(), updatedValue.getLicensePlate());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
-            Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
+            TableUtilities.logSQLException(this, e);
             return false;
         }
     }
@@ -145,13 +147,7 @@ public class ROVTable implements Table<ROV, String> {
     @Override
     public boolean delete(final String primaryKey) {
         final String query = "DELETE FROM " + TABLE_NAME + Constants.WHERE + LICENSE_PLATE + Constants.QUESTION_MARK;
-        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, primaryKey);
-            return statement.executeUpdate() > 0;
-        } catch (final SQLException e) {
-            Logger.getLogger(ROVTable.class.getName()).log(Level.SEVERE, Constants.STATEMENT_CREATION_ERROR, e);
-            return false;
-        }
+        return TableUtilities.deleteOperation(query, primaryKey, this.connection, this);
     }
 
 }
