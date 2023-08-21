@@ -134,9 +134,21 @@ public class OrganismTable implements Table<Organism, String> {
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter counter = new Counter(1);
             statement.setString(counter.getValueAndIncrement(), value.getID());
-            statement.setString(counter.getValueAndIncrement(), value.getSpecies().orElse(null));
-            statement.setString(counter.getValueAndIncrement(), value.getTemporaryName().orElse(null));
-            statement.setString(counter.getValueAndIncrement(), value.getCommonName().orElse(null));
+            if (value.getSpecies().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), value.getSpecies().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
+            if (value.getTemporaryName().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), value.getTemporaryName().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
+            if (value.getCommonName().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), value.getCommonName().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
             statement.setString(counter.getValue(), value.getDescription());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {

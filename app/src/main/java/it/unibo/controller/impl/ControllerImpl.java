@@ -329,16 +329,69 @@ public class ControllerImpl implements Controller {
      * {@inheritDoc}
      */
     @Override
+    public boolean registerOrganism(final String id, final String temportaryName, final String description) {
+        if (temportaryName.length() > 0 && id.length() > 0) {
+            return new OrganismTable(this.provider).save(new Organism(
+                    id,
+                    Optional.empty(),
+                    Optional.of(temportaryName),
+                    Optional.empty(),
+                    description));
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean registerWreck(final String id, final Optional<String> name, final Optional<Date> sinkDate,
+            final Integer length, final String description) {
+        if (id.length() > 0) {
+            return new WreckTable(this.provider).save(new Wreck(id, name, sinkDate, length, description));
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean registerGeologicalFormation(final String id, final String type, final Integer size,
+            final Integer dangerLevel, final String description) {
+        if (id.length() > 0) {
+            return new GeologicalFormationTable(this.provider)
+                    .save(new GeologicalFormation(id, type, size, dangerLevel, description));
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean registerSighting(final String code, final String expeditionCode,
             final Integer depth, final String notes, final String organismID, final String wreckID,
             final String geologicalFormationID) {
-        final int number = TableUtilities.getNextNumber(Constants.SIGHTINGS, expeditionCode,
-                this.provider.getMySQLConnection(), this);
-        return number != -1 && new SightingTable(this.provider)
-                .save(new Sighting(code, expeditionCode, number,
-                        Optional.ofNullable(depth), Optional.ofNullable(notes),
-                        Optional.ofNullable(organismID), Optional.ofNullable(wreckID),
-                        Optional.ofNullable(geologicalFormationID)));
+        if (organismID != null && new OrganismTable(this.provider).findByPrimaryKey(organismID).isEmpty()) {
+            this.inputManager.organismRegistration();
+            return false;
+        } else if (wreckID != null && new WreckTable(this.provider).findByPrimaryKey(wreckID).isEmpty()) {
+            this.inputManager.wreckRegistration();
+            return false;
+        } else if (geologicalFormationID != null
+                && new GeologicalFormationTable(this.provider).findByPrimaryKey(geologicalFormationID).isEmpty()) {
+            this.inputManager.geologicalFormationRegistration();
+            return false;
+        } else {
+            final int number = TableUtilities.getNextNumber(Constants.SIGHTINGS, expeditionCode,
+                    this.provider.getMySQLConnection(), this);
+            return number != -1 && new SightingTable(this.provider)
+                    .save(new Sighting(code, expeditionCode, number,
+                            Optional.ofNullable(depth), Optional.ofNullable(notes),
+                            Optional.ofNullable(organismID), Optional.ofNullable(wreckID),
+                            Optional.ofNullable(geologicalFormationID)));
+        }
     }
 
     /**

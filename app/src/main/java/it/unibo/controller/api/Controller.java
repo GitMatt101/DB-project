@@ -204,6 +204,41 @@ public interface Controller {
     boolean updateSpecies(String organismID, String updatedSpecies);
 
     /**
+     * Registers an {@link Organism} in the database.
+     * 
+     * @param id             the ID of the organism
+     * @param temportaryName the temporary name of the organism
+     * @param description    the description of the organism
+     * @return true if the operation is successful, false otherwise
+     */
+    boolean registerOrganism(String id, String temportaryName, String description);
+
+    /**
+     * Registers a {@link Wreck} in the database.
+     * 
+     * @param id          the ID of the wreck
+     * @param name        the model name of the wreck
+     * @param sinkDate    the date when it sinked
+     * @param length      the length of the wreck
+     * @param description the description of the wreck
+     * @return true if the operation is successful, false otherwise
+     */
+    boolean registerWreck(String id, Optional<String> name, Optional<Date> sinkDate, Integer length,
+            String description);
+
+    /**
+     * Registers a {@link GeologicalFormation} in the database.
+     * 
+     * @param id          the ID of the geological formation
+     * @param type        the type of the geological formation
+     * @param size        the size of the geological formation
+     * @param dangerLevel the danger level of the geological formation
+     * @param description the description of the geological formation
+     * @return true if the operation is successful, false otherwise
+     */
+    boolean registerGeologicalFormation(String id, String type, Integer size, Integer dangerLevel, String description);
+
+    /**
      * Applies the given research filters to retrieve a list of {@link Sighting}s.
      * Each field of the filter is an {@link Optional} of the type of the field, or
      * an empty {@link Optional} if the field is not specified.

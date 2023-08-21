@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +32,7 @@ import it.unibo.view.popups.api.OutputManager;
 public class InputManagerImpl implements InputManager {
 
     private static final String CONFIRM = "Conferma";
+    private static final String OBLIGATORY_ID = "ID*";
     private static final int COLUMNS = 2;
     private static final int FIELD_WIDTH = 300;
     private static final int FIELD_HEIGHT = 40;
@@ -171,7 +173,7 @@ public class InputManagerImpl implements InputManager {
     @Override
     public void memberRegistration() {
         final List<String> fieldNames = List.of("Nome*", "Cognome*", "Codice fiscale*", "Associazione*", "ID gruppo*",
-                "ID*", "Ruolo*");
+                OBLIGATORY_ID, "Ruolo*");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
         confirmButton.addActionListener(e -> {
@@ -254,7 +256,7 @@ public class InputManagerImpl implements InputManager {
     @Override
     public void sightingRegistration() {
         final List<String> fieldNames = List.of("Codice*", "Codice spedizione*", "Profondità", "Note", "ID organismo",
-                "ID relitto*", "ID formazione geologica");
+                "ID relitto", "ID formazione geologica");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
         confirmButton.addActionListener(e -> {
@@ -300,7 +302,7 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void speciesUpdate() {
-        final List<String> fieldNames = List.of("ID*", "Nuova Specie*");
+        final List<String> fieldNames = List.of(OBLIGATORY_ID, "Nuova Specie*");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
         confirmButton.addActionListener(e -> {
@@ -311,6 +313,76 @@ public class InputManagerImpl implements InputManager {
             showResultPopup(result);
         });
         showUserInputPopup(fieldNames, fields, confirmButton, "Aggiornamento specie");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void organismRegistration() {
+        final List<String> fieldNames = List.of(OBLIGATORY_ID, "Nome provvisorio*", "Descrizione*");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
+        final JButton confirmButton = new JButton(CONFIRM);
+        confirmButton.addActionListener(e -> {
+            final Counter counter = new Counter();
+            final boolean result = this.controller.registerOrganism(
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValue()).getText());
+            showResultPopup(result);
+        });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione organismo");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void wreckRegistration() {
+        final List<String> fieldNames = List.of(OBLIGATORY_ID, "Nome", "Data affondamento", "Lunghezza*", "Descrizione*");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
+        final JButton confirmButton = new JButton(CONFIRM);
+        confirmButton.addActionListener(e -> {
+            final Counter counter = new Counter();
+            Date date;
+            try {
+                date = fields.get(2).getText().length() == 0 ? null
+                        : new SimpleDateFormat("yyyy-MM-dd", Locale.ITALIAN).parse(fields.get(2).getText());
+            } catch (final ParseException e1) {
+                Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
+                date = null;
+            }
+            final boolean result = this.controller.registerWreck(
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
+                    Optional.ofNullable(date),
+                    Integer.valueOf(fields.get(counter.getValueAndIncrement() + 1).getText()),
+                    fields.get(counter.getValue() + 1).getText());
+            showResultPopup(result);
+        });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione relitto");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void geologicalFormationRegistration() {
+        final List<String> fieldNames = List.of(OBLIGATORY_ID, "Tipologia*", "Dimensioni*", "Grado di pericolo* (1-5)",
+                "Descrizione*");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
+        final JButton confirmButton = new JButton(CONFIRM);
+        confirmButton.addActionListener(e -> {
+            final Counter counter = new Counter();
+            final boolean result = this.controller.registerGeologicalFormation(
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    fields.get(counter.getValueAndIncrement()).getText(),
+                    Integer.valueOf(fields.get(counter.getValueAndIncrement()).getText()),
+                    Integer.valueOf(fields.get(counter.getValueAndIncrement()).getText()),
+                    fields.get(counter.getValue()).getText());
+            showResultPopup(result);
+        });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Registrazione formazione geologica");
     }
 
     /**

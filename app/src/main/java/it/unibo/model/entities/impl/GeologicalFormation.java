@@ -20,8 +20,8 @@ public class GeologicalFormation implements Subject {
      * Creates an instance of {@code GeologicalFormation}.
      * 
      * @param id          the id
-     * @param size        the size
      * @param type        the type
+     * @param size        the size
      * @param dangerLevel the danger level
      * @param description the description
      */
