@@ -30,7 +30,7 @@ public class OutputManagerImpl implements OutputManager {
     private static final String DESCRIPTION = "Descrizione";
     private static final String NOTES = "Note";
     private static final String FRAME_TITLE = "Risultati";
-    private static final int FONT_SIZE = 15;
+    private static final int FONT_SIZE = 17;
     private static final int FIELD_HEIGHT = 40;
     private static final int HORIZONTAL_CELL_SPACING = 0;
     private static final int VERTICAL_CELL_SPACING = 0;
@@ -39,6 +39,7 @@ public class OutputManagerImpl implements OutputManager {
     private static final int SCROLL_SPEED = 16;
     private static final int SCROLLPANE_MAX_HEIGHT = 600;
     private static final int POPUP_FONT_SIZE = 20;
+    private static final int COMBOBOX_FONT_SIZE = 12;
 
     /**
      * Creates a {@link JTextArea}.
@@ -251,7 +252,7 @@ public class OutputManagerImpl implements OutputManager {
                 }
             }
             final JComboBox<String> names = new JComboBox<>(list);
-            names.setFont(new java.awt.Font(Constants.DEFAULT_FONT, java.awt.Font.PLAIN, FONT_SIZE));
+            names.setFont(new java.awt.Font(Constants.DEFAULT_FONT, java.awt.Font.PLAIN, COMBOBOX_FONT_SIZE));
             names.setEditable(false);
             names.setPreferredSize(new java.awt.Dimension(width, FIELD_HEIGHT));
             centerPanel.add(names);
