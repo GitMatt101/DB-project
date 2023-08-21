@@ -3,7 +3,6 @@ package it.unibo.view.popups.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -466,30 +465,6 @@ public class InputManagerImpl implements InputManager {
      * {@inheritDoc}.
      */
     @Override
-    public void geologicalFormationFilterByDangerLevel() {
-        final List<String> fieldNames = List.of("Grado di pericolo (1-5)");
-        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
-        final JButton confirmButton = new JButton(CONFIRM);
-        confirmButton.addActionListener(e -> {
-            final String field = fields.get(0).getText();
-            final Integer value = Integer.valueOf(field);
-            if (field.length() != 0 && value >= Constants.MINIMUM_DANGER_LEVEL
-                    && value <= Constants.MAXIMUM_DANGER_LEVEL) {
-                final List<List<String>> result = this.controller.filterGeologicalFormationsByDangerLevel(value);
-
-                this.outputManager.showGeologicalFormationsAndLocations(result);
-            } else {
-
-                this.outputManager.showGeologicalFormationsAndLocations(Collections.emptyList());
-            }
-        });
-        showUserInputPopup(fieldNames, fields, confirmButton, "Filtro formazioni geologiche pericolose");
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
     public void wrecksFitlerByName() {
         final List<String> fieldNames = List.of("Nome");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
@@ -512,6 +487,29 @@ public class InputManagerImpl implements InputManager {
         confirmButton.addActionListener(e -> {
             final List<List<String>> result = this.controller.getAnalysesInfo(fields.get(0).getText());
             this.outputManager.showAnalysesAndLaboratories(result);
+        });
+        showUserInputPopup(fieldNames, fields, confirmButton, "Ricerca analisi per materiale");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void yearChoice() {
+        final List<String> fieldNames = List.of("Anno minimo", "Anno massimo");
+        final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
+        final JButton confirmButton = new JButton(CONFIRM);
+        confirmButton.addActionListener(e -> {
+            Integer minYear = 0;
+            Integer maxYear = 0;
+            if (getIntegerOrNull(fields.get(0).getText()) != null) {
+                minYear = Integer.valueOf(fields.get(0).getText());
+            }
+            if (getIntegerOrNull(fields.get(1).getText()) != null) {
+                maxYear = Integer.valueOf(fields.get(1).getText());
+            }
+            final List<List<String>> result = this.controller.getScientificprogress(minYear, maxYear);
+            this.outputManager.showScientificProgress(result);
         });
         showUserInputPopup(fieldNames, fields, confirmButton, "Ricerca analisi per materiale");
     }

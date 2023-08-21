@@ -3,16 +3,18 @@ package it.unibo.controller.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import it.unibo.common.ConnectionProvider;
 import it.unibo.common.Constants;
+import it.unibo.common.Pair;
 import it.unibo.controller.api.Controller;
 import it.unibo.model.entities.Analysis;
 import it.unibo.model.entities.Company;
@@ -145,8 +147,26 @@ public class ControllerImpl implements Controller {
      * {@inheritDoc}
      */
     @Override
-    public void openGeologicalFormationsFilterByDangerLevel() {
-        this.inputManager.geologicalFormationFilterByDangerLevel();
+    public void showLocationsByMostDangerous() {
+        final String query = "SELECT AVG(F.GradoPericolo) AS media, L.Nome, L.NomePaese"
+                + " FROM " + Constants.GEOLOGICAL_FORMATIONS + " F"
+                + Constants.JOIN + Constants.SIGHTINGS + " A ON A.IDformazionegeologica = F.ID"
+                + Constants.JOIN + Constants.EXPEDITIONS + " S ON S.Codice = A.CodiceSpedizione"
+                + Constants.JOIN + Constants.LOCATIONS + " L ON L.Nome = S.NomeLuogo"
+                + " GROUP BY L.Nome ORDER BY media DESC";
+        final List<List<String>> values = new LinkedList<>();
+        try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
+            final ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                values.add(List.of(
+                        resultSet.getString("Nome"),
+                        resultSet.getString("NomePaese"),
+                        String.valueOf(resultSet.getFloat("media"))));
+            }
+        } catch (final SQLException e) {
+            TableUtilities.logSQLException(this, e);
+        }
+        this.outputManager.showMostDangerousLocations(values);
     }
 
     /**
@@ -173,6 +193,7 @@ public class ControllerImpl implements Controller {
             o.getSpecies().ifPresentOrElse(attributes::add, () -> attributes.add("[NON IDENTIFICATO]"));
             o.getTemporaryName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
             o.getCommonName().ifPresentOrElse(attributes::add, () -> attributes.add(""));
+            attributes.add(String.valueOf(o.getDiscoveryDate()));
             attributes.add(o.getDescription());
             output.add(attributes);
         });
@@ -521,66 +542,28 @@ public class ControllerImpl implements Controller {
      * {@inheritDoc}
      */
     @Override
-    public List<List<String>> filterGeologicalFormationsByDangerLevel(final Integer dangerLevel) {
-        final List<GeologicalFormation> geologicalFormations = new GeologicalFormationTable(this.provider)
-                .filterByDangerLevel(dangerLevel);
-        final List<List<String>> output = new LinkedList<>();
-        geologicalFormations.forEach(g -> {
-            final String query = "SELECT Nome, NomePaese FROM "
-                    + Constants.LOCATIONS + "," + Constants.EXPEDITIONS + "," + Constants.SIGHTINGS
-                    + Constants.WHERE + Constants.LOCATIONS + ".Nome"
-                    + Constants.EQUALS + Constants.EXPEDITIONS + ".NomeLuogo"
-                    + Constants.AND + Constants.SIGHTINGS + ".CodiceSpedizione"
-                    + Constants.EQUALS + Constants.EXPEDITIONS + ".Codice"
-                    + Constants.AND + Constants.SIGHTINGS + ".IDformazionegeologica" + Constants.QUESTION_MARK;
-            try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
-                statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, g.getID());
-                final ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    final List<String> list = new ArrayList<>();
-                    list.add(g.getID());
-                    list.add(g.getType());
-                    list.add(String.valueOf(g.getSize()));
-                    list.add(g.getDescription());
-                    list.add(resultSet.getString("Nome"));
-                    list.add(resultSet.getString("NomePaese"));
-                    output.add(list);
-                }
-            } catch (final SQLException e) {
-                TableUtilities.logSQLException(this, e);
-            }
-        });
-        return output;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<List<String>> filterLocationsByWreck(final String wreckName) {
-        final List<Wreck> wrecks = new WreckTable(this.provider).filterByName(wreckName);
-        final Set<List<String>> output = new HashSet<>();
-        wrecks.forEach(w -> {
-            final List<String> list = new ArrayList<>();
-            final String query = "SELECT Nome, NomePaese " + " FROM "
-                    + Constants.LOCATIONS + "," + Constants.EXPEDITIONS + "," + Constants.SIGHTINGS
-                    + Constants.WHERE + Constants.LOCATIONS + ".Nome"
-                    + Constants.EQUALS + Constants.EXPEDITIONS + ".NomeLuogo"
-                    + Constants.AND + Constants.SIGHTINGS + ".CodiceSpedizione"
-                    + Constants.EQUALS + Constants.EXPEDITIONS + ".Codice"
-                    + Constants.AND + Constants.SIGHTINGS + ".IDrelitto" + Constants.QUESTION_MARK;
-            try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
-                statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, w.getID());
-                final ResultSet resultSet = statement.executeQuery();
-                list.add(w.getID());
-                list.add(resultSet.getString("Nome"));
-                list.add(resultSet.getString("NomePaese"));
-                output.add(list);
-            } catch (final SQLException e) {
-                TableUtilities.logSQLException(this, e);
+        final String query = "SELECT COUNT(R.ID) AS numero, L.Nome, L.NomePaese"
+                + " FROM " + Constants.WRECKS + " R"
+                + Constants.JOIN + Constants.SIGHTINGS + " A ON A.IDrelitto = R.ID"
+                + Constants.JOIN + Constants.EXPEDITIONS + " S ON S.Codice = A.CodiceSpedizione"
+                + Constants.JOIN + Constants.LOCATIONS + " L ON L.Nome = S.NomeLuogo"
+                + Constants.WHERE + "R.Nome" + Constants.QUESTION_MARK
+                + " GROUP BY L.Nome ORDER BY numero DESC";
+        final List<List<String>> values = new LinkedList<>();
+        try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
+            statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, wreckName);
+            final ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                values.add(List.of(
+                        resultSet.getString("Nome"),
+                        resultSet.getString("Nomepaese"),
+                        String.valueOf(resultSet.getInt("numero"))));
             }
-        });
-        return new LinkedList<>(output);
+        } catch (final SQLException e) {
+            TableUtilities.logSQLException(this, e);
+        }
+        return new LinkedList<>(values);
     }
 
     /**
@@ -608,6 +591,42 @@ public class ControllerImpl implements Controller {
             });
         });
         return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<List<String>> getScientificprogress(final Integer minYear, final Integer maxYear) {
+        final List<Pair<Integer, Integer>> results = new OrganismTable(this.provider).getDiscoveries(minYear, maxYear);
+        final List<List<String>> output = new LinkedList<>();
+        final List<Integer> values = new LinkedList<>();
+        final List<Float> percentages = new LinkedList<>();
+        results.forEach(r -> {
+            final int n = r.getY();
+            values.add(n);
+            final float avg = (float) values.stream().mapToInt(Integer::intValue).sum() / (float) values.size();
+            final float perc = ((float) n) * 100 / avg - 100;
+            percentages.add(perc);
+        });
+        Collections.reverse(results);
+        Collections.reverse(percentages);
+        final DecimalFormat df = new DecimalFormat("0.00");
+        for (int i = 0; i < results.size(); i++) {
+            final String perc = percentages.get(i) >= 0.0f ? "+" + df.format(percentages.get(i)) + "%"
+                    : df.format(percentages.get(i)) + "%";
+            output.add(List.of(String.valueOf(results.get(i).getX()),
+                    String.valueOf(results.get(i).getY()), perc));
+        }
+        return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void openYearChoice() {
+        this.inputManager.yearChoice();
     }
 
 }

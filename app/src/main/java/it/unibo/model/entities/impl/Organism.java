@@ -1,5 +1,6 @@
 package it.unibo.model.entities.impl;
 
+import java.time.Year;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ public class Organism implements Subject {
     private Optional<String> species;
     private Optional<String> temporaryName;
     private final Optional<String> commonName;
+    private final int discoveryDate;
     private final String description;
 
     /**
@@ -24,15 +26,32 @@ public class Organism implements Subject {
      * @param species       the species of the organism
      * @param temporaryName the temporary name of the organism
      * @param commonName    the common name of the organism
+     * @param discoveryDate the year it was discovered
      * @param description   the description of the organism
      */
     public Organism(final String id, final Optional<String> species, final Optional<String> temporaryName,
-            final Optional<String> commonName, final String description) {
+            final Optional<String> commonName, final int discoveryDate, final String description) {
         this.id = id;
         this.species = species;
         this.temporaryName = temporaryName;
         this.commonName = commonName;
+        this.discoveryDate = discoveryDate;
         this.description = description;
+    }
+
+    /**
+     * Creates an instance of {@code Organism} and sets the discovery date to the
+     * current year.
+     * 
+     * @param id            the identifier of the organism
+     * @param species       the species of the organism
+     * @param temporaryName the temporary name of the organism
+     * @param commonName    the common name of the organism
+     * @param description   the description of the organism
+     */
+    public Organism(final String id, final Optional<String> species, final Optional<String> temporaryName,
+            final Optional<String> commonName, final String description) {
+        this(id, species, temporaryName, commonName, Year.now().getValue(), description);
     }
 
     /**
@@ -78,6 +97,15 @@ public class Organism implements Subject {
      */
     public Optional<String> getCommonName() {
         return this.commonName;
+    }
+
+    /**
+     * Retrieves the discovery date of the organism.
+     * 
+     * @return the year the organism was discovered
+     */
+    public int getDiscoveryDate() {
+        return this.discoveryDate;
     }
 
     /**

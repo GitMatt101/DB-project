@@ -7,12 +7,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import it.unibo.common.ConnectionProvider;
 import it.unibo.common.Constants;
 import it.unibo.common.Counter;
+import it.unibo.common.Pair;
 import it.unibo.model.entities.Expedition;
 import it.unibo.model.entities.impl.Organism;
 import it.unibo.model.tables.TableUtilities;
@@ -76,12 +78,14 @@ public class OrganismTable implements Table<Organism, String> {
     private List<Organism> readOrganismsFromResultSet(final ResultSet resultSet) throws SQLException {
         final List<Organism> organisms = new ArrayList<>();
         while (resultSet.next()) {
+            final Counter counter = new Counter(1);
             organisms.add(new Organism(
-                    resultSet.getString(ID),
-                    Optional.ofNullable(resultSet.getString(SPECIES)),
-                    Optional.ofNullable(resultSet.getString(TEMPORARY_NAME)),
-                    Optional.ofNullable(resultSet.getString(COMMON_NAME)),
-                    resultSet.getString(DESCRIPTION)));
+                    resultSet.getString(counter.getValueAndIncrement()),
+                    Optional.ofNullable(resultSet.getString(counter.getValueAndIncrement())),
+                    Optional.ofNullable(resultSet.getString(counter.getValueAndIncrement())),
+                    Optional.ofNullable(resultSet.getString(counter.getValueAndIncrement())),
+                    resultSet.getInt(counter.getValueAndIncrement()),
+                    resultSet.getString(counter.getValue())));
         }
         return organisms;
     }
@@ -117,6 +121,34 @@ public class OrganismTable implements Table<Organism, String> {
             statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, expeditionCode);
             final ResultSet resultSet = statement.executeQuery();
             return readOrganismsFromResultSet(resultSet);
+        } catch (final SQLException e) {
+            TableUtilities.logSQLException(this, e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Retrieves how many organisms were discovered in a specific year.
+     * 
+     * @param minYear minimum year
+     * @param maxYear maximum year
+     * @return list of year, number of organism discovered
+     */
+    public List<Pair<Integer, Integer>> getDiscoveries(final int minYear, final int maxYear) {
+        final String query = "SELECT COUNT(O.ID) AS numero, O.AnnoScoperta FROM " + Constants.ORGANISMS + " O"
+                + Constants.WHERE + "O.AnnoScoperta >= ?"
+                + Constants.AND + "O.Annoscoperta <= ?"
+                + " GROUP BY O.AnnoScoperta ORDER BY O.AnnoScoperta ASC";
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            final Counter counter = new Counter(1);
+            statement.setInt(counter.getValueAndIncrement(), minYear);
+            statement.setInt(counter.getValue(), maxYear);
+            final ResultSet resultSet = statement.executeQuery();
+            final List<Pair<Integer, Integer>> results = new LinkedList<>();
+            while (resultSet.next()) {
+                results.add(new Pair<>(resultSet.getInt("AnnoScoperta"), resultSet.getInt("numero")));
+            }
+            return results;
         } catch (final SQLException e) {
             TableUtilities.logSQLException(this, e);
             return Collections.emptyList();

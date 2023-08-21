@@ -265,7 +265,8 @@ public class OutputManagerImpl implements OutputManager {
      */
     @Override
     public void showOrganisms(final List<List<String>> organisms) {
-        final List<String> fieldNames = List.of("ID", "Specie", "Nome provvisorio", "Nome comune", DESCRIPTION);
+        final List<String> fieldNames = List.of("ID", "Specie", "Nome provvisorio", "Nome comune", "Anno scoperta",
+                DESCRIPTION);
         final int width = SCREEN_WIDTH / fieldNames.size();
         final JPanel centerPanel = createCenterPanel(organisms.size(), fieldNames.size());
         organisms.forEach(o -> {
@@ -336,24 +337,14 @@ public class OutputManagerImpl implements OutputManager {
      * {@inheritDoc}.
      */
     @Override
-    public void showGeologicalFormationsAndLocations(final List<List<String>> geologicalFormations) {
-        final List<String> fieldNames = List.of("ID", "Tipologia", "Dimensioni", DESCRIPTION, "Luogo", "Paese");
+    public void showMostDangerousLocations(final List<List<String>> values) {
+        final List<String> fieldNames = List.of("Luogo", "Paese", "Grado di pericolo medio");
         final int width = SCREEN_WIDTH / fieldNames.size();
-        final JPanel centerPanel = createCenterPanel(geologicalFormations.size(), fieldNames.size());
-        geologicalFormations.forEach(g -> {
-            for (int i = 0; i < fieldNames.size(); i++) {
-                final String text = g.get(i);
-                if (i == 3) {
-                    final Component component = text.length() > 0
-                            ? createPopupButton(OPEN_NOTES, e -> showPopup(text, NOTES), width)
-                            : createDefaultTextArea("", width);
-                    centerPanel.add(component);
-                } else {
-                    centerPanel.add(createDefaultTextArea(text, width));
-                }
-            }
+        final JPanel centerPanel = createCenterPanel(values.size(), fieldNames.size());
+        values.forEach(g -> {
+            g.forEach(e -> centerPanel.add(createDefaultTextArea(e, width)));
         });
-        showResults(centerPanel, fieldNames, geologicalFormations.size());
+        showResults(centerPanel, fieldNames, values.size());
     }
 
     /**
@@ -361,7 +352,7 @@ public class OutputManagerImpl implements OutputManager {
      */
     @Override
     public void showWrecksAndLocations(final List<List<String>> values) {
-        final List<String> fieldNames = List.of("ID", "Luogo", "Paese");
+        final List<String> fieldNames = List.of("Luogo", "Paese", "Numero di relitti");
         final int width = SCREEN_WIDTH / fieldNames.size();
         final JPanel centerPanel = createCenterPanel(values.size(), fieldNames.size());
         values.forEach(s -> {
@@ -385,6 +376,20 @@ public class OutputManagerImpl implements OutputManager {
             v.forEach(e -> {
                 centerPanel.add(createDefaultTextArea(e, width));
             });
+        });
+        showResults(centerPanel, fieldNames, values.size());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showScientificProgress(final List<List<String>> values) {
+        final List<String> fieldNames = List.of("Anno", "Numero di organismi scoperti", "Aumento percentuale");
+        final int width = SCREEN_WIDTH / fieldNames.size();
+        final JPanel centerPanel = createCenterPanel(values.size(), fieldNames.size());
+        values.forEach(g -> {
+            g.forEach(e -> centerPanel.add(createDefaultTextArea(e, width)));
         });
         showResults(centerPanel, fieldNames, values.size());
     }

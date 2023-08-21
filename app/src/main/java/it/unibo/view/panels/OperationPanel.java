@@ -45,12 +45,14 @@ public class OperationPanel extends JPanel {
                 e -> this.controller.openExpeditionsFilterByAssociation());
         addButton("<html>O8 - Visualizza gli organismi avvistati<br />in una spedizione</html>",
                 e -> this.controller.openOrganismsFilterByExpedition());
-        addButton("<html>O9 - Visualizza le formazioni geologiche<br />filtrando per grado di pericolo</html>",
-                e -> this.controller.openGeologicalFormationsFilterByDangerLevel());
+        addButton("<html>O9 - Visualizza i luoghi più pericolosi",
+                e -> this.controller.showLocationsByMostDangerous());
         addButton("<html>O10 - Visualizza i luoghi dove sono<br />affondati dei relitti</html>",
                 e -> this.controller.openWrecksFilterByName());
         addButton("O11 - Visualizza le analisi fatte su un materiale",
                 e -> this.controller.openAnalysesFilterByMaterial());
+        addButton("O12 - Visualizza il progresso scientifico",
+                e -> this.controller.openYearChoice());
     }
 
     /**

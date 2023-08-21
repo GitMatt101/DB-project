@@ -168,6 +168,11 @@ public final class Constants {
     public static final String SELECT_ALL = "SELECT * FROM ";
 
     /**
+     * String used for queries using JOIN.
+     */
+    public static final String JOIN = " JOIN ";
+
+    /**
      * Number used for prepared statements when the query only has one "?".
      */
     public static final int SINGLE_QUERY_VALUE_INDEX = 1;

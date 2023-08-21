@@ -66,13 +66,12 @@ public interface OutputManager {
     void showAssociations(List<List<String>> associations);
 
     /**
-     * Displays a popup that shows a list of geological formations and the locations
-     * they are situated in.
+     * Displays a popup that shows a list of all locations ordered by the average
+     * danger level across the geological formations situated in them.
      * 
-     * @param values a list of geological formations and locations, each element
-     *               represented by a list of its attributes.
+     * @param values a list of locations and average danger levels.
      */
-    void showGeologicalFormationsAndLocations(List<List<String>> values);
+    void showMostDangerousLocations(List<List<String>> values);
 
     /**
      * Displays a popup that shows a list of wrecks' IDs and the
@@ -90,5 +89,13 @@ public interface OutputManager {
      *               by a list of their attributes
      */
     void showAnalysesAndLaboratories(List<List<String>> values);
+
+    /**
+     * Displays a popup that shows a list of years with the average organisms
+     * sighted and the increase or decrease percentage compared to the previous.
+     * 
+     * @param values a list of year, number of discoveries, percentage
+     */
+    void showScientificProgress(List<List<String>> values);
 
 }

@@ -100,9 +100,9 @@ public interface Controller {
     void openOrganismsFilterByExpedition();
 
     /**
-     * Opens the popup for the {@link GeologicalFormation}s filter by danger level.
+     * Opens the popup for the ordering of most dangerous locations.
      */
-    void openGeologicalFormationsFilterByDangerLevel();
+    void showLocationsByMostDangerous();
 
     /**
      * Opens the popup for the {@link Wreck}s filter by name.
@@ -113,6 +113,11 @@ public interface Controller {
      * Opens the popup for the {@link Extraction}s filter by {@link Material}.
      */
     void openAnalysesFilterByMaterial();
+
+    /**
+     * Opens the popup for year range choice for scientific progress.
+     */
+    void openYearChoice();
 
     /**
      * Registers a new {@link Member} in the database.
@@ -126,7 +131,8 @@ public interface Controller {
      * @param role            the role of the member
      * @return true if the registration was successful, false otherwise
      */
-    boolean registerMember(String firstName, String lastName, String fiscalCode, String associationName, String groupID,
+    boolean registerMember(String firstName, String lastName, String fiscalCode, String associationName,
+            String groupID,
             String id, String role);
 
     /**
@@ -236,7 +242,8 @@ public interface Controller {
      * @param description the description of the geological formation
      * @return true if the operation is successful, false otherwise
      */
-    boolean registerGeologicalFormation(String id, String type, Integer size, Integer dangerLevel, String description);
+    boolean registerGeologicalFormation(String id, String type, Integer size, Integer dangerLevel,
+            String description);
 
     /**
      * Applies the given research filters to retrieve a list of {@link Sighting}s.
@@ -326,24 +333,6 @@ public interface Controller {
     List<List<String>> filterOrganismsByExpedition(String expeditionCode);
 
     /**
-     * Retrieves all the {@link GeologicalFormation}s with a specific danger level
-     * and the {@link Location}s they are situated in.
-     * 
-     * @param dangerLevel the danger level of the geological formations
-     * @return a list of geological formations, each represented by a list of its
-     *         attributes, in the following order:
-     *         <ul>
-     *         <li>ID</li>
-     *         <li>type</li>
-     *         <li>size</li>
-     *         <li>description</li>
-     *         <li>name of the location</li>
-     *         <li>name of the country</li>
-     *         </ul>
-     */
-    List<List<String>> filterGeologicalFormationsByDangerLevel(Integer dangerLevel);
-
-    /**
      * Retrieves all the locations where a certain {@link Wreck} was spotted.
      * 
      * @param wreckName the model of the wreck
@@ -368,5 +357,15 @@ public interface Controller {
      * 
      */
     List<List<String>> getAnalysesInfo(String materialName);
+
+    /**
+     * Retrieves how many organisms were discovered each year in a certain range,
+     * along a percentage of how many more compared to the previous year.
+     * 
+     * @param minYear the minimum year of the range
+     * @param maxYear the maximum year of the range
+     * @return a list of: year, number of discovered organisms, percentage
+     */
+    List<List<String>> getScientificprogress(Integer minYear, Integer maxYear);
 
 }

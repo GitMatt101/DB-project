@@ -79,12 +79,6 @@ public interface InputManager {
     void organismsFilterByExpedition();
 
     /**
-     * Displays a popup that allows the user to filter geological formations by
-     * danger level.
-     */
-    void geologicalFormationFilterByDangerLevel();
-
-    /**
      * Displays a popup that allows the user to filter wrecks by name.
      */
     void wrecksFitlerByName();
@@ -94,5 +88,11 @@ public interface InputManager {
      * material analyzed.
      */
     void analysesFilterByMaterial();
+
+    /**
+     * Displays a popup that allows the user to choose 2 years for scientific
+     * progress range.
+     */
+    void yearChoice();
 
 }
