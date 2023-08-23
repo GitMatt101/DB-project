@@ -345,7 +345,7 @@ public class ControllerImpl implements Controller {
         final Optional<ROV> rov = new ROVTable(this.provider).findByPrimaryKey(rovLicencePlate);
         if (rov.isPresent() && rov.get().getProductionDate().getTime() <= date.getTime()) {
             return new ExpeditionTable(this.provider)
-                .save(new Expedition(code, date, locationName, rovLicencePlate, groupID, associationName));
+                    .save(new Expedition(code, date, locationName, rovLicencePlate, groupID, associationName));
         } else {
             this.outputManager.showErrorMessage("Targa non valida");
             return false;
@@ -402,13 +402,16 @@ public class ControllerImpl implements Controller {
             final String geologicalFormationID) {
         if (organismID != null && new OrganismTable(this.provider).findByPrimaryKey(organismID).isEmpty()) {
             this.inputManager.organismRegistration();
+            this.outputManager.showErrorMessage("Organismo non presente nel database");
             return false;
         } else if (wreckID != null && new WreckTable(this.provider).findByPrimaryKey(wreckID).isEmpty()) {
             this.inputManager.wreckRegistration();
+            this.outputManager.showErrorMessage("Relitto non presente nel database");
             return false;
         } else if (geologicalFormationID != null
                 && new GeologicalFormationTable(this.provider).findByPrimaryKey(geologicalFormationID).isEmpty()) {
             this.inputManager.geologicalFormationRegistration();
+            this.outputManager.showErrorMessage("Formazione geologica non presente nel database");
             return false;
         } else {
             final int number = TableUtilities.getNextNumber(Constants.SIGHTINGS, expeditionCode,
