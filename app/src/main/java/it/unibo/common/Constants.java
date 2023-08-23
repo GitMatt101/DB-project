@@ -35,12 +35,12 @@ public final class Constants {
     /**
      * Username to access the database.
      */
-    public static final String USERNAME = "root";
+    public static final String USERNAME = "mattia";
 
     /**
      * Password to access the database.
      */
-    public static final String PASSWORD = "frtMTT02%101";
+    public static final String PASSWORD = "mattiaDB%123";
 
     /**
      * Name of the analyses table in the database.
