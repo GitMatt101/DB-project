@@ -160,9 +160,10 @@ public class ControllerImpl implements Controller {
         try (PreparedStatement statement = this.provider.getMySQLConnection().prepareStatement(query)) {
             final ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
+                final String country = resultSet.getString("Nomepaese");
                 values.add(List.of(
                         resultSet.getString("Nome"),
-                        resultSet.getString("Nomepaese") != null ? resultSet.getString("Nomepaese") : "",
+                        country != null ? country : "",
                         resultSet.getFloat("media") + "/5"));
             }
         } catch (final SQLException e) {
@@ -305,9 +306,9 @@ public class ControllerImpl implements Controller {
             final Calendar calendar = new GregorianCalendar();
             calendar.setTime(e.getDate());
             attributes.add(e.getCode());
-            attributes.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))
-                    + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1)
-                    + "-" + String.valueOf(calendar.get(Calendar.YEAR)));
+            attributes.add(calendar.get(Calendar.DAY_OF_MONTH)
+                    + "-" + (calendar.get(Calendar.MONTH) + 1)
+                    + "-" + calendar.get(Calendar.YEAR));
             attributes.add(e.getLocationName());
             attributes.add(e.getAssociationName());
             attributes.add(e.getGroupID());
@@ -531,9 +532,9 @@ public class ControllerImpl implements Controller {
             final Calendar calendar = new GregorianCalendar();
             calendar.setTime(s.getDate());
             list.add(s.getCode());
-            list.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))
-                    + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1)
-                    + "-" + String.valueOf(calendar.get(Calendar.YEAR)));
+            list.add(calendar.get(Calendar.DAY_OF_MONTH)
+                    + "-" + (calendar.get(Calendar.MONTH) + 1)
+                    + "-" + calendar.get(Calendar.YEAR));
             list.add(s.getLocationName());
             list.add(s.getAssociationName());
             list.add(s.getGroupID());
