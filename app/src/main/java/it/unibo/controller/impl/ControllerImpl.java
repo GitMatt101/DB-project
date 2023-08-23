@@ -506,7 +506,7 @@ public class ControllerImpl implements Controller {
                     list.add(Constants.DEPTH_NOT_SPECIFIED);
                 }
             }, () -> list.add(Constants.DEPTH_NOT_SPECIFIED));
-            list.add(String.valueOf(s.getAmount()));
+            list.add(s.getAmount() + "kg");
             s.getNotes().ifPresentOrElse(n -> list.add(n), () -> list.add(""));
             output.add(list);
         });
