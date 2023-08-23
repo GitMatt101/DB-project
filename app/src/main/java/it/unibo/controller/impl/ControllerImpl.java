@@ -615,7 +615,7 @@ public class ControllerImpl implements Controller {
             final int n = r.getY();
             values.add(n);
             float avg = (float) n; 
-            if (values.size() > 1){
+            if (values.size() > 1) {
                 avg = (float) (values.stream().mapToInt(Integer::intValue).sum() - n) / (float) (values.size() - 1);
             }
             final float perc = ((float) n) * 100 / avg - 100;
