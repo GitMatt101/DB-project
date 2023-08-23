@@ -210,19 +210,17 @@ public class SightingTable implements Table<Sighting, String> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
             queryBuilder.append(EXPEDITION + Constants.QUESTION_MARK);
         });
-        organismID.ifPresentOrElse(o -> {
+        organismID.ifPresent(o -> {
             queryBuilder.append(appendToQuery(queryBuilder.toString()));
             queryBuilder.append(ORGANISM + Constants.QUESTION_MARK);
-        }, () -> {
-            wreckID.ifPresentOrElse(w -> {
-                queryBuilder.append(appendToQuery(queryBuilder.toString()));
-                queryBuilder.append(WRECK + Constants.QUESTION_MARK);
-            }, () -> {
-                geologicalFormationID.ifPresent(g -> {
-                    queryBuilder.append(appendToQuery(queryBuilder.toString()));
-                    queryBuilder.append(GEOLOGICAL_FORMATION + Constants.QUESTION_MARK);
-                });
-            });
+        });
+        wreckID.ifPresent(w -> {
+            queryBuilder.append(appendToQuery(queryBuilder.toString()));
+            queryBuilder.append(WRECK + Constants.QUESTION_MARK);
+        });
+        geologicalFormationID.ifPresent(g -> {
+            queryBuilder.append(appendToQuery(queryBuilder.toString()));
+            queryBuilder.append(GEOLOGICAL_FORMATION + Constants.QUESTION_MARK);
         });
         final String query = "SELECT " + TABLE_NAME + ".Codice, " + EXPEDITION + ", " + NUMBER + ", " + DEPTH
                 + ", " + NOTES + ", " + ORGANISM + ", " + WRECK + ", " + GEOLOGICAL_FORMATION
@@ -247,9 +245,13 @@ public class SightingTable implements Table<Sighting, String> {
             }
             if (organismID.isPresent()) {
                 statement.setString(c, organismID.get());
-            } else if (wreckID.isPresent()) {
+                c++;
+            }
+            if (wreckID.isPresent()) {
                 statement.setString(c, wreckID.get());
-            } else if (geologicalFormationID.isPresent()) {
+                c++;
+            } 
+            if (geologicalFormationID.isPresent()) {
                 statement.setString(c, geologicalFormationID.get());
             }
             final ResultSet resultSet = statement.executeQuery();
