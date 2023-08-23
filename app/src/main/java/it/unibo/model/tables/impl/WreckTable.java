@@ -125,7 +125,11 @@ public class WreckTable implements Table<Wreck, String> {
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter counter = new Counter(1);
             statement.setString(counter.getValueAndIncrement(), value.getID());
-            statement.setString(counter.getValueAndIncrement(), value.getName().orElse(null));
+            if (value.getName().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), value.getName().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
             if (value.getWreckageDate().isPresent()) {
                 statement.setInt(counter.getValueAndIncrement(), value.getWreckageDate().get());
             } else {

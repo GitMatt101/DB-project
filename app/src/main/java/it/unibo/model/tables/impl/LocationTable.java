@@ -119,7 +119,11 @@ public class LocationTable implements Table<Location, String> {
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter counter = new Counter(1);
             statement.setString(counter.getValueAndIncrement(), value.getName());
-            statement.setString(counter.getValue(), value.getCountryName().orElse(null));
+            if (value.getCountryName().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), value.getCountryName().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             TableUtilities.logSQLException(this, e);

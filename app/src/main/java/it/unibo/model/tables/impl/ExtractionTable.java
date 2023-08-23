@@ -208,9 +208,17 @@ public class ExtractionTable implements Table<Extraction, String> {
             statement.setString(counter.getValueAndIncrement(), value.getExpeditionCode());
             statement.setInt(counter.getValueAndIncrement(), value.getNumber());
             statement.setString(counter.getValueAndIncrement(), value.getMaterialName());
-            statement.setInt(counter.getValueAndIncrement(), value.getDepth().orElse(null));
+            if (value.getDepth().isPresent()) {
+                statement.setInt(counter.getValueAndIncrement(), value.getDepth().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.SMALLINT);
+            }
             statement.setFloat(counter.getValueAndIncrement(), value.getAmount());
-            statement.setString(counter.getValue(), value.getNotes().orElse(null));
+            if (value.getNotes().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), value.getNotes().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             TableUtilities.logSQLException(this, e);
@@ -236,9 +244,17 @@ public class ExtractionTable implements Table<Extraction, String> {
             statement.setString(counter.getValueAndIncrement(), updatedValue.getExpeditionCode());
             statement.setInt(counter.getValueAndIncrement(), updatedValue.getNumber());
             statement.setString(counter.getValueAndIncrement(), updatedValue.getMaterialName());
-            statement.setInt(counter.getValueAndIncrement(), updatedValue.getDepth().orElse(null));
+            if (updatedValue.getDepth().isPresent()) {
+                statement.setInt(counter.getValueAndIncrement(), updatedValue.getDepth().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.SMALLINT);
+            }
             statement.setFloat(counter.getValueAndIncrement(), updatedValue.getAmount());
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getNotes().orElse(null));
+            if (updatedValue.getNotes().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), updatedValue.getNotes().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
             statement.setString(counter.getValue(), updatedValue.getCode());
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {

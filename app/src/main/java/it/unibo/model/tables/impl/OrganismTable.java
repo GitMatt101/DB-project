@@ -202,9 +202,21 @@ public class OrganismTable implements Table<Organism, String> {
                 + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter ct = new Counter(1);
-            statement.setString(ct.getValueAndIncrement(), updatedValue.getSpecies().orElse(null));
-            statement.setString(ct.getValueAndIncrement(), updatedValue.getTemporaryName().orElse(null));
-            statement.setString(ct.getValueAndIncrement(), updatedValue.getCommonName().orElse(null));
+            if (updatedValue.getSpecies().isPresent()) {
+                statement.setString(ct.getValueAndIncrement(), updatedValue.getSpecies().get());
+            } else {
+                statement.setNull(ct.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
+            if (updatedValue.getTemporaryName().isPresent()) {
+                statement.setString(ct.getValueAndIncrement(), updatedValue.getTemporaryName().get());
+            } else {
+                statement.setNull(ct.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
+            if (updatedValue.getCommonName().isPresent()) {
+                statement.setString(ct.getValueAndIncrement(), updatedValue.getCommonName().get());
+            } else {
+                statement.setNull(ct.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
             statement.setString(ct.getValueAndIncrement(), updatedValue.getDescription());
             statement.setString(ct.getValue(), updatedValue.getID());
             return statement.executeUpdate() > 0;

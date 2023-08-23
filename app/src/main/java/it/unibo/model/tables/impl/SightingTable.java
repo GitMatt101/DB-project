@@ -316,8 +316,16 @@ public class SightingTable implements Table<Sighting, String> {
                 + Constants.WHERE + CODE + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter counter = new Counter(1);
-            statement.setInt(counter.getValueAndIncrement(), updatedValue.getDepth().orElse(null));
-            statement.setString(counter.getValue(), updatedValue.getNotes().orElse(null));
+            if (updatedValue.getDepth().isPresent()) {
+                statement.setInt(counter.getValueAndIncrement(), updatedValue.getDepth().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
+            if (updatedValue.getNotes().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), updatedValue.getNotes().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
             return statement.executeUpdate() > 0;
         } catch (final SQLException e) {
             TableUtilities.logSQLException(this, e);
