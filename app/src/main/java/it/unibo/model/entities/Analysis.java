@@ -11,8 +11,8 @@ public class Analysis {
 
     private final String code;
     private final String extractionCode;
-    private final String laboratoryID;
     private final String description;
+    private final String laboratoryID;
 
     /**
      * Creates an instance of {@code Analysis}.
@@ -22,12 +22,12 @@ public class Analysis {
      * @param laboratoryID   the laboratory that conducted the analysis
      * @param description    the description
      */
-    public Analysis(final String code, final String extractionCode, final String laboratoryID,
-            final String description) {
+    public Analysis(final String code, final String extractionCode, final String description,
+            final String laboratoryID) {
         this.code = code;
         this.extractionCode = extractionCode;
-        this.laboratoryID = laboratoryID;
         this.description = description;
+        this.laboratoryID = laboratoryID;
     }
 
     /**

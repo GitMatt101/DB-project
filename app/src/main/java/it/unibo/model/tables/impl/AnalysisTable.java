@@ -22,7 +22,7 @@ import it.unibo.model.tables.api.Table;
 public class AnalysisTable implements Table<Analysis, String> {
 
     private static final String TABLE_NAME = "analisi";
-    private static final String CODE = "CodiceAnalisi";
+    private static final String CODE = "Codice";
     private static final String EXTRACTION_CODE = "CodicePrelievo";
     private static final String DESCRIPTION = "Descrizione";
     private static final String LABORATORY_ID = "IDlaboratorio";

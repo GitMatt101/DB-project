@@ -369,14 +369,19 @@ public class OutputManagerImpl implements OutputManager {
      */
     @Override
     public void showAnalysesAndLaboratories(final List<List<String>> values) {
-        final List<String> fieldNames = List.of("Codice analisi", DESCRIPTION, "Nome laboratorio", "ID laboratorio",
+        final List<String> fieldNames = List.of("Codice analisi", DESCRIPTION, "ID laboratorio", "Nome laboratorio",
                 "Indirizzo laboratorio");
         final int width = SCREEN_WIDTH / fieldNames.size();
         final JPanel centerPanel = createCenterPanel(values.size(), fieldNames.size());
         values.forEach(v -> {
-            v.forEach(e -> {
-                centerPanel.add(createDefaultTextArea(e, width));
-            });
+            for (int i = 0; i < v.size(); i++) {
+                if (i == 1) {
+                    centerPanel.add(createPopupButton(OPEN_DESCRIPTION,
+                            e -> showPopup(v.get(1), DESCRIPTION), width));
+                } else {
+                    centerPanel.add(createDefaultTextArea(v.get(i), width));
+                }
+            }
         });
         showResults(centerPanel, fieldNames, values.size());
     }
