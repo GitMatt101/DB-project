@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -160,8 +162,8 @@ public class ControllerImpl implements Controller {
             while (resultSet.next()) {
                 values.add(List.of(
                         resultSet.getString("Nome"),
-                        resultSet.getString("NomePaese"),
-                        String.valueOf(resultSet.getFloat("media"))));
+                        resultSet.getString("Nomepaese") != null ? resultSet.getString("Nomepaese") : "",
+                        resultSet.getFloat("media") + "/5"));
             }
         } catch (final SQLException e) {
             TableUtilities.logSQLException(this, e);
@@ -300,8 +302,12 @@ public class ControllerImpl implements Controller {
         final List<List<Object>> output = new LinkedList<>();
         expeditions.forEach(e -> {
             final List<Object> attributes = new ArrayList<>();
+            final Calendar calendar = new GregorianCalendar();
+            calendar.setTime(e.getDate());
             attributes.add(e.getCode());
-            attributes.add(e.getDate().toString());
+            attributes.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))
+                    + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1)
+                    + "-" + String.valueOf(calendar.get(Calendar.YEAR)));
             attributes.add(e.getLocationName());
             attributes.add(e.getAssociationName());
             attributes.add(e.getGroupID());
@@ -522,8 +528,12 @@ public class ControllerImpl implements Controller {
         final List<List<Object>> output = new LinkedList<>();
         expeditions.forEach(s -> {
             final List<Object> list = new ArrayList<>();
+            final Calendar calendar = new GregorianCalendar();
+            calendar.setTime(s.getDate());
             list.add(s.getCode());
-            list.add(s.getDate().toString());
+            list.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))
+                    + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1)
+                    + "-" + String.valueOf(calendar.get(Calendar.YEAR)));
             list.add(s.getLocationName());
             list.add(s.getAssociationName());
             list.add(s.getGroupID());
@@ -614,7 +624,7 @@ public class ControllerImpl implements Controller {
         results.forEach(r -> {
             final int n = r.getY();
             values.add(n);
-            float avg = (float) n; 
+            float avg = (float) n;
             if (values.size() > 1) {
                 avg = (float) (values.stream().mapToInt(Integer::intValue).sum() - n) / (float) (values.size() - 1);
             }
