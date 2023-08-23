@@ -3,21 +3,21 @@
 -- *--------------------------------------------
 -- * DB-MAIN version: 11.0.2              
 -- * Generator date: Sep 14 2021              
--- * Generation date: Thu Aug 17 11:35:55 2023 
+-- * Generation date: Tue Aug 22 16:37:12 2023 
 -- * LUN file: C:\Users\utente\Desktop\uni\2 anno\Basi di dati\DB-project\DB-Project.lun 
--- * Schema: spedizioni/SQL 
+-- * Schema: esplorazioni/SQL 
 -- ********************************************* 
 
 
 -- Database Section
 -- ________________ 
 
-create database spedizioni;
+create database esplorazioni;
+use esplorazioni;
 
 -- DBSpace Section
 -- _______________
 
-use spedizioni;
 
 -- Tables Section
 -- _____________ 
@@ -30,16 +30,16 @@ create table analisi (
      constraint ID_ANALISI_ID primary key (Codice),
      constraint SID_ANALI_PRELI_ID unique (CodicePrelievo));
 
-create table associazione (
+create table associazioni (
      Nome char(30) not null,
      Indirizzo text not null,
      constraint ID_ASSOCIAZIONE_ID primary key (Nome));
 
-create table avvistamento (
+create table avvistamenti (
      Codice varchar(10) not null,
      Numero decimal(2,0) not null,
      CodiceSpedizione varchar(10) not null,
-     Profondita decimal(5,0),
+     Profondita numeric(5),
      Note text,
      IDorganismo varchar(10),
      IDrelitto varchar(5),
@@ -47,81 +47,81 @@ create table avvistamento (
      constraint ID_AVVISTAMENTO_ID primary key (Codice),
      constraint SID_AVVISTAMENTO_ID unique (CodiceSpedizione, Numero));
 
-create table casa_produttrice (
+create table case_produttrici (
      Nome char(30) not null,
      Indirizzo text not null,
      constraint ID_CASA_PRODUTTRICE_ID primary key (Nome));
 
-create table formazione_geologica (
+create table formazioni_geologiche (
      ID varchar(5) not null,
      Tipologia char(30) not null,
-     Dimensioni decimal(5,0) not null,
+     Dimensioni decimal(6,0) not null,
      GradoPericolo decimal(1,0) not null,
      Descrizione text not null,
      constraint ID_FORMAZIONE_GEOLOGICA_ID primary key (ID));
 
-create table gruppo_di_esplorazione (
+create table gruppi_di_esplorazione (
      NomeAssociazione char(30) not null,
-     ID varchar(5) not null,
      Nome char(30) not null,
-     constraint ID_GRUPPO_DI_ESPLORAZIONE_ID primary key (NomeAssociazione, ID));
+     constraint ID_GRUPPO_DI_ESPLORAZIONE_ID primary key (NomeAssociazione, Nome));
 
-create table laboratorio (
+create table laboratori (
      Nome char(30) not null,
      ID varchar(10) not null,
      Indirizzo text not null,
      constraint ID_LABORATORIO_ID primary key (ID));
 
-create table luogo (
+create table luoghi (
      Nome char(30) not null,
      NomePaese char(30),
      constraint ID_LUOGO_ID primary key (Nome));
 
-create table materiale (
+create table materiali (
      Nome char(30) not null,
      constraint ID_MATERIALE_ID primary key (Nome));
 
-create table membro (
+create table membri (
      Nome char(30) not null,
      Cognome char(30) not null,
      CodiceFiscale varchar(16) not null,
      ID varchar(5) not null,
      NomeAssociazione char(30) not null,
-     IDgruppo varchar(5) not null,
+     NomeGruppo char(30) not null,
      Ruolo char(30) not null,
      constraint ID_MEMBRO_ID primary key (CodiceFiscale),
-     constraint SID_MEMBRO_ID unique (NomeAssociazione, IDgruppo, ID));
+     constraint SID_MEMBRO_ID unique (NomeAssociazione, NomeGruppo, ID));
 
-create table organismo (
+create table organismi (
      ID varchar(10) not null,
      Specie char(50),
      NomeProvvisorio char(50),
      NomeComune char(50),
+     AnnoScoperta smallint not null,
      Descrizione text not null,
      constraint ID_ORGANISMO_ID primary key (ID),
      constraint SID_ORGANISMO_1_ID unique (Specie),
      constraint SID_ORGANISMO_ID unique (NomeProvvisorio));
 
-create table paese (
+create table paesi (
      Nome char(30) not null,
      constraint ID_PAESE_ID primary key (Nome));
 
-create table prelievo (
+create table prelievi (
      Codice varchar(10) not null,
      Numero decimal(2,0) not null,
      CodiceSpedizione varchar(10) not null,
-     Profondita decimal(5,0),
+     Profondita numeric(5),
      Note text,
-     Quantita float(4,2) not null,
+     Quantita float(2,2) not null,
      NomeMateriale char(30) not null,
      constraint ID_PRELIEVO_ID primary key (Codice),
      constraint SID_PRELIEVO_ID unique (CodiceSpedizione, Numero));
 
-create table relitto (
+create table relitti (
      ID varchar(5) not null,
      Nome char(50),
-     DataAffondamento date,
-     Dimensioni decimal(3,0) not null,
+     AnnoAffondamento date,
+     Dimensioni decimal(4,1) not null,
      Descrizione text not null,
      constraint ID_RELITTO_ID primary key (ID));
 
@@ -133,15 +133,15 @@ create table rov (
      constraint ID_ROV_ID primary key (Targa),
      constraint SID_ROV_ID unique (NomeCasaProduttrice, NumeroSerie));
 
-create table spedizione (
+create table spedizioni (
      Codice varchar(10) not null,
      Data date not null,
      NomeAssociazione char(30) not null,
-     IDgruppo varchar(5) not null,
+     NomeGruppo char(30) not null,
      NomeLuogo char(30) not null,
      TargaROV varchar(7) not null,
      constraint ID_SPEDIZIONE_ID primary key (Codice),
-     constraint SID_SPEDIZIONE_ID unique (Data, NomeAssociazione, IDgruppo));
+     constraint SID_SPEDIZIONE_ID unique (Data, NomeAssociazione, NomeGruppo));
 
 
 -- Constraints Section
@@ -149,61 +149,61 @@ create table spedizione (
 
 alter table analisi add constraint SID_ANALI_PRELI_FK
      foreign key (CodicePrelievo)
-     references prelievo(Codice);
+     references prelievi(Codice);
 
 alter table analisi add constraint EQU_ANALI_LABOR_FK
      foreign key (IDlaboratorio)
-     references laboratorio(ID);
+     references laboratori(ID); 
 
-alter table avvistamento add constraint REF_AVVIS_SPEDI
+alter table avvistamenti add constraint REF_AVVIS_SPEDI
      foreign key (CodiceSpedizione)
-     references spedizione(Codice);
+     references spedizioni(Codice);
 
-alter table avvistamento add constraint EQU_AVVIS_ORGAN_FK
+alter table avvistamenti add constraint EQU_AVVIS_ORGAN_FK
      foreign key (IDorganismo)
-     references organismo(ID);
+     references organismi(ID);
 
-alter table avvistamento add constraint EQU_AVVIS_RELIT_FK
+alter table avvistamenti add constraint EQU_AVVIS_RELIT_FK
      foreign key (IDrelitto)
-     references relitto(ID);
+     references relitti(ID);
 
-alter table avvistamento add constraint EQU_AVVIS_FORMA_FK
+alter table avvistamenti add constraint EQU_AVVIS_FORMA_FK
      foreign key (IDformazionegeologica)
-     references formazione_geologica(ID);
+     references formazioni_geologiche(ID);
 
-alter table gruppo_di_esplorazione add constraint EQU_GRUPP_ASSOC
+alter table gruppi_di_esplorazione add constraint EQU_GRUPP_ASSOC
      foreign key (NomeAssociazione)
-     references associazione(Nome);
+     references associazioni(Nome);
 
-alter table luogo add constraint EQU_LUOGO_PAESE_FK
+alter table luoghi add constraint EQU_LUOGO_PAESE_FK
      foreign key (NomePaese)
-     references paese(Nome);
+     references paesi(Nome);
 
-alter table membro add constraint EQU_MEMBR_GRUPP
-     foreign key (NomeAssociazione, IDgruppo)
-     references gruppo_di_esplorazione(NomeAssociazione, ID);
+alter table membri add constraint EQU_MEMBR_GRUPP
+     foreign key (NomeAssociazione, Nomegruppo)
+     references gruppi_di_esplorazione(NomeAssociazione, Nome);
 
-alter table prelievo add constraint EQU_PRELI_MATER_FK
+alter table prelievi add constraint EQU_PRELI_MATER_FK
      foreign key (NomeMateriale)
-     references materiale(Nome);
+     references materiali(Nome);
 
-alter table prelievo add constraint REF_PRELI_SPEDI
+alter table prelievi add constraint REF_PRELI_SPEDI
      foreign key (CodiceSpedizione)
-     references spedizione(Codice);
+     references spedizioni(Codice);
 
 alter table rov add constraint REF_ROV_CASA_
      foreign key (NomeCasaProduttrice)
-     references casa_produttrice(Nome);
+     references case_produttrici(Nome);
 
-alter table spedizione add constraint REF_SPEDI_GRUPP_FK
-     foreign key (NomeAssociazione, IDgruppo)
-     references gruppo_di_esplorazione(NomeAssociazione, ID);
+alter table spedizioni add constraint REF_SPEDI_GRUPP_FK
+     foreign key (NomeAssociazione, NomeGruppo)
+     references gruppi_di_esplorazione(NomeAssociazione, Nome);
 
-alter table spedizione add constraint REF_SPEDI_LUOGO_FK
+alter table spedizioni add constraint REF_SPEDI_LUOGO_FK
      foreign key (NomeLuogo)
-     references luogo(Nome);
+     references luoghi(Nome);
 
-alter table spedizione add constraint REF_SPEDI_ROV_FK
+alter table spedizioni add constraint REF_SPEDI_ROV_FK
      foreign key (TargaROV)
      references rov(Targa);
 
@@ -221,73 +221,73 @@ create index EQU_ANALI_LABOR_IND
      on analisi (IDlaboratorio);
 
 create unique index ID_ASSOCIAZIONE_IND
-     on associazione (Nome);
+     on associazioni (Nome);
 
 create unique index ID_AVVISTAMENTO_IND
-     on avvistamento (Codice);
+     on avvistamenti (Codice);
 
 create unique index SID_AVVISTAMENTO_IND
-     on avvistamento (CodiceSpedizione, Numero);
+     on avvistamenti (CodiceSpedizione, Numero);
 
 create index EQU_AVVIS_ORGAN_IND
-     on avvistamento (IDorganismo);
+     on avvistamenti (IDorganismo);
 
 create index EQU_AVVIS_RELIT_IND
-     on avvistamento (IDrelitto);
+     on avvistamenti (IDrelitto);
 
 create index EQU_AVVIS_FORMA_IND
-     on avvistamento (IDformazionegeologica);
+     on avvistamenti (IDformazionegeologica);
 
 create unique index ID_CASA_PRODUTTRICE_IND
-     on casa_produttrice (Nome);
+     on case_produttrici (Nome);
 
 create unique index ID_FORMAZIONE_GEOLOGICA_IND
-     on formazione_geologica (ID);
+     on formazioni_geologiche (ID);
 
 create unique index ID_GRUPPO_DI_ESPLORAZIONE_IND
-     on gruppo_di_esplorazione (NomeAssociazione, ID);
+     on gruppi_di_esplorazione (NomeAssociazione, Nome);
 
 create unique index ID_LABORATORIO_IND
-     on laboratorio (ID);
+     on laboratori (ID);
 
 create unique index ID_LUOGO_IND
-     on luogo (Nome);
+     on luoghi (Nome);
 
 create index EQU_LUOGO_PAESE_IND
-     on luogo (NomePaese);
+     on luoghi (NomePaese);
 
 create unique index ID_MATERIALE_IND
-     on materiale (Nome);
+     on materiali (Nome);
 
 create unique index ID_MEMBRO_IND
-     on membro (CodiceFiscale);
+     on membri (CodiceFiscale);
 
 create unique index SID_MEMBRO_IND
-     on membro (NomeAssociazione, IDgruppo, ID);
+     on membri (NomeAssociazione, NomeGruppo, ID);
 
 create unique index ID_ORGANISMO_IND
-     on organismo (ID);
+     on organismi (ID);
 
 create unique index SID_ORGANISMO_1_IND
-     on organismo (Specie);
+     on organismi (Specie);
 
 create unique index SID_ORGANISMO_IND
-     on organismo (NomeProvvisorio);
+     on organismi (NomeProvvisorio);
 
 create unique index ID_PAESE_IND
-     on paese (Nome);
+     on paesi (Nome);
 
 create unique index ID_PRELIEVO_IND
-     on prelievo (Codice);
+     on prelievi (Codice);
 
 create unique index SID_PRELIEVO_IND
-     on prelievo (CodiceSpedizione, Numero);
+     on prelievi (CodiceSpedizione, Numero);
 
 create index EQU_PRELI_MATER_IND
-     on prelievo (NomeMateriale);
+     on prelievi (NomeMateriale);
 
 create unique index ID_RELITTO_IND
-     on relitto (ID);
+     on relitti (ID);
 
 create unique index ID_ROV_IND
      on rov (Targa);
@@ -296,17 +296,17 @@ create unique index SID_ROV_IND
      on rov (NomeCasaProduttrice, NumeroSerie);
 
 create unique index ID_SPEDIZIONE_IND
-     on spedizione (Codice);
+     on spedizioni (Codice);
 
 create unique index SID_SPEDIZIONE_IND
-     on spedizione (Data, NomeAssociazione, IDgruppo);
+     on spedizioni (Data, NomeAssociazione, NomeGruppo);
 
 create index REF_SPEDI_GRUPP_IND
-     on spedizione (NomeAssociazione, IDgruppo);
+     on spedizioni (NomeAssociazione, NomeGruppo);
 
 create index REF_SPEDI_LUOGO_IND
-     on spedizione (NomeLuogo);
+     on spedizioni (NomeLuogo);
 
 create index REF_SPEDI_ROV_IND
-     on spedizione (TargaROV);
+     on spedizioni (TargaROV);
 

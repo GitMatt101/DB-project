@@ -27,7 +27,7 @@ public class MemberTable implements Table<Member, String> {
     private static final String LAST_NAME = "Cognome";
     private static final String FISCAL_CODE = "CodiceFiscale";
     private static final String ASSOCIATION = "NomeAssociazione";
-    private static final String GROUP = "IDgruppo";
+    private static final String GROUP = "NomeGruppo";
     private static final String ID = "ID";
     private static final String ROLE = "Ruolo";
 

@@ -3,7 +3,6 @@ package it.unibo.view.popups.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -171,7 +170,7 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void memberRegistration() {
-        final List<String> fieldNames = List.of("Nome*", "Cognome*", "Codice fiscale*", "Associazione*", "ID gruppo*",
+        final List<String> fieldNames = List.of("Nome*", "Cognome*", "Codice fiscale*", "Associazione*", "Nome gruppo*",
                 OBLIGATORY_ID, "Ruolo*");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
@@ -225,7 +224,7 @@ public class InputManagerImpl implements InputManager {
     @Override
     public void expeditionRegistration() {
         final List<String> fieldNames = List.of("Codice*", "Data* (YYYY-MM-DD)*", "Luogo*", "Targa del ROV*",
-                "Associazione*", "ID gruppo*");
+                "Associazione*", "Nome gruppo*");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
         confirmButton.addActionListener(e -> {
@@ -338,23 +337,15 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void wreckRegistration() {
-        final List<String> fieldNames = List.of(OBLIGATORY_ID, "Nome", "Data affondamento", "Lunghezza*", "Descrizione*");
+        final List<String> fieldNames = List.of(OBLIGATORY_ID, "Nome", "Anno affondamento", "Lunghezza*", "Descrizione*");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
         confirmButton.addActionListener(e -> {
             final Counter counter = new Counter();
-            Date date;
-            try {
-                date = fields.get(2).getText().length() == 0 ? null
-                        : new SimpleDateFormat("yyyy-MM-dd", Locale.ITALIAN).parse(fields.get(2).getText());
-            } catch (final ParseException e1) {
-                Logger.getLogger(InputManagerImpl.class.getName()).log(Level.SEVERE, "Error parsing date", e1);
-                date = null;
-            }
             final boolean result = this.controller.registerWreck(
                     fields.get(counter.getValueAndIncrement()).getText(),
                     Optional.ofNullable(getStringOrNull(fields.get(counter.getValueAndIncrement()).getText())),
-                    Optional.ofNullable(date),
+                    Optional.ofNullable(getIntegerOrNull(fields.get(counter.getValueAndIncrement()).getText())),
                     Integer.valueOf(fields.get(counter.getValueAndIncrement() + 1).getText()),
                     fields.get(counter.getValue() + 1).getText());
             showResultPopup(result);

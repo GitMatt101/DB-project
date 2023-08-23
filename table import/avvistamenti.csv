@@ -1,12 +1,15 @@
-ID,Profondita,Note,IDrelitto,IDformazione,IDorganismo,CodiceSpedizione,Numero
-KASMNK5P8H,null,"L'esemplare sembra fluttuare in posizione verticale, con il mantello rivolto verso il basso.",null,null,UDPDW13YB8,VJ4EIJACWK,1
-7876I2RYN3,null,"Il pesce mantiene una posizione verticale, con la testa rivolta verso l'alto. Dopo essersi accorto della presenza del ROV è fuggito.",null,null,ACGEAS7P9A,VJ4EIJACWK,2
-9T3MWRVPM5,null,null,null,null,364FIFD9JR,FKCHELYUK3,1
-W7UXUWRWBN,null,"Utilizzando lo zoom per vedere meglio l'esemplare, il team si è accorto che i filamenti seghettati della medusa si muovono, probabilmente significando che trasportano le sostanze nutritive al resto del corpo.",null,null,A69M3QUS9A,FKCHELYUK3,2
-8RRJGLX6NQ,null,"La medusa presenta un tentacolo centrale più lungo degli altri esemplari, facendo pensare che quelli visti finora potrebbero non essere completamente formati.",null,null,364FIFD9JR,FKCHELYUK3,3
-AZQ7W1DHDV,700,"Il sifonoforo non ha eseguito alcun movimento per tutta la durata dell'osservazione. Attorno all'organismo sono presenti degli altri più piccoli, non si sa se fanno parte del sifonoforo.",null,null,KHRIIMYK0J,VJ4EIJACWK,3
-9KCBSNB37Q,null,null,null,null,P4FPZBSA8O,SSEY2O52BP,1
-FRG2FXY0E5,null,null,null,null,P4FPZBSA8O,SSEY2O52BP,2
-X98MJF28RS,900,null,null,null,0F5W9M2W7L,FKCHELYUK3,4
-EODISH5X48,null,null,null,null,AI4CEQC9PM,SSEY2O52BP,3
-JTXMQ1M1JV,null,L'esemplare sembra muoversi all'interno della sua casa di muco che utilizza per filtrare i nutrimenti. La massa di muco è completamente trasparente e sembra catturare diverse particelle fluttuanti presenti nell'acqua.,null,null,6567LBSV3P,VJ4EIJACWK,4
+Codice,Numero,CodiceSpedizione,Profondita,Note,IDorganismo,IDrelitto,IDformazionegeologica
+7876I2RYN3,2.0,VJ4EIJACWK,null,"Il pesce mantiene una posizione verticale, con la testa rivolta verso l'alto. Dopo essersi accorto della presenza del ROV è fuggito.",ACGEAS7P9A,null,null
+8RRJGLX6NQ,3.0,FKCHELYUK3,null,"La medusa presenta un tentacolo centrale più lungo degli altri esemplari, facendo pensare che quelli visti finora potrebbero non essere completamente formati.",364FIFD9JR,null,null
+9KCBSNB37Q,1.0,SSEY2O52BP,null,null,P4FPZBSA8O,null,null
+9T3MWRVPM5,1.0,FKCHELYUK3,null,null,364FIFD9JR,null,null
+AZQ7W1DHDV,3.0,VJ4EIJACWK,700.0,"Il sifonoforo non ha eseguito alcun movimento per tutta la durata dell'osservazione. Attorno all'organismo sono presenti degli altri più piccoli, non si sa se fanno parte del sifonoforo.",KHRIIMYK0J,null,null
+EODISH5X48,3.0,SSEY2O52BP,null,null,AI4CEQC9PM,null,null
+FRG2FXY0E5,2.0,SSEY2O52BP,null,null,P4FPZBSA8O,null,null
+GI55FHQUSB,2.0,FKBECBJLP3,null,"La barca è diventata casa di diversi organismi, soprattutto granchi.",null,L8UNN,null
+IZND8WXHHJ,1.0,FKBECBJLP3,null,Questo esemplare possiede la capacità di nuotare.,WOCOAYY52M,null,null
+JTXMQ1M1JV,4.0,VJ4EIJACWK,null,L'esemplare sembra muoversi all'interno della sua casa di muco che utilizza per filtrare i nutrimenti. La massa di muco è completamente trasparente e sembra catturare diverse particelle fluttuanti presenti nell'acqua.,6567LBSV3P,null,null
+KASMNK5P8H,1.0,VJ4EIJACWK,null,"L'esemplare sembra fluttuare in posizione verticale, con il mantello rivolto verso il basso.",UDPDW13YB8,null,null
+W7UXUWRWBN,2.0,FKCHELYUK3,null,"Utilizzando lo zoom per vedere meglio l'esemplare, il team si è accorto che i filamenti seghettati della medusa si muovono, probabilmente significando che trasportano le sostanze nutritive al resto del corpo.",A69M3QUS9A,null,null
+X98MJF28RS,4.0,FKCHELYUK3,900.0,null,0F5W9M2W7L,null,null
+ZH305PH7FV,4.0,SSEY2O52BP,3400.0,null,null,null,AI3YA

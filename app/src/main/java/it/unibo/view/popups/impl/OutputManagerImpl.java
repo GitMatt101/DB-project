@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -392,6 +393,14 @@ public class OutputManagerImpl implements OutputManager {
             g.forEach(e -> centerPanel.add(createDefaultTextArea(e, width)));
         });
         showResults(centerPanel, fieldNames, values.size());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showErrorMessage(final String message) {
+        JOptionPane.showMessageDialog(null, message, "Errore", JOptionPane.ERROR_MESSAGE);
     }
 
 }

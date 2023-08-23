@@ -30,7 +30,7 @@ public final class Constants {
     /**
      * Name of the database.
      */
-    public static final String DATABASE_NAME = "spedizioni";
+    public static final String DATABASE_NAME = "esplorazioni";
 
     /**
      * Username to access the database.

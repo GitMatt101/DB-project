@@ -1,6 +1,5 @@
 package it.unibo.model.entities.impl;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ public class Wreck implements Subject {
 
     private final String id;
     private final Optional<String> name;
-    private final Optional<Date> wreckageDate;
+    private final Optional<Integer> wreckageDate;
     private final int length;
     private final String description;
 
@@ -27,7 +26,7 @@ public class Wreck implements Subject {
      * @param length       the length of the wreck
      * @param description  the description of the wreck
      */
-    public Wreck(final String id, final Optional<String> name, final Optional<Date> wreckageDate, final int length,
+    public Wreck(final String id, final Optional<String> name, final Optional<Integer> wreckageDate, final int length,
             final String description) {
         this.id = id;
         this.name = name;
@@ -58,7 +57,7 @@ public class Wreck implements Subject {
      * 
      * @return the date
      */
-    public Optional<Date> getWreckageDate() {
+    public Optional<Integer> getWreckageDate() {
         return this.wreckageDate;
     }
 

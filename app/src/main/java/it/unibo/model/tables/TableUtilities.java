@@ -38,15 +38,15 @@ public final class TableUtilities {
      */
     public static int getNextNumber(final String tableName, final String expeditionCode, final Connection connection,
             final Object obj) {
-        final String query1 = "SELECT MAX(Numero) FROM " + Constants.SIGHTINGS + Constants.WHERE + "CodiceSpedizione"
+        final String query1 = "SELECT COUNT(*)+1 FROM " + Constants.SIGHTINGS + Constants.WHERE + "CodiceSpedizione"
                 + Constants.QUESTION_MARK;
-        final String query2 = "SELECT MAX(Numero) FROM " + Constants.EXTRACTIONS + Constants.WHERE + "CodiceSpedizione"
+        final String query2 = "SELECT Count(*)+1 FROM " + Constants.EXTRACTIONS + Constants.WHERE + "CodiceSpedizione"
                 + Constants.QUESTION_MARK;
         if (Constants.SIGHTINGS.equals(tableName)) {
             try (PreparedStatement statement = connection.prepareStatement(query1)) {
                 statement.setString(Constants.SINGLE_QUERY_VALUE_INDEX, expeditionCode);
                 final ResultSet resultSet = statement.executeQuery();
-                return resultSet.next() ? resultSet.getInt(Constants.SINGLE_QUERY_VALUE_INDEX) + 1 : 1;
+                return resultSet.next() ? resultSet.getInt(Constants.SINGLE_QUERY_VALUE_INDEX) : 1;
             } catch (final SQLException e) {
                 TableUtilities.logSQLException(obj, e);
                 return -1;

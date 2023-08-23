@@ -98,4 +98,11 @@ public interface OutputManager {
      */
     void showScientificProgress(List<List<String>> values);
 
+    /**
+     * Shows a popup with a message.
+     * 
+     * @param message the message
+     */
+    void showErrorMessage(String message);
+
 }

@@ -342,8 +342,14 @@ public class ControllerImpl implements Controller {
     @Override
     public boolean registerExpedition(final String code, final Date date, final String locationName,
             final String rovLicencePlate, final String associationName, final String groupID) {
-        return new ExpeditionTable(this.provider)
+        final Optional<ROV> rov = new ROVTable(this.provider).findByPrimaryKey(rovLicencePlate);
+        if (rov.isPresent() && rov.get().getProductionDate().getTime() <= date.getTime()) {
+            return new ExpeditionTable(this.provider)
                 .save(new Expedition(code, date, locationName, rovLicencePlate, groupID, associationName));
+        } else {
+            this.outputManager.showErrorMessage("Targa non valida");
+            return false;
+        }
     }
 
     /**
@@ -366,7 +372,7 @@ public class ControllerImpl implements Controller {
      * {@inheritDoc}
      */
     @Override
-    public boolean registerWreck(final String id, final Optional<String> name, final Optional<Date> sinkDate,
+    public boolean registerWreck(final String id, final Optional<String> name, final Optional<Integer> sinkDate,
             final Integer length, final String description) {
         if (id.length() > 0) {
             return new WreckTable(this.provider).save(new Wreck(id, name, sinkDate, length, description));

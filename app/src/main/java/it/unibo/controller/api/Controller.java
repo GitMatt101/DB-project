@@ -229,7 +229,7 @@ public interface Controller {
      * @param description the description of the wreck
      * @return true if the operation is successful, false otherwise
      */
-    boolean registerWreck(String id, Optional<String> name, Optional<Date> sinkDate, Integer length,
+    boolean registerWreck(String id, Optional<String> name, Optional<Integer> sinkDate, Integer length,
             String description);
 
     /**

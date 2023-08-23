@@ -1,80 +1,80 @@
-"Nome";"Cognome";"Codice_Fiscale";"NomeAssociazione";"IDgruppo";"ID";"Ruolo"
-"Cleopatra";"Badolato";"BDLCPT05T58D958T";"Ocean Exploration Trust";"WK8OQ";"2U93A";"Pilota ROV"
-"Libero";"Barbaresco";"BRBLBR77A13F102K";"NOAA";"DEIJB";"QYA2L";"Navigatore"
-"Brandolisi";"Gemma";"BRNGMM55E51C488N";"JAMSTEC";"4XPCU";"7JZ3N";"Biologa Marina"
-"Licia";"Beradino";"BRRLCI00A60A579V";"JAMSTEC";"4XPCU";"SV05U";"Ingegnere informatico"
-"Consolata";"Bratus";"BRTCSL99H56D005K";"Ocean Exploration Trust";"WK8OQ";"L4IAK";"Mappatrice dei fondali"
-"Lodovico";"Bertucci";"BRTLVC61S11I243D";"NOAA";"QHK1T";"27QUX";"Mappatore dei fondali"
-"Monica";"Biti";"BTIMNC13H69D261D";"JAMSTEC";"6G11M";"FZ7CG";"Mappatrice dei fondali"
-"Fabio";"Bottega";"BTTFBA40B11A945I";"NOAA";"QHK1T";"0J4Q3";"Mappatore dei fondali"
-"Nazario";"Bozzi";"BZZNZR05P10H850O";"Ocean Exploration Trust";"WK8OQ";"ASIEA";"Ingegnere informatico"
-"Arrigo";"Acca";"CCARRG05B27B829D";"Ocean Exploration Trust";"WK8OQ";"INNJ6";"Ingegnere informatico"
-"Beatrice";"Ceccadrini";"CCCBRC71R71B748T";"Ocean Exploration Trust";"WK8OQ";"7CT2Y";"Pilota ROV"
-"Romina";"Cecio";"CCERMN71D44B778Q";"Ocean Exploration Trust";"WK8OQ";"JALWM";"Biologa Marina"
-"Casimiro";"Clun";"CLNCMR30S02I565H";"NOAA";"DEIJB";"6Q9ER";"Biologo Marino"
-"Elisabetta";"Celentani";"CLNLBT70R66C904O";"NOAA";"R67EF";"LVXPW";"Biologa Marina"
-"Ezechiele";"Clerico";"CLRZHL62M16A736H";"Ocean Exploration Trust";"WK8OQ";"6RBB6";"Navigatore"
-"Raffaella";"Iacopo";"CPIRFL51S45L019B";"JAMSTEC";"A9MFE";"231RK";"Ingegnere informatico"
-"Moreno";"Cipollini";"CPLMRN81T24B559M";"JAMSTEC";"4XPCU";"E5W7D";"Biologo Marino"
-"Igino";"Coppola";"CPPGNI04S11E390S";"NOAA";"DEIJB";"8DBPE";"Mappatore dei fondali"
-"Alfonso";"Acerbis";"CRBLNS06A07B719G";"NOAA";"QHK1T";"0HQIG";"Ingegnere informatico"
-"Giuda";"Cornaro";"CRNGDI74B05G978U";"JAMSTEC";"6G11M";"Y61FC";"Ingegnere informatico"
-"Gaia";"Corti";"CRTGAI87H57H439A";"NOAA";"R67EF";"4TWU0";"Biologo Marino"
-"Camillo";"Ciussani";"CSSCLL36C19B368V";"JAMSTEC";"A9MFE";"84CAM";"Mappatrice dei fondali"
-"Susanna";"Castagna";"CSTSNN43P54G955G";"JAMSTEC";"4XPCU";"0PQ1K";"Biologa Marina"
-"Fiorella";"Catania";"CTNFLL41E70C409T";"Ocean Exploration Trust";"WK8OQ";"A3RAR";"Mappatrice dei fondali"
-"Augusto";"Ciutti";"CTTGST35L17E206D";"Ocean Exploration Trust";"WK8OQ";"S7M8O";"Biologo Marino"
-"Walter";"Cotta";"CTTWTR74L12A008M";"NOAA";"R67EF";"3K5Z7";"Ingegnere informatico"
-"Ersilia";"Coveri";"CVRRSL08P66B427G";"NOAA";"DEIJB";"HP7N2";"Biologa Marina"
-"Geltrude";"Cò";"CXXGTR41M68D776D";"Ocean Exploration Trust";"WK8OQ";"LFUCJ";"Pilota ROV"
-"Alvise";"Degrossi";"DGRLVS98E18D978M";"Ocean Exploration Trust";"WK8OQ";"H0UY9";"Biologo Marino"
-"Nereo";"Degrossi";"DGRNRE54R07A979H";"JAMSTEC";"A9MFE";"DD6AG";"Pilota ROV"
-"Aldo";"D'Amici";"DMCLDA78P22H238H";"NOAA";"QHK1T";"ARC3P";"Pilota ROV"
-"Elvira";"Dorgnach";"DRGLVR97D57L440D";"JAMSTEC";"6G11M";"KVBTV";"Mappatrice dei fondali"
-"Giada";"Flandina";"FLNGDI44B54B461E";"NOAA";"R67EF";"2Q37U";"Biologa Marina"
-"Romualdo";"Florindi";"FLRRLD91P28D553A";"NOAA";"QHK1T";"00VXE";"Mappatore dei fondali"
-"Rinaldo";"Frezzolino";"FRZRLD34R05A825N";"JAMSTEC";"A9MFE";"3JRDU";"Pilota ROV"
-"Agata";"Galantini";"GLNGTA91P45D470Y";"NOAA";"DEIJB";"SCP3V";"Navigatrice"
-"Quirino";"Gorga";"GRGQRN36T31A053X";"Ocean Exploration Trust";"WK8OQ";"CIB9E";"Pilota ROV"
-"Loreno";"Gerevini";"GRVLRN59H03A418T";"Ocean Exploration Trust";"WK8OQ";"JEKJ6";"Pilota ROV"
-"Morgana";"Gazzetta";"GZZMGN08E60I701X";"Ocean Exploration Trust";"WK8OQ";"COLZW";"Biologa Marino"
-"Pamela";"Alberghini";"LBRPML02H52D962S";"JAMSTEC";"A9MFE";"OH6II";"Mappatrice dei fondali"
-"Floriana";"Limonta";"LMNFRN81P60A065I";"JAMSTEC";"4XPCU";"IKWQC";"Mappatrice dei fondali"
-"Leopoldo";"Longis";"LNGLLD63E27H078A";"JAMSTEC";"6G11M";"N320M";"Ingegnere informatico"
-"Elettra";"Longhi";"LNGLTR80E46A487Z";"Ocean Exploration Trust";"WK8OQ";"D5UY2";"Biologa Marina"
-"Sibilla";"Lino";"LNISLL56S51I682L";"NOAA";"R67EF";"WYM3J";"Ingegnere informatico"
-"Eleuterio";"Monodutto";"MDNLTR10H18D579I";"JAMSTEC";"6G11M";"GTSU0";"Pilota ROV"
-"Fermo";"Maderna";"MDRFRM35R22G333A";"Ocean Exploration Trust";"WK8OQ";"3SAVX";"Navigatore"
-"Porziano";"Mango";"MNGPZN78T17I585O";"JAMSTEC";"6G11M";"V99VN";"Biologo Marino"
-"Marco";"Maiori";"MRAMRC34P28A831L";"JAMSTEC";"A9MFE";"VQG2A";"Ingegnere informatico"
-"Ines";"Maresca";"MRSNSI86D50F870U";"Ocean Exploration Trust";"WK8OQ";"5BWBU";"Mappatrice dei fondali"
-"Uberto";"Mazzali";"MZZBRT40E18D870G";"JAMSTEC";"6G11M";"JCS6S";"Biologo Marino"
-"Spartaco";"Nossardi";"NSSSRT08P10F354F";"Ocean Exploration Trust";"WK8OQ";"2ASC2";"Ingegnere informatico"
-"Tiziana";"Nozia";"NSSTZN90D48G109B";"Ocean Exploration Trust";"WK8OQ";"QPMUC";"Biologa Marina"
-"Emiliana";"Paoli";"PLAMLN67B42E581W";"JAMSTEC";"4XPCU";"W7SSD";"Mappatrice dei fondali"
-"Isidora";"Palamuso";"PLMSDR56L57H888Q";"JAMSTEC";"4XPCU";"9YTO3";"Ingegnere informatico"
-"Milena";"Pantoni";"PNTMLN54L46G411L";"JAMSTEC";"A9MFE";"8TK8W";"Biologo Marino"
-"Orsolina";"Piperis";"PPRRLN40R51D300P";"Ocean Exploration Trust";"WK8OQ";"QCHWS";"Mappatrice dei fondali"
-"Albano";"Pardini";"PRDLBN98C08G407G";"NOAA";"QHK1T";"2IWX9";"Navigatore"
-"Tosca";"Poratto";"PRTTSC07H57L828J";"Ocean Exploration Trust";"WK8OQ";"QGL52";"Mappatrice dei fondali"
-"Camilla";"Pescetto";"PSCCLL54M46A701K";"NOAA";"QHK1T";"Z2MU0";"Ingegnere informatico"
-"Lia";"Pasqualone";"PSQLIA79E65L963A";"NOAA";"DEIJB";"KYEVS";"Pilota ROV"
-"Adalberto";"Opezzi";"PZZDBR12E07I459M";"Ocean Exploration Trust";"WK8OQ";"TSYB1";"Navigatore"
-"Secondo";"Pizzorno";"PZZSND75A30H338Z";"Ocean Exploration Trust";"WK8OQ";"ZZXA2";"Mappatore dei fondali"
-"Beatrice";"Recchia";"RCCBRC93H44G327I";"JAMSTEC";"A9MFE";"WW843";"Biologo Marino"
-"Romolo";"Scaravelli";"SCRRML84M19A468J";"NOAA";"R67EF";"RKR2Y";"Mappatore dei fondali"
-"Ottilia";"Sciorto";"SCRTTL91A55E311P";"JAMSTEC";"4XPCU";"H7DTT";"Pilota ROV"
-"Volfango";"Scaramelli";"SCRVFN09C03G849L";"Ocean Exploration Trust";"WK8OQ";"CPAEG";"Mappatore dei fondali"
-"Cirillo";"Sammartano";"SMMCLL81B11H955W";"NOAA";"R67EF";"843M2";"Pilota ROV"
-"Lorella";"Suardi";"SRDLLL95C55I668D";"NOAA";"DEIJB";"JR8U6";"Pilota ROV"
-"Palmira";"Siro";"SRIPMR35T55G289A";"Ocean Exploration Trust";"WK8OQ";"32SEF";"Navigatrice"
-"Noè";"Soranzo";"SRNNOX70A01F453K";"Ocean Exploration Trust";"WK8OQ";"PXCVM";"Ingegnere informatico"
-"Luigia";"Sartorio";"SRTLGU41B61D281R";"Ocean Exploration Trust";"WK8OQ";"FOQN5";"Pilota ROV"
-"Gillo";"Sassoni";"SSSGLL73R07E061P";"NOAA";"QHK1T";"PZEYP";"Mappatore dei fondali"
-"Piersilvio";"Troia";"TROPSL18L08F773R";"Ocean Exploration Trust";"WK8OQ";"8Y24K";"Biologo Marino"
-"Angela";"Torretti";"TRRNGL74E42G792Y";"NOAA";"R67EF";"AQA93";"Pilota ROV"
-"Iolanda";"Ottolini";"TTLLND93S69E632F";"JAMSTEC";"4XPCU";"U5BYP";"Pilota ROV"
-"Abelardo";"Vendramin";"VNDBRD98B05H648Z";"Ocean Exploration Trust";"WK8OQ";"GGQ7Z";"Biologo Marino"
-"Secondo";"Vitari";"VTRSND37C02B660V";"Ocean Exploration Trust";"WK8OQ";"3OP6P";"Biologo Marino"
-"Adelchi";"Zazzeri";"ZZZDCH96S13L336N";"NOAA";"DEIJB";"O9UUH";"Navigatore"
-"Vanessa";"Zazzeroni";"ZZZVSS47T51F685Q";"JAMSTEC";"6G11M";"FM6YY";"Pilota ROV"
+Nome,Cognome,Codice_Fiscale,NomeAssociazione,NomeGruppo,ID,Ruolo
+Cleopatra,Badolato,BDLCPT05T58D958T,Ocean Exploration Trust,Nautilus,2U93A,Pilota ROV
+Libero,Barbaresco,BRBLBR77A13F102K,NOAA,Atlantis,QYA2L,Navigatore
+Brandolisi,Gemma,BRNGMM55E51C488N,JAMSTEC,Shinsei Maru,7JZ3N,Biologa Marina
+Licia,Beradino,BRRLCI00A60A579V,JAMSTEC,Shinsei Maru,SV05U,Ingegnere informatico
+Consolata,Bratus,BRTCSL99H56D005K,Ocean Exploration Trust,Nautilus,L4IAK,Mappatrice dei fondali
+Lodovico,Bertucci,BRTLVC61S11I243D,NOAA,Pisces,27QUX,Mappatore dei fondali
+Monica,Biti,BTIMNC13H69D261D,JAMSTEC,Mirai,FZ7CG,Mappatrice dei fondali
+Fabio,Bottega,BTTFBA40B11A945I,NOAA,Pisces,0J4Q3,Mappatore dei fondali
+Nazario,Bozzi,BZZNZR05P10H850O,Ocean Exploration Trust,Nautilus,ASIEA,Ingegnere informatico
+Arrigo,Acca,CCARRG05B27B829D,Ocean Exploration Trust,Nautilus,INNJ6,Ingegnere informatico
+Beatrice,Ceccadrini,CCCBRC71R71B748T,Ocean Exploration Trust,Nautilus,7CT2Y,Pilota ROV
+Romina,Cecio,CCERMN71D44B778Q,Ocean Exploration Trust,Nautilus,JALWM,Biologa Marina
+Casimiro,Clun,CLNCMR30S02I565H,NOAA,Atlantis,6Q9ER,Biologo Marino
+Elisabetta,Celentani,CLNLBT70R66C904O,NOAA,Falkor,LVXPW,Biologa Marina
+Ezechiele,Clerico,CLRZHL62M16A736H,Ocean Exploration Trust,Nautilus,6RBB6,Navigatore
+Raffaella,Iacopo,CPIRFL51S45L019B,JAMSTEC,Yokosuka,231RK,Ingegnere informatico
+Moreno,Cipollini,CPLMRN81T24B559M,JAMSTEC,Shinsei Maru,E5W7D,Biologo Marino
+Igino,Coppola,CPPGNI04S11E390S,NOAA,Atlantis,8DBPE,Mappatore dei fondali
+Alfonso,Acerbis,CRBLNS06A07B719G,NOAA,Pisces,0HQIG,Ingegnere informatico
+Giuda,Cornaro,CRNGDI74B05G978U,JAMSTEC,Mirai,Y61FC,Ingegnere informatico
+Gaia,Corti,CRTGAI87H57H439A,NOAA,Falkor,4TWU0,Biologo Marino
+Camillo,Ciussani,CSSCLL36C19B368V,JAMSTEC,Yokosuka,84CAM,Mappatrice dei fondali
+Susanna,Castagna,CSTSNN43P54G955G,JAMSTEC,Shinsei Maru,0PQ1K,Biologa Marina
+Fiorella,Catania,CTNFLL41E70C409T,Ocean Exploration Trust,Nautilus,A3RAR,Mappatrice dei fondali
+Augusto,Ciutti,CTTGST35L17E206D,Ocean Exploration Trust,Nautilus,S7M8O,Biologo Marino
+Walter,Cotta,CTTWTR74L12A008M,NOAA,Falkor,3K5Z7,Ingegnere informatico
+Ersilia,Coveri,CVRRSL08P66B427G,NOAA,Atlantis,HP7N2,Biologa Marina
+Geltrude,Cò,CXXGTR41M68D776D,Ocean Exploration Trust,Nautilus,LFUCJ,Pilota ROV
+Alvise,Degrossi,DGRLVS98E18D978M,Ocean Exploration Trust,Nautilus,H0UY9,Biologo Marino
+Nereo,Degrossi,DGRNRE54R07A979H,JAMSTEC,Yokosuka,DD6AG,Pilota ROV
+Aldo,D'Amici,DMCLDA78P22H238H,NOAA,Pisces,ARC3P,Pilota ROV
+Elvira,Dorgnach,DRGLVR97D57L440D,JAMSTEC,Mirai,KVBTV,Mappatrice dei fondali
+Giada,Flandina,FLNGDI44B54B461E,NOAA,Falkor,2Q37U,Biologa Marina
+Romualdo,Florindi,FLRRLD91P28D553A,NOAA,Pisces,00VXE,Mappatore dei fondali
+Rinaldo,Frezzolino,FRZRLD34R05A825N,JAMSTEC,Yokosuka,3JRDU,Pilota ROV
+Agata,Galantini,GLNGTA91P45D470Y,NOAA,Atlantis,SCP3V,Navigatrice
+Quirino,Gorga,GRGQRN36T31A053X,Ocean Exploration Trust,Nautilus,CIB9E,Pilota ROV
+Loreno,Gerevini,GRVLRN59H03A418T,Ocean Exploration Trust,Nautilus,JEKJ6,Pilota ROV
+Morgana,Gazzetta,GZZMGN08E60I701X,Ocean Exploration Trust,Nautilus,COLZW,Biologa Marino
+Pamela,Alberghini,LBRPML02H52D962S,JAMSTEC,Yokosuka,OH6II,Mappatrice dei fondali
+Floriana,Limonta,LMNFRN81P60A065I,JAMSTEC,Shinsei Maru,IKWQC,Mappatrice dei fondali
+Leopoldo,Longis,LNGLLD63E27H078A,JAMSTEC,Mirai,N320M,Ingegnere informatico
+Elettra,Longhi,LNGLTR80E46A487Z,Ocean Exploration Trust,Nautilus,D5UY2,Biologa Marina
+Sibilla,Lino,LNISLL56S51I682L,NOAA,Falkor,WYM3J,Ingegnere informatico
+Eleuterio,Monodutto,MDNLTR10H18D579I,JAMSTEC,Mirai,GTSU0,Pilota ROV
+Fermo,Maderna,MDRFRM35R22G333A,Ocean Exploration Trust,Nautilus,3SAVX,Navigatore
+Porziano,Mango,MNGPZN78T17I585O,JAMSTEC,Mirai,V99VN,Biologo Marino
+Marco,Maiori,MRAMRC34P28A831L,JAMSTEC,Yokosuka,VQG2A,Ingegnere informatico
+Ines,Maresca,MRSNSI86D50F870U,Ocean Exploration Trust,Nautilus,5BWBU,Mappatrice dei fondali
+Uberto,Mazzali,MZZBRT40E18D870G,JAMSTEC,Mirai,JCS6S,Biologo Marino
+Spartaco,Nossardi,NSSSRT08P10F354F,Ocean Exploration Trust,Nautilus,2ASC2,Ingegnere informatico
+Tiziana,Nozia,NSSTZN90D48G109B,Ocean Exploration Trust,Nautilus,QPMUC,Biologa Marina
+Emiliana,Paoli,PLAMLN67B42E581W,JAMSTEC,Shinsei Maru,W7SSD,Mappatrice dei fondali
+Isidora,Palamuso,PLMSDR56L57H888Q,JAMSTEC,Shinsei Maru,9YTO3,Ingegnere informatico
+Milena,Pantoni,PNTMLN54L46G411L,JAMSTEC,Yokosuka,8TK8W,Biologo Marino
+Orsolina,Piperis,PPRRLN40R51D300P,Ocean Exploration Trust,Nautilus,QCHWS,Mappatrice dei fondali
+Albano,Pardini,PRDLBN98C08G407G,NOAA,Pisces,2IWX9,Navigatore
+Tosca,Poratto,PRTTSC07H57L828J,Ocean Exploration Trust,Nautilus,QGL52,Mappatrice dei fondali
+Camilla,Pescetto,PSCCLL54M46A701K,NOAA,Pisces,Z2MU0,Ingegnere informatico
+Lia,Pasqualone,PSQLIA79E65L963A,NOAA,Atlantis,KYEVS,Pilota ROV
+Adalberto,Opezzi,PZZDBR12E07I459M,Ocean Exploration Trust,Nautilus,TSYB1,Navigatore
+Secondo,Pizzorno,PZZSND75A30H338Z,Ocean Exploration Trust,Nautilus,ZZXA2,Mappatore dei fondali
+Beatrice,Recchia,RCCBRC93H44G327I,JAMSTEC,Yokosuka,WW843,Biologo Marino
+Romolo,Scaravelli,SCRRML84M19A468J,NOAA,Falkor,RKR2Y,Mappatore dei fondali
+Ottilia,Sciorto,SCRTTL91A55E311P,JAMSTEC,Shinsei Maru,H7DTT,Pilota ROV
+Volfango,Scaramelli,SCRVFN09C03G849L,Ocean Exploration Trust,Nautilus,CPAEG,Mappatore dei fondali
+Cirillo,Sammartano,SMMCLL81B11H955W,NOAA,Falkor,843M2,Pilota ROV
+Lorella,Suardi,SRDLLL95C55I668D,NOAA,Atlantis,JR8U6,Pilota ROV
+Palmira,Siro,SRIPMR35T55G289A,Ocean Exploration Trust,Nautilus,32SEF,Navigatrice
+Noè,Soranzo,SRNNOX70A01F453K,Ocean Exploration Trust,Nautilus,PXCVM,Ingegnere informatico
+Luigia,Sartorio,SRTLGU41B61D281R,Ocean Exploration Trust,Nautilus,FOQN5,Pilota ROV
+Gillo,Sassoni,SSSGLL73R07E061P,NOAA,Pisces,PZEYP,Mappatore dei fondali
+Piersilvio,Troia,TROPSL18L08F773R,Ocean Exploration Trust,Nautilus,8Y24K,Biologo Marino
+Angela,Torretti,TRRNGL74E42G792Y,NOAA,Falkor,AQA93,Pilota ROV
+Iolanda,Ottolini,TTLLND93S69E632F,JAMSTEC,Shinsei Maru,U5BYP,Pilota ROV
+Abelardo,Vendramin,VNDBRD98B05H648Z,Ocean Exploration Trust,Nautilus,GGQ7Z,Biologo Marino
+Secondo,Vitari,VTRSND37C02B660V,Ocean Exploration Trust,Nautilus,3OP6P,Biologo Marino
+Adelchi,Zazzeri,ZZZDCH96S13L336N,NOAA,Atlantis,O9UUH,Navigatore
+Vanessa,Zazzeroni,ZZZVSS47T51F685Q,JAMSTEC,Mirai,FM6YY,Pilota ROV

@@ -28,7 +28,7 @@ public class ExpeditionTable implements Table<Expedition, String> {
     private static final String LOCATION = "NomeLuogo";
     private static final String ROV = "TargaROV";
     private static final String ASSOCIATION = "NomeAssociazione";
-    private static final String GROUP = "IDgruppo";
+    private static final String GROUP = "NomeGruppo";
 
     private final Connection connection;
 

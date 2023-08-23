@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class WreckTable implements Table<Wreck, String> {
     private static final String TABLE_NAME = "relitti";
     private static final String ID = "ID";
     private static final String NAME = "Nome";
-    private static final String WRECKAGE_DATE = "DataAffondamento";
+    private static final String WRECKAGE_DATE = "AnnoAffondamento";
     private static final String SIZE = "Dimensioni";
     private static final String DESCRIPTION = "Descrizione";
 
@@ -70,11 +71,11 @@ public class WreckTable implements Table<Wreck, String> {
      * @return a List of all the wrecks in the ResultSet
      */
     private List<Wreck> readWrecksFromResultSet(final ResultSet resultSet) throws SQLException {
-        final List<Wreck> wrecks = List.of();
+        final List<Wreck> wrecks = new LinkedList<>();
         while (resultSet.next()) {
             wrecks.add(new Wreck(resultSet.getString(ID),
                     Optional.ofNullable(resultSet.getString(NAME)),
-                    Optional.ofNullable(resultSet.getDate(WRECKAGE_DATE)),
+                    Optional.ofNullable(resultSet.getInt(WRECKAGE_DATE)),
                     resultSet.getInt(SIZE),
                     resultSet.getString(DESCRIPTION)));
         }
@@ -126,8 +127,7 @@ public class WreckTable implements Table<Wreck, String> {
             statement.setString(counter.getValueAndIncrement(), value.getID());
             statement.setString(counter.getValueAndIncrement(), value.getName().orElse(null));
             if (value.getWreckageDate().isPresent()) {
-                statement.setDate(counter.getValueAndIncrement(),
-                        new java.sql.Date(value.getWreckageDate().get().getTime()));
+                statement.setInt(counter.getValueAndIncrement(), value.getWreckageDate().get());
             } else {
                 statement.setNull(counter.getValueAndIncrement(), java.sql.Types.DATE);
             }
@@ -153,12 +153,15 @@ public class WreckTable implements Table<Wreck, String> {
                 + Constants.WHERE + ID + Constants.QUESTION_MARK;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
             final Counter counter = new Counter(1);
-            statement.setString(counter.getValueAndIncrement(), updatedValue.getName().orElse(null));
-            if (updatedValue.getWreckageDate().isPresent()) {
-                statement.setDate(counter.getValueAndIncrement(),
-                        new java.sql.Date(updatedValue.getWreckageDate().get().getTime()));
+            if (updatedValue.getName().isPresent()) {
+                statement.setString(counter.getValueAndIncrement(), updatedValue.getName().get());
             } else {
-                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.DATE);
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.CHAR);
+            }
+            if (updatedValue.getWreckageDate().isPresent()) {
+                statement.setInt(counter.getValueAndIncrement(), updatedValue.getWreckageDate().get());
+            } else {
+                statement.setNull(counter.getValueAndIncrement(), java.sql.Types.SMALLINT);
             }
             statement.setInt(counter.getValueAndIncrement(), updatedValue.getLength());
             statement.setString(counter.getValueAndIncrement(), updatedValue.getDescription());
