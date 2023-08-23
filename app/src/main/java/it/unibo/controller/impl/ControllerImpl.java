@@ -402,16 +402,16 @@ public class ControllerImpl implements Controller {
             final String geologicalFormationID) {
         if (organismID != null && new OrganismTable(this.provider).findByPrimaryKey(organismID).isEmpty()) {
             this.inputManager.organismRegistration();
-            this.outputManager.showErrorMessage("Organismo non presente nel database");
+            this.outputManager.showErrorMessage("Organismo sconosciuto");
             return false;
         } else if (wreckID != null && new WreckTable(this.provider).findByPrimaryKey(wreckID).isEmpty()) {
             this.inputManager.wreckRegistration();
-            this.outputManager.showErrorMessage("Relitto non presente nel database");
+            this.outputManager.showErrorMessage("Relitto sconosciuto");
             return false;
         } else if (geologicalFormationID != null
                 && new GeologicalFormationTable(this.provider).findByPrimaryKey(geologicalFormationID).isEmpty()) {
             this.inputManager.geologicalFormationRegistration();
-            this.outputManager.showErrorMessage("Formazione geologica non presente nel database");
+            this.outputManager.showErrorMessage("Formazione sconosciuto");
             return false;
         } else {
             final int number = TableUtilities.getNextNumber(Constants.SIGHTINGS, expeditionCode,
@@ -566,7 +566,7 @@ public class ControllerImpl implements Controller {
             while (resultSet.next()) {
                 values.add(List.of(
                         resultSet.getString("Nome"),
-                        resultSet.getString("Nomepaese"),
+                        resultSet.getString("Nomepaese") != null ? resultSet.getString("Nomepaese") : "",
                         String.valueOf(resultSet.getInt("numero"))));
             }
         } catch (final SQLException e) {
@@ -614,7 +614,10 @@ public class ControllerImpl implements Controller {
         results.forEach(r -> {
             final int n = r.getY();
             values.add(n);
-            final float avg = (float) values.stream().mapToInt(Integer::intValue).sum() / (float) values.size();
+            float avg = (float) n; 
+            if (values.size() > 1){
+                avg = (float) (values.stream().mapToInt(Integer::intValue).sum() - n) / (float) (values.size() - 1);
+            }
             final float perc = ((float) n) * 100 / avg - 100;
             percentages.add(perc);
         });
