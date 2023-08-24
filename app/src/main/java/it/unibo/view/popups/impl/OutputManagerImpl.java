@@ -189,7 +189,7 @@ public class OutputManagerImpl implements OutputManager {
      */
     @Override
     public void showSightings(final List<List<String>> sightings) {
-        final List<String> fieldNames = List.of("Codice avvistamento", "Codice spedizione", "Numero", "Profondità",
+        final List<String> fieldNames = List.of("Codice avvistamento", "Codice spedizione", "Numero", "Profondita'",
                 NOTES, "ID organismo", "ID relitto", "ID formazione");
         final int width = SCREEN_WIDTH / fieldNames.size();
         final JPanel centerPanel = createCenterPanel(sightings.size(), fieldNames.size());
@@ -215,7 +215,7 @@ public class OutputManagerImpl implements OutputManager {
     @Override
     public void showExtractions(final List<List<String>> extractions) {
         final List<String> fieldNames = List.of("Codice prelievo", "Codice spedizione", "Numero", "Materiale",
-                "Profondità", "Quantità", NOTES);
+                "Profondita'", "Quantita'", NOTES);
         final int width = SCREEN_WIDTH / fieldNames.size();
         final JPanel centerPanel = createCenterPanel(extractions.size(), fieldNames.size());
         extractions.forEach(e -> {

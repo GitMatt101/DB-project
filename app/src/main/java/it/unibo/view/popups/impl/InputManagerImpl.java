@@ -253,7 +253,7 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void sightingRegistration() {
-        final List<String> fieldNames = List.of("Codice*", "Codice spedizione*", "Profondità", "Note", "ID organismo",
+        final List<String> fieldNames = List.of("Codice*", "Codice spedizione*", "Profondita'", "Note", "ID organismo",
                 "ID relitto", "ID formazione geologica");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
@@ -277,8 +277,8 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void extractionRegistration() {
-        final List<String> fieldNames = List.of("Codice*", "Codice spedizione*", "Materiale*", "Profondità",
-                "Quantità*", "Note");
+        final List<String> fieldNames = List.of("Codice*", "Codice spedizione*", "Materiale*", "Profondita'",
+                "Quantita'*", "Note");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
         confirmButton.addActionListener(e -> {
@@ -380,7 +380,7 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void sightingsFilter() {
-        final List<String> fieldNames = List.of("Luogo", "Profondità minima", "Profondità massima", "Codice spedizione",
+        final List<String> fieldNames = List.of("Luogo", "Profondita' minima", "Profondita' massima", "Codice spedizione",
                 "ID organismo", "ID relitto", "ID formazione geologica");
         final Map<Integer, JTextField> fieldsValues = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);
@@ -404,7 +404,7 @@ public class InputManagerImpl implements InputManager {
      */
     @Override
     public void extractionsFilter() {
-        final List<String> fieldNames = List.of("Luogo", "Profondità minima", "Profondità massima", "Codice spedizione",
+        final List<String> fieldNames = List.of("Luogo", "Profondita' minima", "Profondita' massima", "Codice spedizione",
                 "Materiale");
         final Map<Integer, JTextField> fields = createTextFields(createEmptyStrings(fieldNames.size()));
         final JButton confirmButton = new JButton(CONFIRM);

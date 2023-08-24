@@ -3,7 +3,13 @@ package it.unibo.view.panels;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,7 +20,7 @@ import it.unibo.common.Constants;
 /**
  * This class is used to create the logo and title of the app.
  */
-public class LogoPanel extends JPanel {
+public final class LogoPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,13 +40,20 @@ public class LogoPanel extends JPanel {
         text.setBackground(Constants.BACKGROUND_COLOR);
         text.setBorder(new javax.swing.border.LineBorder(Color.CYAN, 0));
         text.setEditable(false);
-        final JLabel logo = new JLabel();
-        final ImageIcon image = new ImageIcon("app\\src\\main\\resources\\app_icon.jpg");
-        final ImageIcon resizedImage = new ImageIcon(
-                image.getImage().getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, Image.SCALE_DEFAULT));
-        logo.setIcon(resizedImage);
         this.add(text, java.awt.BorderLayout.NORTH);
-        this.add(logo, java.awt.BorderLayout.CENTER);
+        try {
+            final Optional<BufferedImage> bi = Optional
+                    .of(ImageIO.read(this.getClass().getResourceAsStream("/images/app_icon.jpg")));
+            if (bi.isPresent()) {
+                final ImageIcon image = new ImageIcon(bi.get());
+                final ImageIcon resizedImage = new ImageIcon(
+                        image.getImage().getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, Image.SCALE_DEFAULT));
+                final JLabel logo = new JLabel(resizedImage);
+                this.add(logo, java.awt.BorderLayout.CENTER);
+            }
+        } catch (IOException e) {
+            Logger.getLogger(LogoPanel.class.getName()).log(Level.SEVERE, "File not found in the path given", e);
+        }
     }
 
 }
