@@ -114,7 +114,7 @@ public class OrganismTable implements Table<Organism, String> {
      */
     public List<Organism> filterByExpedition(final String expeditionCode) {
         final String query = "SELECT DISTINCT " + ID + ", " + SPECIES + ", " + TEMPORARY_NAME + ", " + COMMON_NAME
-                + ", " + DESCRIPTION + " FROM " + TABLE_NAME + ", " + Constants.SIGHTINGS
+                + ", AnnoScoperta, " + DESCRIPTION + " FROM " + TABLE_NAME + ", " + Constants.SIGHTINGS
                 + Constants.WHERE + Constants.SIGHTINGS + ".CodiceSpedizione" + Constants.QUESTION_MARK
                 + Constants.AND + Constants.SIGHTINGS + ".IDorganismo" + Constants.EQUALS + TABLE_NAME + "." + ID;
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
