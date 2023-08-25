@@ -1,7 +1,12 @@
-Codice,Data,NomeAssociazione,NomeGruppo,NomeLuogo,TargaROV
-FKBECBJLP3,2019-03-19,NOAA,Atlantis,Golfo del Messico,EQE2435
-FKCHELYUK3,2023-07-02,Ocean Exploration Trust,Nautilus,Fossa delle Aleutine,8GPK420
-HAS08MN2FT,1997-07-13,JAMSTEC,Mirai,Mar di Banda,4GMW310
-SSEY2O52BP,2023-07-21,Ocean Exploration Trust,Nautilus,Fossa delle Aleutine,8GPK420
-UI13BGB839,2022-05-15,JAMSTEC,Shinsei Maru,Oceano Indiano,EQE2435
-VJ4EIJACWK,2023-06-18,Ocean Exploration Trust,Nautilus,Fossa delle Aleutine,VT16752
+"Codice";"Data";"NomeAssociazione";"NomeGruppo";"NomeLuogo";"TargaROV"
+"612V1DWEUB";"2012-10-11";"OceanX AG";"OceanXplorer";"Mar Baltico";"CWP8099"
+"EIO8UZ1VVO";"2002-04-26";"JAMSTEC";"Yokosuka";"Costa di Sanriku";"C606966"
+"FKBECBJLP3";"2019-03-19";"NOAA";"Atlantis";"Golfo del Messico";"EQE2435"
+"FKCHELYUK3";"2023-07-02";"Ocean Exploration Trust";"Nautilus";"Fossa delle Aleutine";"8GPK420"
+"L58ZW1K7SR";"2007-11-11";"NOAA";"Falkor";"Golfo del Messico";"CWP8099"
+"NRBWSLDM1X";"2022-08-03";"NOAA";"Falkor";"Oceano Atlantico";"PQ397LS"
+"Q6XUWM8AXS";"2008-03-14";"OceanX AG";"OceanXplorer";"Mare del Nord";"FP056LO"
+"SSEY2O52BP";"2023-07-21";"Ocean Exploration Trust";"Nautilus";"Fossa delle Aleutine";"8GPK420"
+"UI13BGB839";"2022-05-15";"JAMSTEC";"Shinsei Maru";"Oceano Indiano";"EQE2435"
+"VJ4EIJACWK";"2023-06-18";"Ocean Exploration Trust";"Nautilus";"Fossa delle Aleutine";"VT16752"
+"YJZX5W42AW";"2006-03-14";"JAMSTEC";"Mirai";"Baia Sagami";"C606966"

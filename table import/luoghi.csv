@@ -1,8 +1,13 @@
-"Nome";"NomePaese"
-"Oceano Indiano";null
-"Fossa delle Aleutine";"Alaska"
-"Isole Galapagos";"Ecuador"
-"Baia Sagami";"Giappone"
-"Fossa del Giappone";"Giappone"
-"Golfo del Messico";"Messico"
-"Manus Basin";"Papua Nuova Guinea"
+Nome,NomePaese
+Mar Baltico,null
+Mar dei Caraibi,null
+Mare del Nord,null
+Oceano Atlantico,null
+Oceano Indiano,null
+Fossa delle Aleutine,Alaska
+Isole Galapagos,Ecuador
+Baia Sagami,Giappone
+Costa di Sanriku,Giappone
+Fossa del Giappone,Giappone
+Golfo del Messico,Messico
+Manus Basin,Papua Nuova Guinea

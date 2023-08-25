@@ -1,2 +1,10 @@
-"Codice";"Numero";"Profondita";"Quantita";"Note";"CodiceSpedizione";"NomeMateriale"
-"F448LXLYCN";1;2300;1.7;"Le rocce sono state prelevate nelle vicinanze di un vulcano sottomarino.";"FKCHELYUK3";"Rocce effusive"
+Codice,Numero,CodiceSpedizione,Profondita,Note,Quantita,NomeMateriale
+ACFEIA1HJ0,1.0,VJ4EIJACWK,null,null,1.4,Fanghiglia
+BXW0O22NCI,1.0,L58ZW1K7SR,1300.0,null,0.1,Rocce effusive
+E3VK5J2IRZ,3.0,VJ4EIJACWK,null,null,1.2,Alghe
+GNHD1HINCD,3.0,FKBECBJLP3,1800.0,Sabbia prelevata dal cratere di una fumarola nera,1.2,Sabbia
+JVTUYZK0YS,2.0,VJ4EIJACWK,1200.0,null,1.1,Sabbia
+KFUIGY39MI,1.0,FKBECBJLP3,1800.0,null,1.1,Rocce effusive
+OB630R72NT,2.0,L58ZW1K7SR,1430.0,Rocce prelevate dalla bocca di un vulcano inattivo,0.7,Rocce effusive
+OLWKA106M5,2.0,YJZX5W42AW,null,null,0.5,Fanghiglia
+PVCF1OI69J,2.0,FKBECBJLP3,null,null,1.3,Acqua
